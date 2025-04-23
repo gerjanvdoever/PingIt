@@ -1,0 +1,56 @@
+@startuml
+title PingIt - Database Schema (Simplified ERD)
+
+
+entity Users {
+  +int Id
+  --
+  string FirstName
+  string LastName
+  string Email
+  string PasswordHash
+  string Role
+  string? PhoneNumber
+  string Street
+  string HouseNumber
+  string PostalCode
+  string City
+}
+
+entity Incidents {
+  +int Id
+  --
+  string Title
+  string Description
+  decimal Latitude
+  decimal Longitude
+  datetime CreatedAt
+  string Status
+  string Priority
+  datetime Deadline
+  datetime? HandledAt
+  int? CreatedByUserId
+}
+
+entity IncidentPhotos {
+  +int Id
+  --
+  int IncidentId
+  string PhotoUrl
+}
+
+entity IncidentStatusHistory {
+  +int Id
+  --
+  int IncidentId
+  string Status
+  int ChangedByUserId
+  datetime ChangedAt
+}
+
+' RELATIONS
+Users ||--o{ Incidents
+Users ||--o{ IncidentStatusHistory
+Incidents ||--o{ IncidentPhotos
+Incidents ||--o{ IncidentStatusHistory
+@enduml

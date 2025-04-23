@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.12.35707.178 d17.12
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PingIt", "PingIt\PingIt.csproj", "{85224536-9772-4792-BE88-B945767FC76F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PingIt.Maui", "PingIt\PingIt.Maui.csproj", "{85224536-9772-4792-BE88-B945767FC76F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PingIt.Api", "PingIt.Api\PingIt.Api.csproj", "{73B0E615-F04E-48C2-B4B6-F2927DE35F27}"
 EndProject
