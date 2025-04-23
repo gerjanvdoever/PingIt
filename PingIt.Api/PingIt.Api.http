@@ -1,0 +1,6 @@
+@PingIt.Api_HostAddress = https://localhost:7017
+
+GET {{PingIt.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
