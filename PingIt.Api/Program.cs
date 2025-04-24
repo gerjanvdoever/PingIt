@@ -8,12 +8,13 @@ var builder = WebApplication.CreateBuilder(args);
 DotNetEnv.Env.Load();
 
 // Retrieve connection string template from appsettings.json
-var connectionTemplate = builder.Configuration.GetConnectionString("PostgresConnection");
+var connectionTemplate = builder.Configuration.GetConnectionString("PostgresConnection")
+   ?? throw new InvalidOperationException("Connection string 'PostgresConnection' not found.");
 
 // Replace placeholders in connection string template with values from .env
 var connectionString = connectionTemplate
-    .Replace("{username}", Env.GetString("PGUSERNAME"))
-    .Replace("{password}", Env.GetString("PGPASSWORD"));
+   .Replace("{username}", Env.GetString("PGUSERNAME"))
+   .Replace("{password}", Env.GetString("PGPASSWORD"));
 
 // DbContext registreren met dynamische connection string
 builder.Services.AddDbContext<PingItDbContext>(options =>
