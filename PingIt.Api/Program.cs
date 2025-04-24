@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using DotNetEnv;
 using Microsoft.EntityFrameworkCore;
 using PingIt.Api.Data;
@@ -20,7 +21,12 @@ var connectionString = connectionTemplate
 builder.Services.AddDbContext<PingItDbContext>(options =>
     options.UseNpgsql(connectionString));
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
 builder.Services.AddOpenApi();
 
 var app = builder.Build();

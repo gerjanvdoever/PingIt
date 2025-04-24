@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PingIt.Api.Data;
@@ -11,9 +12,11 @@ using PingIt.Api.Data;
 namespace PingIt.Api.Migrations
 {
     [DbContext(typeof(PingItDbContext))]
-    partial class PingItDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250424084307_AddWantsNotificationsToUser")]
+    partial class AddWantsNotificationsToUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,7 +39,7 @@ namespace PingIt.Api.Migrations
                     b.Property<int?>("CreatedByUserId")
                         .HasColumnType("integer");
 
-                    b.Property<DateTime?>("Deadline")
+                    b.Property<DateTime>("Deadline")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("Description")
@@ -169,9 +172,6 @@ namespace PingIt.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<bool>("WantsNotifications")
-                        .HasColumnType("boolean");
-
                     b.HasKey("Id");
 
                     b.ToTable("Users");
@@ -188,7 +188,7 @@ namespace PingIt.Api.Migrations
             modelBuilder.Entity("PingIt.Api.Models.IncidentPhoto", b =>
                 {
                     b.HasOne("PingIt.Api.Models.Incident", null)
-                        .WithMany("Photos")
+                        .WithMany()
                         .HasForeignKey("IncidentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -207,11 +207,6 @@ namespace PingIt.Api.Migrations
                         .HasForeignKey("IncidentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("PingIt.Api.Models.Incident", b =>
-                {
-                    b.Navigation("Photos");
                 });
 #pragma warning restore 612, 618
         }

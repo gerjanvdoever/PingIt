@@ -11,6 +11,7 @@ entity Users {
   string PasswordHash
   string Role
   string? PhoneNumber
+  bool WantsNotifications
   string Street
   string HouseNumber
   string PostalCode
@@ -21,13 +22,13 @@ entity Incidents {
   +int Id
   --
   string Title
-  string Description
+  string? Description
   decimal Latitude
   decimal Longitude
   datetime CreatedAt
   string Status
-  string Priority
-  datetime Deadline
+  string? Priority
+  datetime? Deadline
   datetime? HandledAt
   int? CreatedByUserId
 }

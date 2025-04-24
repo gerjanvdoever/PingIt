@@ -4,12 +4,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PingIt.Api", "PingIt.Api\PingIt.Api.csproj", "{73B0E615-F04E-48C2-B4B6-F2927DE35F27}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DA10DFA0-311F-4835-848C-DC68FEC6326B} = {DA10DFA0-311F-4835-848C-DC68FEC6326B}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PingIt.Maui", "PingIt.App\PingIt.App\PingIt.Maui.csproj", "{63C06FF5-8505-4424-BB7C-E86C3FC66B02}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PingIt.Shared", "PingIt.App\PingIt.App.Shared\PingIt.Shared.csproj", "{88F0B4B6-199B-446B-8246-649CE96B67DD}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PingIt.Web", "PingIt.App\PingIt.App.Web\PingIt.Web.csproj", "{C44768F6-12CE-4A21-9D40-F828D616ACF1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PingIt.Shared", "PingIt.Shared\PingIt.Shared.csproj", "{DA10DFA0-311F-4835-848C-DC68FEC6326B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,18 +20,10 @@ Global
 		{73B0E615-F04E-48C2-B4B6-F2927DE35F27}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73B0E615-F04E-48C2-B4B6-F2927DE35F27}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{73B0E615-F04E-48C2-B4B6-F2927DE35F27}.Release|Any CPU.Build.0 = Release|Any CPU
-		{63C06FF5-8505-4424-BB7C-E86C3FC66B02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{63C06FF5-8505-4424-BB7C-E86C3FC66B02}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{63C06FF5-8505-4424-BB7C-E86C3FC66B02}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{63C06FF5-8505-4424-BB7C-E86C3FC66B02}.Release|Any CPU.Build.0 = Release|Any CPU
-		{88F0B4B6-199B-446B-8246-649CE96B67DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{88F0B4B6-199B-446B-8246-649CE96B67DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{88F0B4B6-199B-446B-8246-649CE96B67DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{88F0B4B6-199B-446B-8246-649CE96B67DD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C44768F6-12CE-4A21-9D40-F828D616ACF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C44768F6-12CE-4A21-9D40-F828D616ACF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C44768F6-12CE-4A21-9D40-F828D616ACF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C44768F6-12CE-4A21-9D40-F828D616ACF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA10DFA0-311F-4835-848C-DC68FEC6326B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA10DFA0-311F-4835-848C-DC68FEC6326B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA10DFA0-311F-4835-848C-DC68FEC6326B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA10DFA0-311F-4835-848C-DC68FEC6326B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
