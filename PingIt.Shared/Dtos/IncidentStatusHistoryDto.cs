@@ -1,12 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using PingIt.Shared.Enums;
 
 namespace PingIt.Shared.Dtos
 {
-    internal class IncidentStatusHistoryDto
+    public class IncidentStatusHistoryDto
     {
+        public int Id { get; set; }
+        public int IncidentId { get; set; }
+        public IncidentStatus Status { get; set; }
+        public int ChangedByUserId { get; set; }
+        public DateTime ChangedAt { get; set; }
     }
 }

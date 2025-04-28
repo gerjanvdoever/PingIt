@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PingIt.Shared.Dtos
+﻿namespace PingIt.Shared.Dtos
 {
-    internal class IncidentPhotoDto
+    public class IncidentPhotoDto
     {
+        public int Id { get; set; }
+        public int IncidentId { get; set; }
+        public string PhotoUrl { get; set; } = string.Empty;
     }
 }

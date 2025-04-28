@@ -1,25 +1,51 @@
+using System.Text;
 using System.Text.Json.Serialization;
 using DotNetEnv;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using PingIt.Api.Data;
+using PingIt.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Load .env
+// Load environment variables from .env
 DotNetEnv.Env.Load();
 
-// Retrieve connection string template from appsettings.json
+// Get connection string template
 var connectionTemplate = builder.Configuration.GetConnectionString("PostgresConnection")
-   ?? throw new InvalidOperationException("Connection string 'PostgresConnection' not found.");
+    ?? throw new InvalidOperationException("Connection string 'PostgresConnection' not found.");
 
-// Replace placeholders in connection string template with values from .env
+// Replace placeholders from .env
 var connectionString = connectionTemplate
-   .Replace("{username}", Env.GetString("PGUSERNAME"))
-   .Replace("{password}", Env.GetString("PGPASSWORD"));
+    .Replace("{username}", Env.GetString("PGUSERNAME"))
+    .Replace("{password}", Env.GetString("PGPASSWORD"));
 
-// DbContext registreren met dynamische connection string
+// JWT settings
+var jwtKey = Env.GetString("JWT_SECRET") ?? throw new InvalidOperationException("JWT_SECRET not found in .env");
+var jwtIssuer = builder.Configuration["Jwt:Issuer"];
+var jwtAudience = builder.Configuration["Jwt:Audience"];
+
+// Services
 builder.Services.AddDbContext<PingItDbContext>(options =>
     options.UseNpgsql(connectionString));
+
+builder.Services.AddScoped<JwtService>();
+
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+        };
+    });
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
@@ -31,7 +57,6 @@ builder.Services.AddOpenApi();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -39,6 +64,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
