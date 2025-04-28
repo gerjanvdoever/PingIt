@@ -1,6 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PingIt.Api.Data;
@@ -55,16 +56,15 @@ namespace PingIt.Api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
+            if (await _context.Users.AnyAsync(u => u.Email == registerDto.Email))
+            {
+                return Conflict(new { Message = "A user with this email already exists." });
+            }
+
             var validationResult = ValidateRegisterDto(registerDto);
             if (!string.IsNullOrEmpty(validationResult))
             {
                 return BadRequest(new { Message = validationResult });
-            }
-
-            // Check if email already exists
-            if (await _context.Users.AnyAsync(u => u.Email == registerDto.Email))
-            {
-                return Conflict(new { Message = "A user with this email already exists." });
             }
 
             var user = new Models.User
@@ -91,6 +91,53 @@ namespace PingIt.Api.Controllers
             return Ok(new { 
                 Token = token,
                 Message = "User registered successfully." });
+        }
+
+        // PUT: api/auth/change-password/{id}
+        [HttpPut("change-password/{id}")]
+        [Authorize]
+        public async Task<IActionResult> ChangePassword(int id, [FromBody] ChangePasswordDto passwordDto)
+        {
+            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            if (userIdClaim == null)
+            {
+                return Unauthorized(new { Message = "Invalid token." });
+            }
+
+            var userIdFromToken = int.Parse(userIdClaim);
+
+            // Only allow users to change their own password
+            if (userIdFromToken != id)
+            {
+                return Forbid("You are not authorized to change another user's password.");
+            }
+
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+            {
+                return NotFound(new { Message = "User not found." });
+            }
+
+            var hashedOldPassword = HashPassword(passwordDto.OldPassword);
+            if (user.PasswordHash != hashedOldPassword)
+            {
+                return Unauthorized(new { Message = "Old password is incorrect." });
+            }
+
+            // Validate the new password
+            var passwordRegex = new Regex(@"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$");
+            if (!passwordRegex.IsMatch(passwordDto.NewPassword))
+            {
+                return BadRequest(new { Message = "New password must be at least 8 characters long, contain an uppercase letter, a lowercase letter and a number." });
+            }
+
+            user.PasswordHash = HashPassword(passwordDto.NewPassword);
+
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            return Ok();
         }
 
         private string HashPassword(string password)
