@@ -1,5 +1,6 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PingIt.Api.Data;
@@ -54,8 +55,42 @@ namespace PingIt.Api.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDto registerDto)
         {
-            // TODO: Implement registration logic
-            return Ok();
+            var validationResult = ValidateRegisterDto(registerDto);
+            if (!string.IsNullOrEmpty(validationResult))
+            {
+                return BadRequest(new { Message = validationResult });
+            }
+
+            // Check if email already exists
+            if (await _context.Users.AnyAsync(u => u.Email == registerDto.Email))
+            {
+                return Conflict(new { Message = "A user with this email already exists." });
+            }
+
+            var user = new Models.User
+            {
+                FirstName = registerDto.FirstName,
+                LastName = registerDto.LastName,
+                Email = registerDto.Email,
+                PasswordHash = HashPassword(registerDto.Password),
+                Role = Shared.Enums.UserRole.Resident.ToString(), // Always Resident, can be changed later by Admin
+                PhoneNumber = registerDto.PhoneNumber,
+                WantsNotifications = registerDto.WantsNotifications,
+                Street = registerDto.Street,
+                HouseNumber = registerDto.HouseNumber,
+                PostalCode = registerDto.PostalCode,
+                City = registerDto.City
+            };
+
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
+
+            // Generate JWT token for immediate login
+            var token = _jwtService.GenerateToken(user);
+
+            return Ok(new { 
+                Token = token,
+                Message = "User registered successfully." });
         }
 
         private string HashPassword(string password)
@@ -63,12 +98,47 @@ namespace PingIt.Api.Controllers
             using var sha256 = SHA256.Create();
             var bytes = Encoding.UTF8.GetBytes(password);
             var hash = sha256.ComputeHash(bytes);
-            var base64Hash = Convert.ToBase64String(hash);
+            return Convert.ToBase64String(hash);
+        }
 
-            _logger.LogInformation("[HashPassword] Password: {Password} → Hash: {Hash}", password, base64Hash);
+        private string ValidateRegisterDto(RegisterDto dto)
+        {
+            // Group required fields check
+            if (string.IsNullOrWhiteSpace(dto.FirstName) ||
+                string.IsNullOrWhiteSpace(dto.LastName) ||
+                string.IsNullOrWhiteSpace(dto.Email) ||
+                string.IsNullOrWhiteSpace(dto.Password) ||
+                string.IsNullOrWhiteSpace(dto.Street) ||
+                string.IsNullOrWhiteSpace(dto.HouseNumber) ||
+                string.IsNullOrWhiteSpace(dto.PostalCode) ||
+                string.IsNullOrWhiteSpace(dto.City))
+            {
+                return "All fields are required.";
+            }
 
+            // Validate email
+            var emailRegex = new Regex(@"^\S+@\S+\.\S+$");
+            if (!emailRegex.IsMatch(dto.Email))
+            {
+                return "Invalid email format.";
+            }
 
-            return base64Hash;
+            // Validate password
+            var passwordRegex = new Regex(@"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$");
+            if (!passwordRegex.IsMatch(dto.Password))
+            {
+                return "Password must be at least 8 characters long, contain an uppercase letter, a lowercase letter and a number";
+            }
+
+            // Validate postal code
+            var postalCodeRegex = new Regex(@"^\d{4}[A-Z]{2}$");
+            if (!postalCodeRegex.IsMatch(dto.PostalCode))
+            {
+                return "Postal code must be in the format 1234AB.";
+            }
+
+            return string.Empty; // All validations passed
         }
     }
 }
+
