@@ -47,6 +47,8 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.AddSingleton<EmailService>();
+
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
     {

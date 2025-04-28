@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PingIt.Api.Data;
 using PingIt.Api.Models;
+using PingIt.Api.Services;
 using PingIt.Shared.Dtos;
 using PingIt.Shared.Enums;
 
@@ -14,10 +15,12 @@ namespace PingIt.Api.Controllers
     public class IncidentStatusController : ControllerBase
     {
         private readonly PingItDbContext _context;
+        private readonly EmailService _emailService;
 
-        public IncidentStatusController(PingItDbContext context)
+        public IncidentStatusController(PingItDbContext context, EmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
 
         // POST: api/incidents/{incidentId}/status
@@ -111,6 +114,23 @@ namespace PingIt.Api.Controllers
 
                 _context.IncidentStatusHistories.Add(statusHistory);
                 await _context.SaveChangesAsync();
+            }
+
+            // Send notification email to reporter (if WantsNotifications = true & CreatedByUserid != null)
+            if (incident.CreatedByUserId.HasValue)
+            {
+                var creator = await _context.Users.FindAsync(incident.CreatedByUserId.Value);
+
+                if (creator != null && creator.WantsNotifications)
+                {
+                    var subject = $"Update on your incident: {incident.Title}";
+                    var body = $"Hello {creator.FirstName},\n\n" +
+                               $"The status of your reported incident \"{incident.Title}\" has been updated to: {incident.Status}.\n\n" +
+                               $"Thank you for helping keep the city safe!\n\n" +
+                               $"- PingIt Team";
+
+                    await _emailService.SendEmailAsync(creator.Email, subject, body);
+                }
             }
 
             return Ok(new { Message = "Incident updated successfully." });
