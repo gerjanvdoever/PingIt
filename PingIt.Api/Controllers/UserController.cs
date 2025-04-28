@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PingIt.Api.Data;
+using PingIt.Api.Extensions;
 using PingIt.Api.Models;
 using PingIt.Shared.Dtos;
 using PingIt.Shared.Enums;
@@ -24,8 +26,21 @@ namespace PingIt.Api.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<UserDto>> GetUser(int id)
         {
-            var user = await _context.Users.FindAsync(id);
+            try
+            {
+                var userIdFromToken = User.GetUserId();
 
+                if (!(userIdFromToken == id || User.IsWorker() || User.IsAdmin()))
+                {
+                    return Forbid("You are not authorized to view this user's data.");
+                }
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { Message = ex.Message });
+            }
+
+            var user = await _context.Users.FindAsync(id);
             if (user == null)
             {
                 return NotFound(new { Message = "User not found." });
@@ -42,7 +57,8 @@ namespace PingIt.Api.Controllers
                 Street = user.Street,
                 HouseNumber = user.HouseNumber,
                 PostalCode = user.PostalCode,
-                City = user.City
+                City = user.City,
+                Role = Enum.Parse<UserRole>(user.Role)
             };
 
             return Ok(userDto);
@@ -57,10 +73,30 @@ namespace PingIt.Api.Controllers
                 return BadRequest(new { Message = "User ID mismatch." });
             }
 
+            try
+            {
+                var userIdFromToken = User.GetUserId();
+
+                if (!User.IsAdmin() && userIdFromToken != id)
+                {
+                    return Forbid("You are not authorized to update this user.");
+                }
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new { Message = ex.Message });
+            }
+
             var user = await _context.Users.FindAsync(id);
             if (user == null)
             {
                 return NotFound(new { Message = "User not found." });
+            }
+
+            var validationResult = ValidateUserDto(userDto);
+            if (!string.IsNullOrEmpty(validationResult))
+            {
+                return BadRequest(new { Message = validationResult });
             }
 
             user.FirstName = userDto.FirstName;
@@ -103,6 +139,26 @@ namespace PingIt.Api.Controllers
             return Ok(userDtos);
         }
 
+        // GET: api/user/workers
+        [HttpGet("workers")]
+        [Authorize(Roles = "Administrator")]
+        public async Task<ActionResult<List<UserDto>>> GetAllWorkers()
+        {
+            var workers = await _context.Users
+                .Where(u => u.Role == UserRole.Worker.ToString())
+                .Select(user => new UserDto
+                {
+                    Id = user.Id,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Role = Enum.Parse<UserRole>(user.Role)
+                })
+                .ToListAsync();
+
+            return Ok(workers);
+        }
+
+
         // PUT: api/user/role/{id}
         [HttpPut("role/{id}")]
         [Authorize(Roles = "Administrator")]
@@ -121,6 +177,34 @@ namespace PingIt.Api.Controllers
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        private string ValidateUserDto(UserDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.FirstName) ||
+                string.IsNullOrWhiteSpace(dto.LastName) ||
+                string.IsNullOrWhiteSpace(dto.Email) ||
+                string.IsNullOrWhiteSpace(dto.Street) ||
+                string.IsNullOrWhiteSpace(dto.HouseNumber) ||
+                string.IsNullOrWhiteSpace(dto.PostalCode) ||
+                string.IsNullOrWhiteSpace(dto.City))
+            {
+                return "All fields are required.";
+            }
+
+            var emailRegex = new Regex(@"^\S+@\S+\.\S+$");
+            if (!emailRegex.IsMatch(dto.Email))
+            {
+                return "Invalid email format.";
+            }
+
+            var postalCodeRegex = new Regex(@"^\d{4}[A-Z]{2}$");
+            if (!postalCodeRegex.IsMatch(dto.PostalCode))
+            {
+                return "Postal code must be in the format 1234AB.";
+            }
+
+            return string.Empty;
         }
     }
 }

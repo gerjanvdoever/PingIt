@@ -17,8 +17,9 @@ namespace PingIt.Shared.Dtos
         public DateTime? Deadline { get; set; }
         public DateTime? HandledAt { get; set; }
 
-        public List<string> PhotoUrls { get; set; } = new();
-
         public int? CreatedByUserId { get; set; }
+        public bool HandledByExternal { get; set; } = false;
+        public int? HandledByUserId { get; set; }
+        public string? Notes { get; set; }
     }
 }

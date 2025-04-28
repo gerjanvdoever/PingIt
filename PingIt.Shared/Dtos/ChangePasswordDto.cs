@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace PingIt.Shared.Dtos
+﻿namespace PingIt.Shared.Dtos
 {
-    internal class ChangePasswordDto
+    public class ChangePasswordDto
     {
+        public string OldPassword { get; set; } = string.Empty;
+        public string NewPassword { get; set; } = string.Empty;
     }
 }

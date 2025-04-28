@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PingIt.Api.Data;
 using PingIt.Api.Services;
+using PingIt.Api.Extensions; // <-- NEW
 using PingIt.Shared.Dtos;
 
 namespace PingIt.Api.Controllers
@@ -73,7 +74,7 @@ namespace PingIt.Api.Controllers
                 LastName = registerDto.LastName,
                 Email = registerDto.Email,
                 PasswordHash = HashPassword(registerDto.Password),
-                Role = Shared.Enums.UserRole.Resident.ToString(), // Always Resident, can be changed later by Admin
+                Role = Shared.Enums.UserRole.Resident.ToString(),
                 PhoneNumber = registerDto.PhoneNumber,
                 WantsNotifications = registerDto.WantsNotifications,
                 Street = registerDto.Street,
@@ -85,12 +86,13 @@ namespace PingIt.Api.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            // Generate JWT token for immediate login
             var token = _jwtService.GenerateToken(user);
 
-            return Ok(new { 
+            return Ok(new
+            {
                 Token = token,
-                Message = "User registered successfully." });
+                Message = "User registered successfully."
+            });
         }
 
         // PUT: api/auth/change-password/{id}
@@ -98,19 +100,18 @@ namespace PingIt.Api.Controllers
         [Authorize]
         public async Task<IActionResult> ChangePassword(int id, [FromBody] ChangePasswordDto passwordDto)
         {
-            var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-            if (userIdClaim == null)
+            try
             {
-                return Unauthorized(new { Message = "Invalid token." });
+                var userIdFromToken = User.GetUserId();
+
+                if (userIdFromToken != id)
+                {
+                    return Forbid("You are not authorized to change another user's password.");
+                }
             }
-
-            var userIdFromToken = int.Parse(userIdClaim);
-
-            // Only allow users to change their own password
-            if (userIdFromToken != id)
+            catch (UnauthorizedAccessException ex)
             {
-                return Forbid("You are not authorized to change another user's password.");
+                return Unauthorized(new { Message = ex.Message });
             }
 
             var user = await _context.Users.FindAsync(id);
@@ -125,11 +126,13 @@ namespace PingIt.Api.Controllers
                 return Unauthorized(new { Message = "Old password is incorrect." });
             }
 
-            // Validate the new password
             var passwordRegex = new Regex(@"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$");
             if (!passwordRegex.IsMatch(passwordDto.NewPassword))
             {
-                return BadRequest(new { Message = "New password must be at least 8 characters long, contain an uppercase letter, a lowercase letter and a number." });
+                return BadRequest(new
+                {
+                    Message = "New password must be at least 8 characters long, contain an uppercase letter, a lowercase letter and a number."
+                });
             }
 
             user.PasswordHash = HashPassword(passwordDto.NewPassword);
@@ -150,7 +153,6 @@ namespace PingIt.Api.Controllers
 
         private string ValidateRegisterDto(RegisterDto dto)
         {
-            // Group required fields check
             if (string.IsNullOrWhiteSpace(dto.FirstName) ||
                 string.IsNullOrWhiteSpace(dto.LastName) ||
                 string.IsNullOrWhiteSpace(dto.Email) ||
@@ -163,29 +165,25 @@ namespace PingIt.Api.Controllers
                 return "All fields are required.";
             }
 
-            // Validate email
             var emailRegex = new Regex(@"^\S+@\S+\.\S+$");
             if (!emailRegex.IsMatch(dto.Email))
             {
                 return "Invalid email format.";
             }
 
-            // Validate password
             var passwordRegex = new Regex(@"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$");
             if (!passwordRegex.IsMatch(dto.Password))
             {
-                return "Password must be at least 8 characters long, contain an uppercase letter, a lowercase letter and a number";
+                return "Password must be at least 8 characters long, contain an uppercase letter, a lowercase letter and a number.";
             }
 
-            // Validate postal code
             var postalCodeRegex = new Regex(@"^\d{4}[A-Z]{2}$");
             if (!postalCodeRegex.IsMatch(dto.PostalCode))
             {
                 return "Postal code must be in the format 1234AB.";
             }
 
-            return string.Empty; // All validations passed
+            return string.Empty;
         }
     }
 }
-
