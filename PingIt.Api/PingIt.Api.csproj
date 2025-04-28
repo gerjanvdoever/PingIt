@@ -22,4 +22,8 @@
     <ProjectReference Include="..\PingIt.Shared\PingIt.Shared.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Uploads\" />
+  </ItemGroup>
+
 </Project>

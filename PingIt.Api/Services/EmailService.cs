@@ -1,6 +1,7 @@
 ﻿using MailKit.Net.Smtp;
 using MimeKit;
 using DotNetEnv;
+using MailKit.Security;
 
 namespace PingIt.Api.Services
 {
@@ -36,7 +37,7 @@ namespace PingIt.Api.Services
             };
 
             using var client = new SmtpClient();
-            await client.ConnectAsync(_server, _port, _useSsl);
+            await client.ConnectAsync(_server, _port, SecureSocketOptions.StartTls);
             await client.AuthenticateAsync(_email, _password);
             await client.SendAsync(message);
             await client.DisconnectAsync(true);
