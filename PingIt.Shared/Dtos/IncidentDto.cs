@@ -16,6 +16,7 @@ namespace PingIt.Shared.Dtos
         public PriorityLevel Priority { get; set; } = PriorityLevel.Unknown;
         public DateTime? Deadline { get; set; }
         public DateTime? HandledAt { get; set; }
+        public List<IncidentPhotoDto> Photos { get; set; } = new();
 
         public int? CreatedByUserId { get; set; }
         public bool HandledByExternal { get; set; } = false;
