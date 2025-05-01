@@ -23,16 +23,10 @@ namespace PingIt.Api.Data
                 .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Incident>()
-                .HasOne<User>() // New relation
+                .HasOne<User>() 
                 .WithMany()
                 .HasForeignKey(i => i.HandledByUserId)
                 .OnDelete(DeleteBehavior.SetNull);
-
-            modelBuilder.Entity<Incident>()
-                .HasMany(i => i.Photos)
-                .WithOne()
-                .HasForeignKey(p => p.IncidentId)
-                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<IncidentStatusHistory>()
                 .HasOne<Incident>()
