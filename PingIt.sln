@@ -13,6 +13,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PingIt.Web", "PingIt.Web\PingIt.Web.csproj", "{D03AF3C5-617E-474F-AEC0-C17B541AE288}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PingIt.Maui", "PingIt.Maui\PingIt.Maui.csproj", "{96EDC40A-536A-44F4-B449-919AF2E7C2BD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DA10DFA0-311F-4835-848C-DC68FEC6326B} = {DA10DFA0-311F-4835-848C-DC68FEC6326B}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
