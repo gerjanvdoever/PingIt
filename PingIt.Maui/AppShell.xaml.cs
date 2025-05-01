@@ -1,4 +1,6 @@
-﻿namespace PingIt.Maui
+﻿using PingIt.Maui.Views;
+
+namespace PingIt.Maui
 {
     public partial class AppShell : Shell
     {

@@ -1,6 +1,5 @@
 @startuml
-title PingIt - Database Schema (Simplified ERD)
-
+title PingIt - Database Schema (Updated ERD)
 
 entity Users {
   +int Id
@@ -27,10 +26,13 @@ entity Incidents {
   decimal Longitude
   datetime CreatedAt
   string Status
-  string? Priority
+  string Priority
   datetime? Deadline
   datetime? HandledAt
   int? CreatedByUserId
+  bool HandledByExternal
+  int? HandledByUserId
+  string? Notes
 }
 
 entity IncidentPhotos {
@@ -50,8 +52,10 @@ entity IncidentStatusHistory {
 }
 
 ' RELATIONS
-Users ||--o{ Incidents
-Users ||--o{ IncidentStatusHistory
+Users ||--o{ Incidents : creates
+Users ||--o{ IncidentStatusHistory : changes status
 Incidents ||--o{ IncidentPhotos
 Incidents ||--o{ IncidentStatusHistory
+Users ||--o{ Incidents : handles
+
 @enduml
