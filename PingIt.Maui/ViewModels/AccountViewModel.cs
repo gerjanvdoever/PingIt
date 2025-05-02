@@ -52,6 +52,8 @@ namespace PingIt.Maui.ViewModels
                     _logger.LogWarning("Failed to load user info. Status: {StatusCode}", response.StatusCode);
                     return;
                 }
+                var rawResponse = await response.Content.ReadAsStringAsync();
+                _logger.LogDebug("Raw API response: {RawJson}", rawResponse);
 
                 var user = await response.Content.ReadFromJsonAsync<UserDto>();
                 if (user != null)
