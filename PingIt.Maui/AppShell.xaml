@@ -9,5 +9,6 @@
     Title="PingIt.Maui">
 
     <ShellContent ContentTemplate="{DataTemplate views:LoginPage}" Route="LoginPage" />
+    <ShellContent ContentTemplate="{DataTemplate views:AccountPage}" Route="AccountPage" />
 
 </Shell>
