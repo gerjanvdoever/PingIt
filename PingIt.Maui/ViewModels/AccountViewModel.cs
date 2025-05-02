@@ -31,9 +31,12 @@ namespace PingIt.Maui.ViewModels
             _logger = logger;
 
             LogoutCommand = new Command(async () => await OnLogout());
-            _ = LoadUserAsync();
         }
 
+        public async Task OnAppearing()
+        {
+            await LoadUserAsync();
+        }
         private async Task LoadUserAsync()
         {
             try
