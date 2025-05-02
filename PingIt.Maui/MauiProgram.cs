@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using PingIt.Maui.Services;
 
 namespace PingIt.Maui
 {
@@ -16,8 +17,25 @@ namespace PingIt.Maui
                 });
 
 #if DEBUG
-    		builder.Logging.AddDebug();
+            builder.Logging.AddDebug();
 #endif
+
+            // Register HTTP clients
+            builder.Services.AddHttpClient("PingItClient", client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:7017/");
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+            });
+
+            builder.Services.AddHttpClient("AuthenticatedClient", client =>
+            {
+                client.BaseAddress = new Uri("https://localhost:7017/");
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+            }).AddHttpMessageHandler<AuthHeaderHandler>();
+
+            // Register AuthHeaderHandler and other PingIt services
+            builder.Services.AddTransient<AuthHeaderHandler>();
+            builder.Services.AddPingItServices(); // Your centralized service registration
 
             return builder.Build();
         }
