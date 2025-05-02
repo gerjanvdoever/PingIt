@@ -7,6 +7,11 @@ namespace PingIt.Maui.ViewModels
     {
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        public HttpClient HttpClient { get; set; } = new()
+        {
+            BaseAddress = new Uri("https://localhost:7017/")
+        };
+
         protected void OnPropertyChanged([CallerMemberName] string? name = null) =>
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 

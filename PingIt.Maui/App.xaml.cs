@@ -21,6 +21,7 @@
 
         private async Task InitAsync()
         {
+
             await Shell.Current.GoToAsync("//LoginPage");
         }
     }
