@@ -5,24 +5,25 @@
         public App()
         {
             InitializeComponent();
-            MainPage = new AppShell();
+        }
 
-            // Defer initialization until the app is fully loaded
-            Application.Current.Dispatcher.Dispatch(async () =>
+        protected override Window CreateWindow(IActivationState? activationState)
+        {
+            var window = new Window(new AppShell());
+
+            // Optionally, defer InitAsync here if needed
+            Application.Current!.Dispatcher.Dispatch(async () =>
             {
                 await InitAsync();
             });
-        }
 
-        //protected override Window CreateWindow(IActivationState? activationState)
-        //{
-        //    return new Window(new AppShell());
-        //}
+            return window;
+        }
 
         private async Task InitAsync()
         {
-
             await Shell.Current.GoToAsync("//LoginPage");
         }
     }
+
 }

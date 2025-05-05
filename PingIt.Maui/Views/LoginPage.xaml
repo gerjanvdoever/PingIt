@@ -16,16 +16,24 @@
 
        <Entry Placeholder="Wachtwoord"  
               Text="{Binding Password}"  
-              IsPassword="True" />  
+              IsPassword="True" />
 
-       <ActivityIndicator IsRunning="{Binding IsBusy}"  
+        <Label Text="{Binding ValidationError}" 
+       TextColor="Red" 
+       IsVisible="{Binding ValidationError, Converter={StaticResource StringNotEmptyConverter}}" />
+
+        <ActivityIndicator IsRunning="{Binding IsBusy}"  
                           IsVisible="{Binding IsBusy}" />  
 
        <Button Text="Inloggen"  
                Command="{Binding LoginCommand}"  
-               IsEnabled="{Binding IsNotBusy}" />  
+               IsEnabled="{Binding IsNotBusy}" />
 
-       <Button Text="Ik wil anoniem een incident melden"  
+        <Button Text="Registreren"
+               Command="{Binding RegisterCommand}"
+               IsEnabled="{Binding IsNotBusy}" />
+
+        <Button Text="Ik wil anoniem een incident melden"  
                Command="{Binding AnonymousCommand}"  
                IsEnabled="{Binding IsNotBusy}" />  
 

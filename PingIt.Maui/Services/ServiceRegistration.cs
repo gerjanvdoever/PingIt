@@ -15,10 +15,12 @@ public static class ServiceRegistration
         // ViewModels
         services.AddTransient<LoginViewModel>();
         services.AddTransient<AccountViewModel>();
+        services.AddTransient<RegisterViewModel>();
 
         // Views
         services.AddTransient<LoginPage>();
         services.AddTransient<AccountPage>();
+        services.AddTransient<RegisterPage>();
 
         return services;
     }
