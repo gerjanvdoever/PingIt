@@ -5,21 +5,28 @@ using Microsoft.Extensions.Logging;
 using PingIt.Maui.Services;
 using PingIt.Shared.Dtos;
 using PingIt.Shared.Enums;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using System.Data;
 
 namespace PingIt.Maui.ViewModels
 {
-    public class AccountViewModel : BaseViewModel
+    public partial class AccountViewModel : ObservableObject
     {
         private readonly TokenStorageService _tokenStorage;
         private readonly HttpClient _httpClient;
         private readonly ILogger<AccountViewModel> _logger;
 
-        public string FirstName { get; set; } = "Demo";
-        public string LastName { get; set; } = "Gebruiker";
-        public UserRole Role { get; set; } = UserRole.Resident;
-        public string FullName => $"{FirstName} {LastName}";
+        [ObservableProperty]
+        private string firstName = "Demo";
 
-        public ICommand LogoutCommand { get; }
+        [ObservableProperty]
+        private string lastName = "Gebruiker";
+
+        [ObservableProperty]
+        private UserRole role = UserRole.Resident;
+
+        public string FullName => $"{FirstName} {LastName}";
 
         public AccountViewModel(
             TokenStorageService tokenStorage,
@@ -30,10 +37,16 @@ namespace PingIt.Maui.ViewModels
             _httpClient = httpClientFactory.CreateClient("AuthenticatedClient");
             _logger = logger;
 
-            LogoutCommand = new Command(async () => await OnLogout());
             _ = LoadUserAsync();
         }
-        
+
+        [RelayCommand]
+        private async Task Logout()
+        {
+            await _tokenStorage.ClearTokenAsync();
+            await Shell.Current.GoToAsync("//LoginPage");
+        }
+
         private async Task LoadUserAsync()
         {
             try
@@ -62,19 +75,12 @@ namespace PingIt.Maui.ViewModels
                     LastName = user.LastName;
                     Role = user.Role;
                     OnPropertyChanged(nameof(FullName));
-                    OnPropertyChanged(nameof(Role));
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error loading user");
             }
-        }
-
-        private async Task OnLogout()
-        {
-            await _tokenStorage.ClearTokenAsync();
-            await Shell.Current.GoToAsync("//LoginPage");
         }
     }
 }
