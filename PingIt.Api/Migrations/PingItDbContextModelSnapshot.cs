@@ -60,13 +60,11 @@ namespace PingIt.Api.Migrations
                     b.Property<string>("Notes")
                         .HasColumnType("text");
 
-                    b.Property<string>("Priority")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Priority")
+                        .HasColumnType("integer");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Title")
                         .IsRequired()
@@ -97,8 +95,6 @@ namespace PingIt.Api.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("IncidentId");
 
                     b.ToTable("IncidentPhotos");
                 });
@@ -172,9 +168,8 @@ namespace PingIt.Api.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasColumnType("text");
+                    b.Property<int>("Role")
+                        .HasColumnType("integer");
 
                     b.Property<string>("Street")
                         .IsRequired()
@@ -201,15 +196,6 @@ namespace PingIt.Api.Migrations
                         .OnDelete(DeleteBehavior.SetNull);
                 });
 
-            modelBuilder.Entity("PingIt.Api.Models.IncidentPhoto", b =>
-                {
-                    b.HasOne("PingIt.Api.Models.Incident", null)
-                        .WithMany("Photos")
-                        .HasForeignKey("IncidentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("PingIt.Api.Models.IncidentStatusHistory", b =>
                 {
                     b.HasOne("PingIt.Api.Models.User", null)
@@ -223,11 +209,6 @@ namespace PingIt.Api.Migrations
                         .HasForeignKey("IncidentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("PingIt.Api.Models.Incident", b =>
-                {
-                    b.Navigation("Photos");
                 });
 #pragma warning restore 612, 618
         }

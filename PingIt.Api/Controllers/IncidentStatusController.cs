@@ -23,12 +23,10 @@ namespace PingIt.Api.Controllers
             _emailService = emailService;
         }
 
-        // POST: api/incidents/{incidentId}/status
         [HttpPost]
         public async Task<IActionResult> ChangeStatus(int incidentId, [FromBody] IncidentStatusUpdateDto statusDto)
         {
             var incident = await _context.Incidents.FindAsync(incidentId);
-
             if (incident == null)
             {
                 return NotFound(new { Message = "Incident not found." });
@@ -37,17 +35,15 @@ namespace PingIt.Api.Controllers
             bool statusChanged = false;
 
             // 1. Status change
-            if (!string.IsNullOrEmpty(statusDto.NewStatus) && incident.Status != statusDto.NewStatus)
+            if (statusDto.NewStatus.HasValue && incident.Status != statusDto.NewStatus.Value)
             {
-                incident.Status = statusDto.NewStatus;
+                incident.Status = statusDto.NewStatus.Value;
                 statusChanged = true;
 
                 // If new status is Resolved -> set HandledAt timestamp
-                if (statusDto.NewStatus == IncidentStatus.Resolved.ToString())
+                if (incident.Status == IncidentStatus.Resolved)
                 {
                     incident.HandledAt = DateTime.UtcNow;
-
-                    // TODO: Send notification email to reporter (if WantsNotifications = true & CreatedByUserid != null)
                 }
             }
 
@@ -64,21 +60,19 @@ namespace PingIt.Api.Controllers
             }
 
             // 4. Update notes
-            if (!string.IsNullOrEmpty(statusDto.Notes))
+            if (!string.IsNullOrWhiteSpace(statusDto.Notes))
             {
                 incident.Notes = statusDto.Notes;
             }
 
             // 5. Priority change
-            if (!string.IsNullOrEmpty(statusDto.NewPriority) && incident.Priority != statusDto.NewPriority)
+            if (statusDto.NewPriority.HasValue && incident.Priority != statusDto.NewPriority.Value)
             {
-                incident.Priority = statusDto.NewPriority;
+                incident.Priority = statusDto.NewPriority.Value;
 
-                // Only if we move away from Unknown, calculate deadline
-                if (Enum.TryParse<PriorityLevel>(statusDto.NewPriority, out var priorityLevel) &&
-                    priorityLevel != PriorityLevel.Unknown)
+                if (incident.Priority != PriorityLevel.Unknown)
                 {
-                    incident.Deadline = priorityLevel switch
+                    incident.Deadline = incident.Priority switch
                     {
                         PriorityLevel.Low => DateTime.UtcNow.AddDays(42),      // 6 weeks
                         PriorityLevel.Normal => DateTime.UtcNow.AddDays(21),   // 3 weeks
@@ -89,11 +83,11 @@ namespace PingIt.Api.Controllers
                 }
             }
 
-            // Save changes to incident
+            // Save changes
             _context.Incidents.Update(incident);
             await _context.SaveChangesAsync();
 
-            // Create IncidentStatusHistory if status was changed
+            // Create IncidentStatusHistory if status changed
             if (statusChanged)
             {
                 var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
@@ -107,7 +101,7 @@ namespace PingIt.Api.Controllers
                 var statusHistory = new IncidentStatusHistory
                 {
                     IncidentId = incident.Id,
-                    Status = incident.Status,
+                    Status = incident.Status.ToString(),
                     ChangedByUserId = userIdFromToken,
                     ChangedAt = DateTime.UtcNow
                 };
@@ -116,11 +110,10 @@ namespace PingIt.Api.Controllers
                 await _context.SaveChangesAsync();
             }
 
-            // Send notification email to reporter (if WantsNotifications = true & CreatedByUserid != null)
+            // Send notification email to reporter if they want notifications
             if (incident.CreatedByUserId.HasValue)
             {
                 var creator = await _context.Users.FindAsync(incident.CreatedByUserId.Value);
-
                 if (creator != null && creator.WantsNotifications)
                 {
                     var subject = $"Update on your incident: {incident.Title}";
@@ -135,6 +128,7 @@ namespace PingIt.Api.Controllers
 
             return Ok(new { Message = "Incident updated successfully." });
         }
+
 
         // GET: api/incidents/{incidentId}/status-history
         [HttpGet("history")]

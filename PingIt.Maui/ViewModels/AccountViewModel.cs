@@ -74,7 +74,7 @@ namespace PingIt.Maui.ViewModels
         private async Task OnLogout()
         {
             await _tokenStorage.ClearTokenAsync();
-            await Shell.Current.GoToAsync("//login");
+            await Shell.Current.GoToAsync("//LoginPage");
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using PingIt.Shared.Enums;
+﻿using System.Text.Json.Serialization;
+using PingIt.Shared.Enums;
 
 namespace PingIt.Shared.Dtos
 {
@@ -12,7 +13,9 @@ namespace PingIt.Shared.Dtos
         public decimal Longitude { get; set; }
 
         public DateTime CreatedAt { get; set; }
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public IncidentStatus Status { get; set; } = IncidentStatus.Reported;
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         public PriorityLevel Priority { get; set; } = PriorityLevel.Unknown;
         public DateTime? Deadline { get; set; }
         public DateTime? HandledAt { get; set; }

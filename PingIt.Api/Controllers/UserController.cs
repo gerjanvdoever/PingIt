@@ -58,7 +58,7 @@ namespace PingIt.Api.Controllers
                 HouseNumber = user.HouseNumber,
                 PostalCode = user.PostalCode,
                 City = user.City,
-                Role = Enum.Parse<UserRole>(user.Role)
+                Role = user.Role
             };
 
             return Ok(userDto);
@@ -133,7 +133,7 @@ namespace PingIt.Api.Controllers
                 HouseNumber = user.HouseNumber,
                 PostalCode = user.PostalCode,
                 City = user.City,
-                Role = Enum.Parse<UserRole>(user.Role)
+                Role = user.Role
             }).ToList();
 
             return Ok(userDtos);
@@ -145,13 +145,13 @@ namespace PingIt.Api.Controllers
         public async Task<ActionResult<List<UserDto>>> GetAllWorkers()
         {
             var workers = await _context.Users
-                .Where(u => u.Role == UserRole.Worker.ToString())
+                .Where(u => u.Role == UserRole.Worker)
                 .Select(user => new UserDto
                 {
                     Id = user.Id,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
-                    Role = Enum.Parse<UserRole>(user.Role)
+                    Role = user.Role
                 })
                 .ToListAsync();
 
@@ -171,7 +171,7 @@ namespace PingIt.Api.Controllers
                 return NotFound(new { Message = "User not found." });
             }
 
-            user.Role = userRoleDto.Role.ToString();
+            user.Role = userRoleDto.Role;
 
             _context.Users.Update(user);
             await _context.SaveChangesAsync();

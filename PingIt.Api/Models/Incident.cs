@@ -13,8 +13,8 @@ namespace PingIt.Api.Models
         public decimal Longitude { get; set; }
 
         public DateTime CreatedAt { get; set; }
-        public string Status { get; set; } = IncidentStatus.Reported.ToString();
-        public string Priority { get; set; } = PriorityLevel.Unknown.ToString();
+        public IncidentStatus Status { get; set; } = IncidentStatus.Reported;
+        public PriorityLevel Priority { get; set; } = PriorityLevel.Unknown;
         public DateTime? Deadline { get; set; }
         public DateTime? HandledAt { get; set; }
         public int? CreatedByUserId { get; set; } // Can be null if the incident is reported anonymously

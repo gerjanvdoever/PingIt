@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PingIt.Api.Data;
 using PingIt.Api.Services;
-using PingIt.Api.Extensions; // <-- NEW
+using PingIt.Api.Extensions;
 using PingIt.Shared.Dtos;
 
 namespace PingIt.Api.Controllers
@@ -74,7 +74,7 @@ namespace PingIt.Api.Controllers
                 LastName = registerDto.LastName,
                 Email = registerDto.Email,
                 PasswordHash = HashPassword(registerDto.Password),
-                Role = Shared.Enums.UserRole.Resident.ToString(),
+                Role = Shared.Enums.UserRole.Resident,
                 PhoneNumber = registerDto.PhoneNumber,
                 WantsNotifications = registerDto.WantsNotifications,
                 Street = registerDto.Street,

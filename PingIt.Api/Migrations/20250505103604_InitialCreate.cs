@@ -13,6 +13,20 @@ namespace PingIt.Api.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
+                name: "IncidentPhotos",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    IncidentId = table.Column<int>(type: "integer", nullable: false),
+                    PhotoUrl = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_IncidentPhotos", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -22,8 +36,9 @@ namespace PingIt.Api.Migrations
                     LastName = table.Column<string>(type: "text", nullable: false),
                     Email = table.Column<string>(type: "text", nullable: false),
                     PasswordHash = table.Column<string>(type: "text", nullable: false),
-                    Role = table.Column<string>(type: "text", nullable: false),
+                    Role = table.Column<int>(type: "integer", nullable: false),
                     PhoneNumber = table.Column<string>(type: "text", nullable: true),
+                    WantsNotifications = table.Column<bool>(type: "boolean", nullable: false),
                     Street = table.Column<string>(type: "text", nullable: false),
                     HouseNumber = table.Column<string>(type: "text", nullable: false),
                     PostalCode = table.Column<string>(type: "text", nullable: false),
@@ -45,11 +60,14 @@ namespace PingIt.Api.Migrations
                     Latitude = table.Column<decimal>(type: "numeric", nullable: false),
                     Longitude = table.Column<decimal>(type: "numeric", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Status = table.Column<string>(type: "text", nullable: false),
-                    Priority = table.Column<string>(type: "text", nullable: false),
-                    Deadline = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Status = table.Column<int>(type: "integer", nullable: false),
+                    Priority = table.Column<int>(type: "integer", nullable: false),
+                    Deadline = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
                     HandledAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    CreatedByUserId = table.Column<int>(type: "integer", nullable: true)
+                    CreatedByUserId = table.Column<int>(type: "integer", nullable: true),
+                    HandledByExternal = table.Column<bool>(type: "boolean", nullable: false),
+                    HandledByUserId = table.Column<int>(type: "integer", nullable: true),
+                    Notes = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -60,26 +78,12 @@ namespace PingIt.Api.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "IncidentPhotos",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    IncidentId = table.Column<int>(type: "integer", nullable: false),
-                    PhotoUrl = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_IncidentPhotos", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_IncidentPhotos_Incidents_IncidentId",
-                        column: x => x.IncidentId,
-                        principalTable: "Incidents",
+                        name: "FK_Incidents_Users_HandledByUserId",
+                        column: x => x.HandledByUserId,
+                        principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.SetNull);
                 });
 
             migrationBuilder.CreateTable(
@@ -110,14 +114,14 @@ namespace PingIt.Api.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_IncidentPhotos_IncidentId",
-                table: "IncidentPhotos",
-                column: "IncidentId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Incidents_CreatedByUserId",
                 table: "Incidents",
                 column: "CreatedByUserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Incidents_HandledByUserId",
+                table: "Incidents",
+                column: "HandledByUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_IncidentStatusHistories_ChangedByUserId",

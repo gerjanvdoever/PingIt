@@ -39,7 +39,7 @@ namespace PingIt.Api.Controllers
         public async Task<ActionResult<List<IncidentDto>>> GetActiveIncidents()
         {
             var incidents = await _context.Incidents
-                .Where(i => i.Status != IncidentStatus.Resolved.ToString())
+                .Where(i => i.Status != IncidentStatus.Resolved)
                 .ToListAsync();
 
             var incidentDtos = incidents.Select(incident => MapToDto(incident)).ToList();
@@ -53,7 +53,7 @@ namespace PingIt.Api.Controllers
         public async Task<ActionResult<List<IncidentDto>>> GetClosedIncidents()
         {
             var incidents = await _context.Incidents
-                .Where(i => i.Status == IncidentStatus.Resolved.ToString())
+                .Where(i => i.Status == IncidentStatus.Resolved)
                 .ToListAsync();
 
             var incidentDtos = incidents.Select(incident => MapToDto(incident)).ToList();
@@ -114,8 +114,8 @@ namespace PingIt.Api.Controllers
                 Latitude = incidentDto.Latitude,
                 Longitude = incidentDto.Longitude,
                 CreatedAt = DateTime.UtcNow,
-                Status = IncidentStatus.Reported.ToString(),
-                Priority = PriorityLevel.Unknown.ToString(),
+                Status = IncidentStatus.Reported,
+                Priority = PriorityLevel.Unknown,
                 CreatedByUserId = incidentDto.CreatedByUserId,
                 HandledByExternal = false
             };
@@ -155,8 +155,8 @@ namespace PingIt.Api.Controllers
                 Latitude = incident.Latitude,
                 Longitude = incident.Longitude,
                 CreatedAt = incident.CreatedAt,
-                Status = Enum.Parse<IncidentStatus>(incident.Status),
-                Priority = Enum.Parse<PriorityLevel>(incident.Priority),
+                Status = incident.Status,
+                Priority = incident.Priority,
                 Deadline = incident.Deadline,
                 HandledAt = incident.HandledAt,
                 CreatedByUserId = incident.CreatedByUserId,
