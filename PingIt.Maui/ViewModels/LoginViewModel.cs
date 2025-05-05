@@ -4,35 +4,30 @@ using PingIt.Maui.Dtos;
 using PingIt.Maui.Services;
 using Microsoft.Extensions.Logging;
 using PingIt.Maui.Views;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace PingIt.Maui.ViewModels
 {
-    public class LoginViewModel : BaseViewModel
+    public partial class LoginViewModel : ObservableObject
     {
         private readonly TokenStorageService _tokenStorageService;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<LoginViewModel> _logger;
 
+        [ObservableProperty]
         private string email = string.Empty;
-        public string Email
-        {
-            get => email;
-            set => SetProperty(ref email, value);
-        }
 
+        [ObservableProperty]
         private string password = string.Empty;
-        public string Password
-        {
-            get => password;
-            set => SetProperty(ref password, value);
-        }
 
-        public string ValidationError { get => validationError; set => SetProperty(ref validationError, value); }
+        [ObservableProperty]
         private string validationError = string.Empty;
 
-        public ICommand LoginCommand { get; }
-        public ICommand RegisterCommand { get; }
-        public ICommand AnonymousCommand { get; }
+        [ObservableProperty]
+        private bool isBusy;
+
+        public bool IsNotBusy => !IsBusy;
 
         public LoginViewModel(
             TokenStorageService tokenStorageService,
@@ -42,17 +37,14 @@ namespace PingIt.Maui.ViewModels
             _tokenStorageService = tokenStorageService;
             _httpClientFactory = httpClientFactory;
             _logger = logger;
-
-            LoginCommand = new Command(async () => await OnLoginAsync(), () => !IsBusy);
-            RegisterCommand = new Command(async () => await OnRegister());
-            AnonymousCommand = new Command(OnAnonymous);
         }
 
-        private async Task OnLoginAsync()
+        [RelayCommand(CanExecute = nameof(IsNotBusy))]
+        private async Task LoginAsync()
         {
             if (IsBusy) return;
             IsBusy = true;
-            ((Command)LoginCommand).ChangeCanExecute();
+            LoginCommand.NotifyCanExecuteChanged();
 
             ValidationError = string.Empty;
 
@@ -111,16 +103,18 @@ namespace PingIt.Maui.ViewModels
             finally
             {
                 IsBusy = false;
-                ((Command)LoginCommand).ChangeCanExecute();
+                LoginCommand.NotifyCanExecuteChanged();
             }
         }
 
-
-        private async Task OnRegister()
+        [RelayCommand]
+        private async Task Register()
         {
             await Shell.Current.GoToAsync("//RegisterPage");
         }
-        private void OnAnonymous()
+
+        [RelayCommand]
+        private void Anonymous()
         {
             _logger.LogInformation("Navigating anonymously...");
             // Navigate to anonymous screen (future)

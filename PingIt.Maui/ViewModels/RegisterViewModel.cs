@@ -5,14 +5,57 @@ using Microsoft.Extensions.Logging;
 using PingIt.Shared.Dtos;
 using PingIt.Maui.Services;
 using PingIt.Maui.Dtos;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace PingIt.Maui.ViewModels
 {
-    public class RegisterViewModel : BaseViewModel
+    public partial class RegisterViewModel : ObservableObject
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<RegisterViewModel> _logger;
         private readonly TokenStorageService _tokenStorage;
+
+        [ObservableProperty]
+        private string firstName = string.Empty;
+
+        [ObservableProperty]
+        private string lastName = string.Empty;
+
+        [ObservableProperty]
+        private string email = string.Empty;
+
+        [ObservableProperty]
+        private string password = string.Empty;
+
+        [ObservableProperty]
+        private string confirmPassword = string.Empty;
+
+        [ObservableProperty]
+        private string? phoneNumber;
+
+        [ObservableProperty]
+        private string street = string.Empty;
+
+        [ObservableProperty]
+        private string houseNumber = string.Empty;
+
+        [ObservableProperty]
+        private string postalCode = string.Empty;
+
+        [ObservableProperty]
+        private string city = string.Empty;
+
+        [ObservableProperty]
+        private bool wantsNotifications = false;
+
+        [ObservableProperty]
+        private string validationError = string.Empty;
+
+        [ObservableProperty]
+        private bool isBusy;
+
+        public bool IsNotBusy => !IsBusy;
 
         public RegisterViewModel(
             TokenStorageService tokenStorage,
@@ -22,43 +65,14 @@ namespace PingIt.Maui.ViewModels
             _tokenStorage = tokenStorage;
             _httpClientFactory = httpClientFactory;
             _logger = logger;
-
-            RegisterCommand = new Command(async () => await OnRegisterAsync(), () => IsNotBusy);
         }
 
-        public ICommand RegisterCommand { get; }
-
-        public string FirstName { get => firstName; set => SetProperty(ref firstName, value); }
-        public string LastName { get => lastName; set => SetProperty(ref lastName, value); }
-        public string Email { get => email; set => SetProperty(ref email, value); }
-        public string Password { get => password; set => SetProperty(ref password, value); }
-        public string ConfirmPassword { get => confirmPassword; set => SetProperty(ref confirmPassword, value); }
-        public string? PhoneNumber { get => phoneNumber; set => SetProperty(ref phoneNumber, value); }
-        public string Street { get => street; set => SetProperty(ref street, value); }
-        public string HouseNumber { get => houseNumber; set => SetProperty(ref houseNumber, value); }
-        public string PostalCode { get => postalCode; set => SetProperty(ref postalCode, value); }
-        public string City { get => city; set => SetProperty(ref city, value); }
-        public bool WantsNotifications { get => wantsNotifications; set => SetProperty(ref wantsNotifications, value); }
-        public string ValidationError { get => validationError; set => SetProperty(ref validationError, value); }
-
-        private string firstName = string.Empty;
-        private string lastName = string.Empty;
-        private string email = string.Empty;
-        private string password = string.Empty;
-        private string confirmPassword = string.Empty;
-        private string? phoneNumber;
-        private string street = string.Empty;
-        private string houseNumber = string.Empty;
-        private string postalCode = string.Empty;
-        private string city = string.Empty;
-        private bool wantsNotifications = false;
-        private string validationError = string.Empty;
-
-        private async Task OnRegisterAsync()
+        [RelayCommand(CanExecute = nameof(IsNotBusy))]
+        private async Task RegisterAsync()
         {
             if (IsBusy) return;
             IsBusy = true;
-            ((Command)RegisterCommand).ChangeCanExecute();
+            RegisterCommand.NotifyCanExecuteChanged();
 
             try
             {
@@ -153,7 +167,7 @@ namespace PingIt.Maui.ViewModels
             finally
             {
                 IsBusy = false;
-                ((Command)RegisterCommand).ChangeCanExecute();
+                RegisterCommand.NotifyCanExecuteChanged();
             }
         }
     }
