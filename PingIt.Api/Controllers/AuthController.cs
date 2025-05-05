@@ -91,6 +91,7 @@ namespace PingIt.Api.Controllers
             return Ok(new
             {
                 Token = token,
+                Role = user.Role.ToString(),
                 Message = "User registered successfully."
             });
         }
