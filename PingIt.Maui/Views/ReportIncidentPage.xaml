@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:PingIt.Maui.ViewModels"
+    x:Class="PingIt.Maui.Views.ReportIncidentPage"
+    x:DataType="vm:ReportIncidentViewModel"
+    Title="Meld Incident">
+
+    <VerticalStackLayout Padding="20" Spacing="16">
+
+        <!-- Title -->
+        <Entry
+            Placeholder="Titel"
+            Text="{Binding Title}" />
+
+        <!-- Description -->
+        <Editor
+            Placeholder="Beschrijving"
+            AutoSize="TextChanges"
+            Text="{Binding Description}" />
+
+        <!-- Photo gallery -->
+        <Label Text="Foto’s" FontAttributes="Bold" />
+        <CollectionView
+            ItemsSource="{Binding Photos}"
+            ItemsLayout="HorizontalList"
+            HeightRequest="100">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame
+                        Padding="0"
+                        HasShadow="False"
+                        CornerRadius="8"
+                        HeightRequest="80"
+                        WidthRequest="80">
+                        <Image
+                            Source="{Binding .}"
+                            Aspect="AspectFill" />
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Add-photo button -->
+        <Button
+            Text="Foto toevoegen"
+            Command="{Binding AddPhotoCommand}"
+            IsEnabled="{Binding IsNotBusy}" />
+
+        <!-- Busy indicator -->
+        <ActivityIndicator
+            IsRunning="{Binding IsBusy}"
+            IsVisible="{Binding IsBusy}" />
+
+        <!-- Send stub button -->
+        <Button
+            Text="Verstuur"
+            Command="{Binding SendCommand}"
+            IsEnabled="{Binding IsNotBusy}" />
+
+    </VerticalStackLayout>
+</ContentPage>

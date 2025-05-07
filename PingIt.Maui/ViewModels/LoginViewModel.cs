@@ -114,10 +114,9 @@ namespace PingIt.Maui.ViewModels
         }
 
         [RelayCommand]
-        private void Anonymous()
+        private async void Anonymous()
         {
-            _logger.LogInformation("Navigating anonymously...");
-            // Navigate to anonymous screen (future)
+            await Shell.Current.GoToAsync("//ReportIncidentPage");
         }
     }
 }
