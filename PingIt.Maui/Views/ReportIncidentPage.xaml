@@ -23,20 +23,22 @@
         <!-- Photo gallery -->
         <Label Text="Foto’s" FontAttributes="Bold" />
         <CollectionView
-            ItemsSource="{Binding Photos}"
-            ItemsLayout="HorizontalList"
-            HeightRequest="100">
+        ItemsSource="{Binding Photos}"
+        ItemsLayout="HorizontalList"
+        HeightRequest="100">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Frame
-                        Padding="0"
-                        HasShadow="False"
-                        CornerRadius="8"
-                        HeightRequest="80"
-                        WidthRequest="80">
+                Padding="0"
+                HasShadow="False"
+                CornerRadius="8"
+                HeightRequest="80"
+                WidthRequest="80">
                         <Image
-                            Source="{Binding .}"
-                            Aspect="AspectFill" />
+                    Source="{Binding .}"
+                    Aspect="AspectFill"
+                    HeightRequest="80"
+                    WidthRequest="80" />
                     </Frame>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
