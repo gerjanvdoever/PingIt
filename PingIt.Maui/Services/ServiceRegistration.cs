@@ -17,12 +17,15 @@ public static class ServiceRegistration
         services.AddTransient<AccountViewModel>();
         services.AddTransient<RegisterViewModel>();
         services.AddTransient<ReportIncidentViewModel>();
+        services.AddTransient<IncidentListViewModel>();
 
         // Views
         services.AddTransient<LoginPage>();
         services.AddTransient<AccountPage>();
         services.AddTransient<RegisterPage>();
         services.AddTransient<ReportIncidentPage>();
+        services.AddTransient<IncidentListPage>();
+        services.AddTransient<BottomNavBar>();
 
         return services;
     }

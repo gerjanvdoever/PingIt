@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PingIt.Api.Data;
@@ -11,9 +12,11 @@ using PingIt.Api.Data;
 namespace PingIt.Api.Migrations
 {
     [DbContext(typeof(PingItDbContext))]
-    partial class PingItDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250508092345_SeedInitialData3")]
+    partial class SeedInitialData3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

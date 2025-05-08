@@ -102,6 +102,18 @@ namespace PingIt.Api.Controllers
             return Ok(incidentDtos);
         }
 
+        // GET: api/incidents/worker/{workerId}/active
+        [HttpGet("worker/{workerId}/active")]
+        [Authorize(Roles = "Worker, Administrator")]
+        public async Task<ActionResult<List<IncidentDto>>> GetActiveIncidentsByWorkerId(int workerId)
+        {
+            var incidents = await _context.Incidents
+                .Where(i => i.HandledByUserId == workerId && i.Status != IncidentStatus.Resolved)
+                .ToListAsync();
+            var incidentDtos = incidents.Select(incident => MapToDto(incident)).ToList();
+            return Ok(incidentDtos);
+        }
+
         // POST: api/incidents
         [HttpPost]
         [AllowAnonymous]

@@ -1,47 +1,36 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:PingIt.Maui.ViewModels"
+             xmlns:views="clr-namespace:PingIt.Maui.Views"
              x:Class="PingIt.Maui.Views.AccountPage"
              x:DataType="vm:AccountViewModel"
              Title="Account">
 
-    <VerticalStackLayout Padding="30" Spacing="20" VerticalOptions="Center">
+    <Grid RowDefinitions="Auto,*,Auto" Padding="0">
 
-        <!-- Profile Section -->
-        <VerticalStackLayout HorizontalOptions="Center" Spacing="10">
-            <Image Source="profile_icon.png" 
-                   WidthRequest="80" 
-                   HeightRequest="80" 
-                   HorizontalOptions="Center"/>
+        <!-- Main Content -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="30" Spacing="20" VerticalOptions="Center">
+                <!-- Profile Section -->
+                <VerticalStackLayout HorizontalOptions="Center" Spacing="10">
+                    <Image Source="profile_icon.png" WidthRequest="80" HeightRequest="80" />
+                    <Label Text="{Binding FullName}" FontSize="18" FontAttributes="Bold" HorizontalOptions="Center"/>
+                </VerticalStackLayout>
 
-            <Label Text="{Binding FullName}" 
-                   FontSize="18" 
-                   FontAttributes="Bold"
-                   HorizontalOptions="Center"/>
-        </VerticalStackLayout>
+                <!-- Actions Section -->
+                <VerticalStackLayout Spacing="15">
+                    <Button Text="Incident melden" ImageSource="incident_icon.png" HorizontalOptions="Fill"/>
+                    <Button Text="Mijn incidenten" ImageSource="incidentlist_icon.png" HorizontalOptions="Fill"/>
+                </VerticalStackLayout>
 
-        <!-- Actions Section -->
-        <VerticalStackLayout Spacing="15">
-            <Button Text="Incident melden"
-                    ImageSource="incident_icon.png"
-                    HorizontalOptions="Fill"/>
+                <!-- Logout -->
+                <Button Text="Uitloggen" Command="{Binding LogoutCommand}" Margin="0,20,0,0"/>
 
-            <Button Text="Mijn incidenten"
-                    ImageSource="incidentlist_icon.png"
-                    HorizontalOptions="Fill"/>
-        </VerticalStackLayout>
+                <!-- Role -->
+                <Label Text="{Binding Role}" HorizontalOptions="Center" FontSize="14"/>
+            </VerticalStackLayout>
+        </ScrollView>
+        <views:BottomNavBar Grid.Row="2" CurrentPage="AccountPage" />
 
-        <!-- Logout -->
-        <Button Text="Uitloggen"
-                Command="{Binding LogoutCommand}"
-                Margin="0,20,0,0"/>
-
-        <!-- Role Indicator -->
-        <Label Text="{Binding Role}"
-               HorizontalOptions="Center"
-               FontSize="14"
-               TextColor="{AppThemeBinding Light=Black, Dark=White}"/>
-
-    </VerticalStackLayout>
+    </Grid>
 </ContentPage>

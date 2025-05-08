@@ -26,6 +26,9 @@ namespace PingIt.Maui.ViewModels
         [ObservableProperty]
         private UserRole role = UserRole.Resident;
 
+        [ObservableProperty]
+        private bool isFooterVisible;
+
         public string FullName => $"{FirstName} {LastName}";
 
         public AccountViewModel(
@@ -45,6 +48,18 @@ namespace PingIt.Maui.ViewModels
         {
             await _tokenStorage.ClearTokenAsync();
             await Shell.Current.GoToAsync("//LoginPage");
+        }
+
+        [RelayCommand]
+        private async Task NavigateMap()
+        {
+            await Shell.Current.GoToAsync("//MapPage");
+        }
+
+        [RelayCommand]
+        private async Task NavigateList()
+        {
+            await Shell.Current.GoToAsync("//IncidentListPage");
         }
 
         private async Task LoadUserAsync()
@@ -75,7 +90,10 @@ namespace PingIt.Maui.ViewModels
                     LastName = user.LastName;
                     Role = user.Role;
                     OnPropertyChanged(nameof(FullName));
+
+                    IsFooterVisible = Role == UserRole.Administrator || Role == UserRole.Worker;
                 }
+
             }
             catch (Exception ex)
             {

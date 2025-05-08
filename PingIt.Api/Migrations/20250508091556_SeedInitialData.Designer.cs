@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PingIt.Api.Data;
@@ -11,9 +12,11 @@ using PingIt.Api.Data;
 namespace PingIt.Api.Migrations
 {
     [DbContext(typeof(PingItDbContext))]
-    partial class PingItDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250508091556_SeedInitialData")]
+    partial class SeedInitialData
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -77,36 +80,6 @@ namespace PingIt.Api.Migrations
                     b.HasIndex("HandledByUserId");
 
                     b.ToTable("Incidents");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            CreatedAt = new DateTime(2024, 1, 1, 12, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedByUserId = 2,
-                            Description = "Werkt niet sinds gisteren",
-                            HandledByExternal = false,
-                            HandledByUserId = 1,
-                            Latitude = 52.3702m,
-                            Longitude = 4.8952m,
-                            Priority = 2,
-                            Status = 0,
-                            Title = "Kapotte lantaarnpaal"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            CreatedAt = new DateTime(2024, 1, 1, 12, 0, 0, 0, DateTimeKind.Utc),
-                            CreatedByUserId = 2,
-                            Description = "Losliggende stoeptegel bij de speeltuin",
-                            HandledByExternal = false,
-                            HandledByUserId = 1,
-                            Latitude = 52.3792m,
-                            Longitude = 4.8922m,
-                            Priority = 3,
-                            Status = 2,
-                            Title = "Gevaarlijke stoeptegel"
-                        });
                 });
 
             modelBuilder.Entity("PingIt.Api.Models.IncidentPhoto", b =>

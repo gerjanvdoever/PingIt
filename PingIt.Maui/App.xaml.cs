@@ -1,10 +1,14 @@
-﻿namespace PingIt.Maui
+﻿using PingIt.Maui.Services;
+
+namespace PingIt.Maui
 {
     public partial class App : Application
     {
-        public App()
+        private readonly TokenStorageService _tokenStorage;
+        public App(TokenStorageService tokenStorage)
         {
             InitializeComponent();
+            _tokenStorage = tokenStorage;
         }
 
         protected override Window CreateWindow(IActivationState? activationState)
@@ -22,7 +26,16 @@
 
         private async Task InitAsync()
         {
-            await Shell.Current.GoToAsync("//LoginPage");
+            await _tokenStorage.LoadTokenAsync();
+
+            if (_tokenStorage.IsAuthenticated)
+            {
+                await Shell.Current.GoToAsync("//AccountPage");
+            }
+            else
+            {
+                await Shell.Current.GoToAsync("//LoginPage");
+            }
         }
     }
 
