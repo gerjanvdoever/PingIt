@@ -67,23 +67,8 @@ namespace PingIt.Maui.ViewModels
 
                 if (result != null)
                 {
-                    // 1) Open the file stream
-                    using var sourceStream = await result.OpenReadAsync();
-
-                    // 2) Copy into a MemoryStream that lives beyond this block
-                    var memoryStream = new MemoryStream();
-                    await sourceStream.CopyToAsync(memoryStream);
-
-                    // 3) IMPORTANT: reset so reads start at the beginning
-                    memoryStream.Position = 0;
-
-                    // 4) Create an ImageSource that re-uses (or re-clones) that MemoryStream
-                    Photos.Add(ImageSource.FromStream(() =>
-                    {
-                        // rewind before each read, in case the UI reads multiple times
-                        memoryStream.Position = 0;
-                        return memoryStream;
-                    }));
+                    using var stream = await result.OpenReadAsync();
+                    Photos.Add(ImageSource.FromStream(() => stream));
                 }
             }
             catch (FeatureNotSupportedException)
