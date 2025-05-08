@@ -1,56 +1,97 @@
-﻿using System.Collections.ObjectModel;
-using System.Windows.Input;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Maui.Devices;
+using Microsoft.Maui.Storage;
 using Microsoft.Maui.Controls;
 
 namespace PingIt.Maui.ViewModels
 {
     public partial class ReportIncidentViewModel : ObservableObject
     {
-        // --- Fields & properties ---
-
         [ObservableProperty]
         private string title = string.Empty;
 
         [ObservableProperty]
         private string description = string.Empty;
 
-        // Holds the image sources for display; will be populated via AddPhotoCommand
         public ObservableCollection<ImageSource> Photos { get; } = new();
 
         [ObservableProperty]
         private bool isBusy;
 
-        // Helper for button enablement
         public bool IsNotBusy => !IsBusy;
 
-        // --- Constructor ---
-
-        public ReportIncidentViewModel()
-        {
-        }
-
-        // --- Commands ---
+        public ReportIncidentViewModel() { }
 
         [RelayCommand(CanExecute = nameof(IsNotBusy))]
         private async Task AddPhotoAsync()
         {
             if (IsBusy) return;
             IsBusy = true;
+
             try
             {
-                // TODO: launch Camera or FilePicker to pick/take a photo
-                // var fileResult = await MediaPicker.Default.PickPhotoAsync();
-                // if (fileResult != null)
-                // {
-                //     var stream = await fileResult.OpenReadAsync();
-                //     Photos.Add(ImageSource.FromStream(() => stream));
-                // }
+                // Build action-sheet choices
+                var options = new List<string>();
+                bool canCapture = DeviceInfo.Platform != DevicePlatform.WinUI;
+                if (canCapture)
+                    options.Add("Take Photo");
+                options.Add("Choose Photo");
+
+                var choice = await Shell.Current.DisplayActionSheet(
+                    "Add Photo",
+                    "Cancel",
+                    null,
+                    options.ToArray());
+
+                if (choice == "Cancel")
+                    return;
+
+                FileResult? result = choice switch
+                {
+                    "Take Photo" => await MediaPicker.CapturePhotoAsync(new MediaPickerOptions
+                    {
+                        Title = $"incident_{DateTime.Now:yyyyMMdd_HHmmss}"
+                    }),
+                    "Choose Photo" => await MediaPicker.PickPhotoAsync(new MediaPickerOptions
+                    {
+                        Title = "Select a photo"
+                    }),
+                    _ => null
+                };
+
+                if (result != null)
+                {
+                    using var stream = await result.OpenReadAsync();
+                    Photos.Add(ImageSource.FromStream(() => stream));
+                }
+            }
+            catch (FeatureNotSupportedException)
+            {
+                await Shell.Current.DisplayAlert(
+                    "Not supported",
+                    "Camera is not available on this device.",
+                    "OK");
+            }
+            catch (PermissionException)
+            {
+                await Shell.Current.DisplayAlert(
+                    "Permission denied",
+                    "Please grant permission to use the camera or storage.",
+                    "OK");
             }
             catch (Exception ex)
             {
-                // TODO: handle any errors (permissions, cancellation, etc.)
+                Debug.WriteLine($"AddPhotoAsync failed: {ex}");
+                await Shell.Current.DisplayAlert(
+                    "Error",
+                    "Something went wrong while adding the photo.",
+                    "OK");
             }
             finally
             {
@@ -58,11 +99,11 @@ namespace PingIt.Maui.ViewModels
             }
         }
 
+
         [RelayCommand(CanExecute = nameof(IsNotBusy))]
         private void Send()
         {
-            // TODO: implement API call to POST IncidentDto
-            // right now this is a stub for future work
+            // stub for future implementation
         }
     }
 }
