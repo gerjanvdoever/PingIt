@@ -28,18 +28,19 @@
         HeightRequest="100">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
-                    <Frame
-                Padding="0"
-                HasShadow="False"
-                CornerRadius="8"
-                HeightRequest="80"
-                WidthRequest="80">
-                        <Image
-                    Source="{Binding .}"
-                    Aspect="AspectFill"
+                    <Border
+                    Stroke="Transparent"
+                    StrokeThickness="0"
+                    BackgroundColor="Yellow"
+                    StrokeShape="RoundRectangle 8"
                     HeightRequest="80"
-                    WidthRequest="80" />
-                    </Frame>
+                    WidthRequest="80">
+                    <Image
+                     Source="{Binding .}"
+                     Aspect="AspectFill"
+                     HeightRequest="80"
+                     WidthRequest="80" />
+                     </Border>
                 </DataTemplate>
             </CollectionView.ItemTemplate>
         </CollectionView>

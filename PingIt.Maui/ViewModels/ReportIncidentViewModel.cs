@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -34,9 +35,15 @@ namespace PingIt.Maui.ViewModels
             if (IsBusy) return;
             IsBusy = true;
 
+            var status = await Permissions.RequestAsync<Permissions.Camera>();
+            if (status != PermissionStatus.Granted)
+            {
+                await Shell.Current.DisplayAlert("Permissie geweigerd", "Camera toegang is vereist.", "OK");
+                return;
+            }
+
             try
             {
-                // Build action-sheet choices
                 var options = new List<string>();
                 bool canCapture = DeviceInfo.Platform != DevicePlatform.WinUI;
                 if (canCapture)
@@ -44,13 +51,12 @@ namespace PingIt.Maui.ViewModels
                 options.Add("Choose Photo");
 
                 var choice = await Shell.Current.DisplayActionSheet(
-                    "Add Photo",
-                    "Cancel",
+                    "Foto toevoegen",
+                    "Annuleer",
                     null,
                     options.ToArray());
 
-                if (choice == "Cancel")
-                    return;
+                if (choice == "Annuleer") return;
 
                 FileResult? result = choice switch
                 {
@@ -67,31 +73,19 @@ namespace PingIt.Maui.ViewModels
 
                 if (result != null)
                 {
-                    using var stream = await result.OpenReadAsync();
-                    Photos.Add(ImageSource.FromStream(() => stream));
+                    string savedPath = await SavePhotoAsync(result);
+
+                    MainThread.BeginInvokeOnMainThread(() =>
+                    {
+                        Photos.Add(ImageSource.FromFile(savedPath));
+                        OnPropertyChanged(nameof(Photos));
+                    });
                 }
-            }
-            catch (FeatureNotSupportedException)
-            {
-                await Shell.Current.DisplayAlert(
-                    "Not supported",
-                    "Camera is not available on this device.",
-                    "OK");
-            }
-            catch (PermissionException)
-            {
-                await Shell.Current.DisplayAlert(
-                    "Permission denied",
-                    "Please grant permission to use the camera or storage.",
-                    "OK");
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"AddPhotoAsync failed: {ex}");
-                await Shell.Current.DisplayAlert(
-                    "Error",
-                    "Something went wrong while adding the photo.",
-                    "OK");
+                await Shell.Current.DisplayAlert("Fout", "Kon de foto niet toevoegen.", "OK");
             }
             finally
             {
@@ -99,6 +93,17 @@ namespace PingIt.Maui.ViewModels
             }
         }
 
+        private async Task<string> SavePhotoAsync(FileResult photo)
+        {
+            var fileName = $"{Guid.NewGuid()}_{photo.FileName}";
+            var filePath = Path.Combine(FileSystem.AppDataDirectory, fileName);
+
+            using var inputStream = await photo.OpenReadAsync();
+            using var outputStream = File.Create(filePath);
+            await inputStream.CopyToAsync(outputStream);
+
+            return filePath;
+        }
 
         [RelayCommand(CanExecute = nameof(IsNotBusy))]
         private void Send()

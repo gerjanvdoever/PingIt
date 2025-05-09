@@ -23,19 +23,25 @@ namespace PingIt.Maui
             // Register HTTP clients
             builder.Services.AddHttpClient("PingItClient", client =>
             {
-                client.BaseAddress = new Uri("https://localhost:7017/");
+                client.BaseAddress = DeviceInfo.Platform == DevicePlatform.Android
+                ? new Uri("http://10.0.2.2:5276/") // points to the host machine instead of the emulator
+                : new Uri("https://localhost:7017/");
+
                 client.DefaultRequestHeaders.Add("Accept", "application/json");
             });
 
             builder.Services.AddHttpClient("AuthenticatedClient", client =>
             {
-                client.BaseAddress = new Uri("https://localhost:7017/");
-                client.DefaultRequestHeaders.Add("Accept", "application/json");
-            }).AddHttpMessageHandler<AuthHeaderHandler>();
+                client.BaseAddress = DeviceInfo.Platform == DevicePlatform.Android
+                    ? new Uri("http://10.0.2.2:5276/")
+                    : new Uri("https://localhost:7017/");
 
-            // Register AuthHeaderHandler and other PingIt services
+                client.DefaultRequestHeaders.Add("Accept", "application/json");
+            })
+            .AddHttpMessageHandler<AuthHeaderHandler>();
+
             builder.Services.AddTransient<AuthHeaderHandler>();
-            builder.Services.AddPingItServices(); // Your centralized service registration
+            builder.Services.AddPingItServices();
 
             return builder.Build();
         }

@@ -10,9 +10,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PingIt.Api", "PingIt.Api\Pi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PingIt.Shared", "PingIt.Shared\PingIt.Shared.csproj", "{DA10DFA0-311F-4835-848C-DC68FEC6326B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PingIt.Web", "PingIt.Web\PingIt.Web.csproj", "{D03AF3C5-617E-474F-AEC0-C17B541AE288}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PingIt.Maui", "PingIt.Maui\PingIt.Maui.csproj", "{96EDC40A-536A-44F4-B449-919AF2E7C2BD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DA10DFA0-311F-4835-848C-DC68FEC6326B} = {DA10DFA0-311F-4835-848C-DC68FEC6326B}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PingIt.Web", "PingIt.Web\PingIt.Web.csproj", "{0C76FB57-46D5-4145-8097-8E1AEC1BAA05}"
 	ProjectSection(ProjectDependencies) = postProject
 		{DA10DFA0-311F-4835-848C-DC68FEC6326B} = {DA10DFA0-311F-4835-848C-DC68FEC6326B}
 	EndProjectSection
@@ -31,15 +34,15 @@ Global
 		{DA10DFA0-311F-4835-848C-DC68FEC6326B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DA10DFA0-311F-4835-848C-DC68FEC6326B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DA10DFA0-311F-4835-848C-DC68FEC6326B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D03AF3C5-617E-474F-AEC0-C17B541AE288}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D03AF3C5-617E-474F-AEC0-C17B541AE288}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D03AF3C5-617E-474F-AEC0-C17B541AE288}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D03AF3C5-617E-474F-AEC0-C17B541AE288}.Release|Any CPU.Build.0 = Release|Any CPU
 		{96EDC40A-536A-44F4-B449-919AF2E7C2BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{96EDC40A-536A-44F4-B449-919AF2E7C2BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{96EDC40A-536A-44F4-B449-919AF2E7C2BD}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{96EDC40A-536A-44F4-B449-919AF2E7C2BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{96EDC40A-536A-44F4-B449-919AF2E7C2BD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C76FB57-46D5-4145-8097-8E1AEC1BAA05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C76FB57-46D5-4145-8097-8E1AEC1BAA05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C76FB57-46D5-4145-8097-8E1AEC1BAA05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C76FB57-46D5-4145-8097-8E1AEC1BAA05}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

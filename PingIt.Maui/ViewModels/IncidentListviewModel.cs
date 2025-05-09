@@ -15,6 +15,7 @@ public partial class IncidentListViewModel : ObservableObject
     private readonly ILogger<IncidentListViewModel> _logger;
 
     [ObservableProperty] private ObservableCollection<IncidentDto> incidents = new();
+    [ObservableProperty] private ObservableCollection<IncidentDto> closedIncidents = new();
     [ObservableProperty] private bool isLoading;
     [ObservableProperty] private string statusMessage = string.Empty;
 
@@ -65,4 +66,44 @@ public partial class IncidentListViewModel : ObservableObject
             IsLoading = false;
         }
     }
+
+    [RelayCommand]
+    public async Task LoadClosedIncidentsAsync()
+    {
+        if (_tokenStorage.UserId is null)
+        {
+            StatusMessage = "Gebruiker niet ingelogd.";
+            return;
+        }
+
+        try
+        {
+            IsLoading = true;
+            StatusMessage = string.Empty;
+
+            int userId = _tokenStorage.UserId.Value;
+            var response = await _httpClient.GetAsync($"api/incident/worker/{userId}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                StatusMessage = "Kan afgesloten incidenten niet ophalen.";
+                _logger.LogWarning("Failed to fetch closed incidents: {StatusCode}", response.StatusCode);
+                return;
+            }
+
+            var result = await response.Content.ReadFromJsonAsync<List<IncidentDto>>();
+            closedIncidents = new ObservableCollection<IncidentDto>(result ?? []);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Fout bij ophalen afgesloten incidenten");
+            StatusMessage = "Er ging iets mis bij het ophalen van afgesloten incidenten.";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+
 }

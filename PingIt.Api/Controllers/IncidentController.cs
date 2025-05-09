@@ -88,17 +88,15 @@ namespace PingIt.Api.Controllers
             return Ok(incidentDtos);
         }
 
-        // GET: api/incidents/worker/{workerId}
+        // GET: api/incidents/worker/{workerId}/closed
         [HttpGet("worker/{workerId}")]
         [Authorize(Roles = "Worker, Administrator")]
-        public async Task<ActionResult<List<IncidentDto>>> GetIncidentsByWorkerId(int workerId)
+        public async Task<ActionResult<List<IncidentDto>>> GetClosedIncidentsByWorkerId(int workerId)
         {
             var incidents = await _context.Incidents
-                .Where(i => i.HandledByUserId == workerId)
+                .Where(i => i.HandledByUserId == workerId && i.Status == IncidentStatus.Resolved)
                 .ToListAsync();
-
             var incidentDtos = incidents.Select(incident => MapToDto(incident)).ToList();
-
             return Ok(incidentDtos);
         }
 
