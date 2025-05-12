@@ -20,10 +20,10 @@ namespace PingIt.Maui.ViewModels
         public bool AllowReport => DeviceInfo.Platform == DevicePlatform.Android;
 
         [ObservableProperty]
-        private string firstName = "Demo";
+        private string firstName = "Gebruiker ophalen...";
 
         [ObservableProperty]
-        private string lastName = "Gebruiker";
+        private string lastName = "";
 
         [ObservableProperty]
         private UserRole role = UserRole.Resident;
