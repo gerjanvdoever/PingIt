@@ -1,61 +1,76 @@
 @startuml
-title PingIt - Database Schema (Updated ERD)
+
+/' -------------------------------------------------
+   ENTITIES
+   ------------------------------------------------- '/
 
 entity Users {
-  +int Id
+  +int Id <<PK>>
   --
-  string FirstName
-  string LastName
-  string Email
-  string PasswordHash
-  string Role
+  string   FirstName
+  string   LastName
+  string   Email
+  string   PasswordHash
+  int        Role            <<enum UserRole>>
   string? PhoneNumber
-  bool WantsNotifications
-  string Street
-  string HouseNumber
-  string PostalCode
-  string City
+  bool     WantsNotifications
+  string   Street
+  string   HouseNumber
+  string   PostalCode
+  string   City
 }
 
 entity Incidents {
-  +int Id
+  +int Id <<PK>>
   --
-  string Title
-  string? Description
-  decimal Latitude
-  decimal Longitude
-  datetime CreatedAt
-  string Status
-  string Priority
-  datetime? Deadline
-  datetime? HandledAt
-  int? CreatedByUserId
-  bool HandledByExternal
-  int? HandledByUserId
-  string? Notes
+  string            Title
+  string?           Description
+  decimal         Latitude
+  decimal         Longitude
+  datetime       CreatedAt
+  int                 Status        <<enum IncidentStatus>>
+  int                 Priority      <<enum PriorityLevel>>
+  datetime?     Deadline
+  datetime?     HandledAt
+  int?               CreatedByUserId <<FK>>
+  bool              HandledByExternal
+  int?               HandledByUserId  <<FK>>
+  string?          Notes
 }
 
 entity IncidentPhotos {
-  +int Id
+  +int Id <<PK>>
   --
-  int IncidentId
+  int      IncidentId  <<FK>>
   string PhotoUrl
 }
 
 entity IncidentStatusHistory {
-  +int Id
+  +int Id <<PK>>
   --
-  int IncidentId
-  string Status
-  int ChangedByUserId
-  datetime ChangedAt
+  int            IncidentId     <<FK>>
+  string       Status
+  int            ChangedByUserId <<FK>>
+  datetime  ChangedAt
 }
 
-' RELATIONS
-Users ||--o{ Incidents : creates
-Users ||--o{ IncidentStatusHistory : changes status
-Incidents ||--o{ IncidentPhotos
-Incidents ||--o{ IncidentStatusHistory
-Users ||--o{ Incidents : handles
+/' -------------------------------------------------
+   RELATIONS (conform Fluent API)
+   ------------------------------------------------- '/
+
+' 1  User (creator) ---< Incident
+Users       ||--o{ Incidents           : creates
+
+' 2  User (handler) ---< Incident   (zelfde tabel, andere rol)
+Users       ||--o{ Incidents           : handles
+
+' 3  User ---< IncidentStatusHistory
+Users       ||--o{ IncidentStatusHistory : changes status
+
+' 4  Incident ---< IncidentPhotos
+Incidents   ||--o{ IncidentPhotos
+
+' 5  Incident ---< IncidentStatusHistory
+Incidents   ||--o{ IncidentStatusHistory
 
 @enduml

@@ -23,7 +23,7 @@ public class TokenAuthenticationStateProvider : AuthenticationStateProvider
 
         // 2. Normalise “role” → ClaimTypes.Role so AuthorizeView works
         var claims = jwt.Claims.Select(c =>
-            c.Type is "role" or "roles"               // your API might emit either
+            c.Type is "Role"
                 ? new Claim(ClaimTypes.Role, c.Value)
                 : c);
 
