@@ -17,11 +17,13 @@ namespace PingIt.Maui.ViewModels
         private readonly HttpClient _httpClient;
         private readonly ILogger<AccountViewModel> _logger;
 
-        [ObservableProperty]
-        private string firstName = "Demo";
+        public bool AllowReport => DeviceInfo.Platform == DevicePlatform.Android;
 
         [ObservableProperty]
-        private string lastName = "Gebruiker";
+        private string firstName = "Gebruiker ophalen...";
+
+        [ObservableProperty]
+        private string lastName = "";
 
         [ObservableProperty]
         private UserRole role = UserRole.Resident;
