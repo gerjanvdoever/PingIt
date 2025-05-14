@@ -1,119 +1,168 @@
 using Microsoft.Maui.Controls.Maps;
-using Microsoft.Maui.Devices.Sensors;
 using Microsoft.Maui.Maps;
 using PingIt.Shared.Dtos;
 
-namespace PingIt.Maui.Views;
-
-public partial class MapView : ContentView
+namespace PingIt.Maui.Views
 {
+    /*
+     MapView Usage:
+     ----------------
+     In your XAML page:
+     
+       xmlns:views="clr-namespace:PingIt.Maui.Views"
+       xmlns:maps="http://schemas.microsoft.com/dotnet/2021/maui/maps"
+     
+       <views:MapView
+           HeightRequest="200"
+           PinItems="{Binding PinItems}"
+           ShowUserLocation="{Binding ShowUserLocation}"
+           SelectedLocation="{Binding SelectedLocation, Mode=TwoWay}"
+           IsPinSelectionEnabled="True"
+           MapType="Hybrid" />
+     
+     Properties:
+       • PinItems (IEnumerable<LocationDto>): the pins to display
+       • SelectedLocation (LocationDto?, TwoWay): tapped location
+       • ShowUserLocation (bool): blue-dot current position
+       • IsPinSelectionEnabled (bool): enable/disable tap-to-add
+       • MapType (MapType): Street, Satellite, or Hybrid
+     */
 
-    public static readonly BindableProperty PinItemsProperty =
-      BindableProperty.Create(
-        nameof(PinItems),
-        typeof(IEnumerable<LocationDto>),
-        typeof(MapView),
-        propertyChanged: OnPinsChanged);
-
-    public static readonly BindableProperty ShowUserLocationProperty =
-      BindableProperty.Create(
-        nameof(ShowUserLocation),
-        typeof(bool),
-        typeof(MapView),
-        false);
-
-    public static readonly BindableProperty SelectedLocationProperty =
-      BindableProperty.Create(
-        nameof(SelectedLocation),
-        typeof(LocationDto),
-        typeof(MapView),
-        null,
-        BindingMode.TwoWay,
-        propertyChanged: OnSelectedLocationChanged);
-
-    public IEnumerable<LocationDto> PinItems
+    public partial class MapView : ContentView
     {
-        get => (IEnumerable<LocationDto>)GetValue(PinItemsProperty);
-        set => SetValue(PinItemsProperty, value);
-    }
+        public static readonly BindableProperty PinItemsProperty =
+            BindableProperty.Create(
+                nameof(PinItems),
+                typeof(IEnumerable<LocationDto>),
+                typeof(MapView),
+                null,
+                propertyChanged: OnMapDataChanged);
 
-    public bool ShowUserLocation
-    {
-        get => (bool)GetValue(ShowUserLocationProperty);
-        set => SetValue(ShowUserLocationProperty, value);
-    }
+        public static readonly BindableProperty ShowUserLocationProperty =
+            BindableProperty.Create(
+                nameof(ShowUserLocation),
+                typeof(bool),
+                typeof(MapView),
+                false);
 
-    public LocationDto SelectedLocation
-    {
-        get => (LocationDto)GetValue(SelectedLocationProperty);
-        set => SetValue(SelectedLocationProperty, value);
-    }
+        public static readonly BindableProperty SelectedLocationProperty =
+            BindableProperty.Create(
+                nameof(SelectedLocation),
+                typeof(LocationDto),
+                typeof(MapView),
+                null,
+                BindingMode.TwoWay,
+                propertyChanged: OnMapDataChanged);
 
-    public MapView()
-    {
-        InitializeComponent();
-    }
+        public static readonly BindableProperty IsPinSelectionEnabledProperty =
+            BindableProperty.Create(
+                nameof(IsPinSelectionEnabled),
+                typeof(bool),
+                typeof(MapView),
+                true);
 
-    private static void OnSelectedLocationChanged(BindableObject bindable, object oldVal, object newVal)
-    {
-        var control = (MapView)bindable;
-        control.InternalMap.Pins.Clear();
+        public static readonly BindableProperty MapTypeProperty =
+            BindableProperty.Create(
+                nameof(MapType),
+                typeof(MapType),
+                typeof(MapView),
+                MapType.Street,
+                propertyChanged: OnMapTypeChanged);
 
-        if (newVal is LocationDto dto)
+        public MapView() => InitializeComponent();
+
+        public IEnumerable<LocationDto>? PinItems
         {
-            // 1) Create MAUI Location + pin
-            var loc = new Location(
-                          (double)dto.Latitude,
-                          (double)dto.Longitude);
-            var pin = new Pin
-            {
-                Label = "Gekozen locatie",
-                Location = loc,
-                Type = PinType.Place
-            };
-            control.InternalMap.Pins.Add(pin);
-
-            // 2) Center & zoom the map on it
-            control.InternalMap.MoveToRegion(
-                MapSpan.FromCenterAndRadius(loc, Distance.FromMeters(500)));
+            get => (IEnumerable<LocationDto>?)GetValue(PinItemsProperty);
+            set => SetValue(PinItemsProperty, value);
         }
-    }
 
-    private void OnMapClicked(object sender, MapClickedEventArgs e)
-    {
-        // 1) Update the bound SelectedLocation
-        SelectedLocation = new LocationDto
+        public bool ShowUserLocation
         {
-            Latitude = (decimal)e.Location.Latitude,
-            Longitude = (decimal)e.Location.Longitude
-        };
+            get => (bool)GetValue(ShowUserLocationProperty);
+            set => SetValue(ShowUserLocationProperty, value);
+        }
 
-        // 2) Show a pin at that spot
-        InternalMap.Pins.Clear();
-        var pin = new Pin
+        public LocationDto? SelectedLocation
         {
-            Label = "Chosen position",
-            Location = e.Location,
-            Type = PinType.Place
-        };
-        InternalMap.Pins.Add(pin);
-    }
+            get => (LocationDto?)GetValue(SelectedLocationProperty);
+            set => SetValue(SelectedLocationProperty, value);
+        }
 
-    private static void OnPinsChanged(BindableObject b, object oldVal, object newVal)
-    {
-        var control = (MapView)b;
-        control.InternalMap.Pins.Clear();
-        if (newVal is IEnumerable<LocationDto> list)
+        public bool IsPinSelectionEnabled
         {
-            foreach (var dto in list)
+            get => (bool)GetValue(IsPinSelectionEnabledProperty);
+            set => SetValue(IsPinSelectionEnabledProperty, value);
+        }
+
+        public MapType MapType
+        {
+            get => (MapType)GetValue(MapTypeProperty);
+            set => SetValue(MapTypeProperty, value);
+        }
+
+        static void OnMapDataChanged(BindableObject bindable, object oldVal, object newVal)
+        {
+            ((MapView)bindable).UpdatePins();
+        }
+
+        static void OnMapTypeChanged(BindableObject bindable, object oldVal, object newVal)
+        {
+            if (bindable is MapView mv && mv.InternalMap != null && newVal is MapType mt)
+                mv.InternalMap.MapType = mt;
+        }
+
+        void UpdatePins()
+        {
+            if (InternalMap == null)
+                return;
+
+            InternalMap.MapType = MapType;
+            InternalMap.Pins.Clear();
+
+            if (PinItems != null)
             {
-                control.InternalMap.Pins.Add(new Pin
+                foreach (var dto in PinItems)
                 {
-                    Location = new Location(
-                               (double)dto.Latitude,
-                               (double)dto.Longitude)
-                });
+                    InternalMap.Pins.Add(new Pin
+                    {
+                        Label = dto.Label ?? "Location",
+                        Location = new Location((double)dto.Latitude, (double)dto.Longitude),
+                        Type = PinType.Place
+                    });
+                }
+
+                var first = PinItems.FirstOrDefault();
+                if (first != null)
+                {
+                    var center = new Location((double)first.Latitude, (double)first.Longitude);
+                    InternalMap.MoveToRegion(MapSpan.FromCenterAndRadius(center, Distance.FromMeters(500)));
+                }
             }
+
+            if (SelectedLocation != null)
+            {
+                var sel = new Location((double)SelectedLocation.Latitude, (double)SelectedLocation.Longitude);
+                InternalMap.Pins.Add(new Pin
+                {
+                    Label = "Selected",
+                    Location = sel,
+                    Type = PinType.Place
+                });
+                InternalMap.MoveToRegion(MapSpan.FromCenterAndRadius(sel, Distance.FromMeters(500)));
+            }
+        }
+
+        void HandleMapClicked(object sender, MapClickedEventArgs e)
+        {
+            if (!IsPinSelectionEnabled)
+                return;
+
+            SelectedLocation = new LocationDto
+            {
+                Latitude = (decimal)e.Location.Latitude,
+                Longitude = (decimal)e.Location.Longitude
+            };
         }
     }
 }

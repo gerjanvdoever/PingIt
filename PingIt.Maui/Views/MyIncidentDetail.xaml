@@ -56,7 +56,9 @@
                 <views:MapView
                 HeightRequest="200"
                 PinItems="{Binding PinItems}"
-                ShowUserLocation="False"  />
+                ShowUserLocation="False" 
+                IsPinSelectionEnabled="False"/>
+
             </VerticalStackLayout>
         </ScrollView>
     </Grid>
