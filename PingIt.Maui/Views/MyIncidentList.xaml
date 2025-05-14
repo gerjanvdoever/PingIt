@@ -5,6 +5,7 @@
     xmlns:vm="clr-namespace:PingIt.Maui.ViewModels"
     xmlns:dto="clr-namespace:PingIt.Shared.Dtos;assembly=PingIt.Shared"
     xmlns:views="clr-namespace:PingIt.Maui.Views"
+    xmlns:toolkit="http://schemas.microsoft.com/dotnet/2022/maui/toolkit"
     x:Class="PingIt.Maui.Views.MyIncidentList"
     x:DataType="vm:MyIncidentListViewModel">
 
@@ -17,10 +18,11 @@
 
         <!-- Incident List -->
         <CollectionView
-      Grid.Row="1"
-      ItemsSource="{Binding Incidents}"
-      EmptyView="Geen incidenten gevonden.">
-
+            Grid.Row="1"
+  x:Name="IncidentList"
+    ItemsSource="{Binding Incidents}"
+    SelectionMode="Single"
+    SelectedItem="{Binding SelectedIncident, Mode=TwoWay}">
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="dto:IncidentDto">
                     <Border

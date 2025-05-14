@@ -8,7 +8,7 @@ using PingIt.Shared.Dtos;
 namespace PingIt.Api.Controllers
 {
     [ApiController]
-    [Route("api/incidents/{incidentId}/photos")]
+    [Route("api/incident/{incidentId}/photos")]
     public class PhotoController : ControllerBase
     {
         private readonly PingItDbContext _context;
@@ -18,7 +18,7 @@ namespace PingIt.Api.Controllers
             _context = context;
         }
 
-        // POST: api/incidents/{incidentId}/photos
+        // POST: api/incident/{incidentId}/photos
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> UploadPhoto(int incidentId, [FromBody] IncidentPhotoDto photoDto)
@@ -71,7 +71,7 @@ namespace PingIt.Api.Controllers
             return CreatedAtAction(nameof(GetPhotos), new { incidentId = incidentId }, new { Message = "Photo uploaded successfully.", PhotoUrl = newPhoto.PhotoUrl });
         }
 
-        // GET: api/incidents/{incidentId}/photos
+        // GET: api/incident/{incidentId}/photos
         [HttpGet]
         [AllowAnonymous]
         public async Task<ActionResult<List<IncidentPhotoDto>>> GetPhotos(int incidentId)

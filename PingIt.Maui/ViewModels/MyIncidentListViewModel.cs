@@ -5,11 +5,13 @@ using PingIt.Shared.Dtos;
 using PingIt.Maui.Services;
 using System.Collections.ObjectModel;
 using System.Net.Http.Json;
+using PingIt.Maui.Views;
 
 namespace PingIt.Maui.ViewModels
 {
     public partial class MyIncidentListViewModel : ObservableObject
     {
+        private readonly IIncidentStore _store;
         private readonly TokenStorageService _tokenStorage;
         private readonly HttpClient _httpClient;
         private readonly ILogger<MyIncidentListViewModel> _logger;
@@ -26,11 +28,13 @@ namespace PingIt.Maui.ViewModels
         public MyIncidentListViewModel(
             TokenStorageService tokenStorage,
             IHttpClientFactory httpClientFactory,
-            ILogger<MyIncidentListViewModel> logger)
+            ILogger<MyIncidentListViewModel> logger,
+            IIncidentStore store)
         {
             _tokenStorage = tokenStorage;
             _httpClient = httpClientFactory.CreateClient("AuthenticatedClient");
             _logger = logger;
+            _store = store;
         }
 
         [RelayCommand]
@@ -68,6 +72,22 @@ namespace PingIt.Maui.ViewModels
             {
                 IsLoading = false;
             }
+        }
+
+        [ObservableProperty]
+        private IncidentDto? selectedIncident;
+
+        partial void OnSelectedIncidentChanged(IncidentDto? incident)
+            => HandleSelectionChangedAsync(incident);
+
+        private async Task HandleSelectionChangedAsync(IncidentDto? incident)
+        {
+            if (incident is null)
+                return;
+
+            _store.SelectedIncident = incident;
+            SelectedIncident = null;
+            await Shell.Current.GoToAsync(nameof(MyIncidentDetail));
         }
     }
 }

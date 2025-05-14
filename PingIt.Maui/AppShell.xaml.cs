@@ -8,6 +8,7 @@ namespace PingIt.Maui
         {
             InitializeComponent();
             Routing.RegisterRoute(nameof(MyIncidentList), typeof(MyIncidentList));
+            Routing.RegisterRoute(nameof(MyIncidentDetail), typeof(MyIncidentDetail));
         }
     }
 }
