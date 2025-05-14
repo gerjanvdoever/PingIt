@@ -22,8 +22,8 @@ public partial class BottomNavBar : ContentView
 
     public ICommand NavigateMapCommand => new Command(async () =>
     {
-        if (CurrentPage != "MapPage")
-            await Shell.Current.GoToAsync("//MapPage");
+        if (CurrentPage != "IncidentMapPage")
+            await Shell.Current.GoToAsync("//IncidentMapPage");
     });
 
     public ICommand NavigateListCommand => new Command(async () =>
