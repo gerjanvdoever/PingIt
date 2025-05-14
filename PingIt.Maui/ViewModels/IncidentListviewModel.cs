@@ -18,6 +18,7 @@ public partial class IncidentListViewModel : ObservableObject
     [ObservableProperty] private ObservableCollection<IncidentDto> closedIncidents = new();
     [ObservableProperty] private bool isLoading;
     [ObservableProperty] private string statusMessage = string.Empty;
+    [ObservableProperty] private bool showClosed;
 
     public IncidentListViewModel(
         TokenStorageService tokenStorage,
@@ -78,6 +79,7 @@ public partial class IncidentListViewModel : ObservableObject
 
         try
         {
+            ShowClosed = true;
             IsLoading = true;
             StatusMessage = string.Empty;
 

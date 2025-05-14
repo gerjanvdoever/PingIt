@@ -6,7 +6,7 @@
     xmlns:local="clr-namespace:PingIt.Maui"
     xmlns:views="clr-namespace:PingIt.Maui.Views"
     Shell.FlyoutBehavior="Disabled"
-    Title="PingIt.Maui">
+    Shell.NavBarIsVisible="False">
 
     <ShellContent ContentTemplate="{DataTemplate views:LoginPage}" Route="LoginPage" />
     <ShellContent ContentTemplate="{DataTemplate views:AccountPage}" Route="AccountPage" />
