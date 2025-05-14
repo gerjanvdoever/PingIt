@@ -13,10 +13,24 @@ namespace PingIt.Maui.ViewModels
     {
         [ObservableProperty] private IncidentDto incident = default!;
 
+        public IEnumerable<LocationDto> PinItems
+            => new[]
+            {
+                new LocationDto
+                {
+                    Latitude  = Incident.Latitude,
+                    Longitude = Incident.Longitude
+                }
+            };
+
+        public bool HasHandledAt => Incident.HandledAt.HasValue;
+
         public MyIncidentDetailViewModel(IIncidentStore store)
         {
-            incident = store.SelectedIncident
+            Incident = store.SelectedIncident
                        ?? throw new InvalidOperationException("No incident selected");
+            OnPropertyChanged(nameof(HasHandledAt));
+            OnPropertyChanged(nameof(PinItems));
         }
     }
 }

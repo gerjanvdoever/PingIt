@@ -29,6 +29,12 @@
                 <Label
           Text="{Binding Incident.Status, StringFormat='Status: {0}'}" />
 
+                <Label
+    Text="{Binding Incident.HandledAt, StringFormat='Afgehandeld op: {0:dd MMM yyyy}'}"
+    FontSize="14"
+    IsVisible="{Binding HasHandledAt}" />
+
+
                 <!-- Photos -->
                 <CollectionView
           ItemsSource="{Binding Incident.Photos}"
@@ -45,7 +51,6 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-
             </VerticalStackLayout>
         </ScrollView>
     </Grid>

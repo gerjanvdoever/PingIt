@@ -15,8 +15,18 @@ namespace PingIt.Maui.Converters
             return default(Location);
         }
 
-        public object ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
-          => throw new NotImplementedException();
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            if (value is Location loc)
+            {
+                return new LocationDto
+                {
+                    Latitude = (decimal)loc.Latitude,
+                    Longitude = (decimal)loc.Longitude
+                };
+            }
+            return null;
+        }
     }
 }
 
