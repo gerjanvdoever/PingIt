@@ -86,8 +86,8 @@ namespace PingIt.Maui.ViewModels
                 return;
 
             _store.SelectedIncident = incident;
-            SelectedIncident = null;
             await Shell.Current.GoToAsync(nameof(MyIncidentDetail));
+            SelectedIncident = null;
         }
     }
 }

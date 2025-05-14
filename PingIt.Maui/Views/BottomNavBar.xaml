@@ -12,6 +12,7 @@
         <Button Text="Map"
                 Grid.Column="0"
                 Command="{Binding NavigateMapCommand, Source={x:Reference FooterRoot}}"
+                IsEnabled="{Binding AllowMap, Source={x:Reference FooterRoot}}"
                 FontSize="16"
                 BackgroundColor="Transparent"
                 TextColor="{Binding CurrentPage, Source={x:Reference FooterRoot}, Converter={StaticResource PageToColorConverter}, ConverterParameter=MapPage}" />

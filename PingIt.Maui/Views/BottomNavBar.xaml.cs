@@ -12,6 +12,8 @@ public partial class BottomNavBar : ContentView
     public static readonly BindableProperty CurrentPageProperty =
         BindableProperty.Create(nameof(CurrentPage), typeof(string), typeof(BottomNavBar), string.Empty);
 
+    public bool AllowMap => DeviceInfo.Platform == DevicePlatform.Android;
+
     public string CurrentPage
     {
         get => (string)GetValue(CurrentPageProperty);
