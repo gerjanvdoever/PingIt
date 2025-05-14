@@ -8,6 +8,7 @@ using PingIt.Shared.Enums;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using System.Data;
+using PingIt.Maui.Views;
 
 namespace PingIt.Maui.ViewModels
 {
@@ -61,7 +62,7 @@ namespace PingIt.Maui.ViewModels
         [RelayCommand]
         private async Task NavigateList()
         {
-            await Shell.Current.GoToAsync("//IncidentListPage");
+            await Shell.Current.GoToAsync(nameof(MyIncidentList));
         }
 
         private async Task LoadUserAsync()

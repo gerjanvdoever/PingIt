@@ -37,15 +37,10 @@ namespace PingIt.Maui.Views
 
         private async void OnBackButtonClicked(object sender, EventArgs e)
         {
-            // Try Shell navigation first
             if (Shell.Current.Navigation.NavigationStack.Count > 1)
-            {
                 await Shell.Current.GoToAsync("..");
-            }
             else
-            {
                 await Shell.Current.Navigation.PopAsync();
-            }
         }
     }
 }

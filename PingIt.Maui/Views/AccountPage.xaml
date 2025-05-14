@@ -20,7 +20,7 @@
                 <!-- Actions Section -->
                 <VerticalStackLayout Spacing="15">
                     <Button Text="Incident melden" IsEnabled="{Binding AllowReport}" ImageSource="incident_icon.png" HorizontalOptions="Fill"/>
-                    <Button Text="Mijn incidenten" ImageSource="incidentlist_icon.png" HorizontalOptions="Fill"/>
+                    <Button Text="Mijn incidenten" Command="{Binding NavigateListCommand}" ImageSource="incidentlist_icon.png" HorizontalOptions="Fill"/>
                 </VerticalStackLayout>
 
                 <!-- Logout -->

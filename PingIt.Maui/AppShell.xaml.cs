@@ -7,6 +7,7 @@ namespace PingIt.Maui
         public AppShell()
         {
             InitializeComponent();
+            Routing.RegisterRoute(nameof(MyIncidentList), typeof(MyIncidentList));
         }
     }
 }

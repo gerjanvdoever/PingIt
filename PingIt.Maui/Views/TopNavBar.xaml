@@ -14,28 +14,31 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <!-- Back Button -->
+        <!-- Square Back Button -->
         <Button
-      x:Name="BackButton"
-      Grid.Column="0"
-      Text="◀"
-      FontSize="24"
-      VerticalOptions="Center"
-      HorizontalOptions="Start"
-      IsVisible="{Binding Source={x:Reference this}, Path=ShowBackButton}"
-      Clicked="OnBackButtonClicked"
-      BackgroundColor="Transparent"
-      TextColor="{AppThemeBinding Light=Black, Dark=White}" />
+        x:Name="BackButton"
+        Grid.Column="0"
+        WidthRequest="40"
+        HeightRequest="40"
+        CornerRadius="8"
+        Text="back"
+        FontSize="18"
+        VerticalOptions="Center"
+        HorizontalOptions="Center"
+        IsVisible="{Binding Source={x:Reference this}, Path=ShowBackButton}"
+        Clicked="OnBackButtonClicked"
+        BackgroundColor="Black"
+        TextColor="{AppThemeBinding Light=Black, Dark=White}" />
 
-        <!-- Title -->
+        <!-- Centered Title -->
         <Label
-      Grid.Column="1"
-      Text="{Binding Source={x:Reference this}, Path=Title}"
-      VerticalOptions="Center"
-      HorizontalOptions="Center"
-      FontSize="18"
-      FontAttributes="Bold"
-      TextColor="{AppThemeBinding Light=Black, Dark=White}" />
+        Grid.Column="1"
+        VerticalOptions="Center"
+        HorizontalOptions="Center"
+        FontSize="18"
+        FontAttributes="Bold"
+        TextColor="{AppThemeBinding Light=Black, Dark=White}"
+        Text="{Binding Source={x:Reference this}, Path=Title}" />
 
     </Grid>
 </ContentView>
