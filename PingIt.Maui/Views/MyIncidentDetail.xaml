@@ -51,6 +51,12 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
+
+                <!--map-->
+                <views:MapView
+                HeightRequest="200"
+                PinItems="{Binding PinItems}"
+                ShowUserLocation="False"  />
             </VerticalStackLayout>
         </ScrollView>
     </Grid>
