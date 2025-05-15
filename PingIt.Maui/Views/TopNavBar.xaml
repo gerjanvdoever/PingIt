@@ -21,13 +21,13 @@
         WidthRequest="40"
         HeightRequest="40"
         CornerRadius="8"
-        Text="back"
+        Text="◀"
         FontSize="18"
         VerticalOptions="Center"
         HorizontalOptions="Center"
         IsVisible="{Binding Source={x:Reference this}, Path=ShowBackButton}"
         Clicked="OnBackButtonClicked"
-        BackgroundColor="Black"
+        BackgroundColor="Transparent"
         TextColor="{AppThemeBinding Light=Black, Dark=White}" />
 
         <!-- Centered Title -->

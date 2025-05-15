@@ -15,7 +15,6 @@ namespace PingIt.Maui
         {
             var window = new Window(new AppShell());
 
-            // Optionally, defer InitAsync here if needed
             Application.Current!.Dispatcher.Dispatch(async () =>
             {
                 await InitAsync();

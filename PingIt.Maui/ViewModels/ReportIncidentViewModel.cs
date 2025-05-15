@@ -132,12 +132,7 @@ namespace PingIt.Maui.ViewModels
                 if (result != null)
                 {
                     string savedPath = await SavePhotoAsync(result);
-
-                    MainThread.BeginInvokeOnMainThread(() =>
-                    {
-                        Photos.Add(ImageSource.FromFile(savedPath));
-                        OnPropertyChanged(nameof(Photos));
-                    });
+                    Photos.Add(ImageSource.FromFile(savedPath));
                 }
             }
             catch (Exception ex)
@@ -153,14 +148,16 @@ namespace PingIt.Maui.ViewModels
 
         private async Task<string> SavePhotoAsync(FileResult photo)
         {
-            var fileName = $"{Guid.NewGuid()}_{photo.FileName}";
-            var filePath = Path.Combine(FileSystem.AppDataDirectory, fileName);
+            var localFilePath = Path.Combine(
+                FileSystem.CacheDirectory,
+                photo.FileName);
 
-            using var inputStream = await photo.OpenReadAsync();
-            using var outputStream = File.Create(filePath);
-            await inputStream.CopyToAsync(outputStream);
+            using Stream sourceStream = await photo.OpenReadAsync();
+            using FileStream destStream = File.OpenWrite(localFilePath);
 
-            return filePath;
+            await sourceStream.CopyToAsync(destStream);
+
+            return localFilePath;
         }
 
         [RelayCommand(CanExecute = nameof(IsNotBusy))]
