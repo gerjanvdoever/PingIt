@@ -22,6 +22,7 @@ public static class ServiceRegistration
         services.AddTransient<MyIncidentListViewModel>();
         services.AddTransient<MyIncidentDetailViewModel>();
         services.AddTransient<IncidentMapViewModel>();
+        services.AddTransient<IncidentDetailViewModel>();
 
         // Views
         services.AddTransient<LoginPage>();
@@ -34,6 +35,7 @@ public static class ServiceRegistration
         services.AddTransient<MyIncidentList>();
         services.AddTransient<MyIncidentDetail>();
         services.AddTransient<IncidentMapPage>();
+        services.AddTransient<IncidentDetailPage>();
 
         return services;
     }

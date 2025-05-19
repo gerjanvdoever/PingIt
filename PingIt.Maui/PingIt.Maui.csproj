@@ -90,6 +90,9 @@
 	  <MauiXaml Update="Views\BottomNavBar.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\IncidentDetailPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\IncidentListPage.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
