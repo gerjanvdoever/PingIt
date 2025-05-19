@@ -9,8 +9,11 @@
     Title="Incident Melden">
 
     <VerticalStackLayout Padding="20" Spacing="16">
+        <views:TopNavBar
+         Title="Incident Melden"
+            ShowBackButton="True" />
 
-            <Entry
+        <Entry
       Placeholder="Titel"
       Text="{Binding Title}" />
 

@@ -1,9 +1,12 @@
-﻿using System.Security.Claims;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PingIt.Api.Data;
-using PingIt.Api.Extensions;
 using PingIt.Api.Models;
 using PingIt.Shared.Dtos;
 using PingIt.Shared.Enums;
@@ -27,11 +30,11 @@ namespace PingIt.Api.Controllers
         [Authorize(Roles = "Worker, Administrator")]
         public async Task<ActionResult<List<IncidentDto>>> GetAllIncidents()
         {
-            var incidents = await _context.Incidents.ToListAsync();
+            var incidents = await _context.Incidents
+                .Include(i => i.Photos)
+                .ToListAsync();
 
-            var incidentDtos = incidents.Select(incident => MapToDto(incident)).ToList();
-
-            return Ok(incidentDtos);
+            return Ok(incidents.Select(MapToDto).ToList());
         }
 
         // GET: api/incidents/active
@@ -40,12 +43,11 @@ namespace PingIt.Api.Controllers
         public async Task<ActionResult<List<IncidentDto>>> GetActiveIncidents()
         {
             var incidents = await _context.Incidents
+                .Include(i => i.Photos)
                 .Where(i => i.Status != IncidentStatus.Resolved)
                 .ToListAsync();
 
-            var incidentDtos = incidents.Select(incident => MapToDto(incident)).ToList();
-
-            return Ok(incidentDtos);
+            return Ok(incidents.Select(MapToDto).ToList());
         }
 
         // GET: api/incidents/closed
@@ -54,24 +56,23 @@ namespace PingIt.Api.Controllers
         public async Task<ActionResult<List<IncidentDto>>> GetClosedIncidents()
         {
             var incidents = await _context.Incidents
+                .Include(i => i.Photos)
                 .Where(i => i.Status == IncidentStatus.Resolved)
                 .ToListAsync();
 
-            var incidentDtos = incidents.Select(incident => MapToDto(incident)).ToList();
-
-            return Ok(incidentDtos);
+            return Ok(incidents.Select(MapToDto).ToList());
         }
 
         // GET: api/incidents/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<IncidentDto>> GetIncident(int id)
         {
-            var incident = await _context.Incidents.FindAsync(id);
+            var incident = await _context.Incidents
+                .Include(i => i.Photos)
+                .FirstOrDefaultAsync(i => i.Id == id);
 
             if (incident == null)
-            {
                 return NotFound(new { Message = "Incident not found." });
-            }
 
             return Ok(MapToDto(incident));
         }
@@ -81,12 +82,11 @@ namespace PingIt.Api.Controllers
         public async Task<ActionResult<List<IncidentDto>>> GetIncidentsByUserId(int userId)
         {
             var incidents = await _context.Incidents
+                .Include(i => i.Photos)
                 .Where(i => i.CreatedByUserId == userId)
                 .ToListAsync();
 
-            var incidentDtos = incidents.Select(incident => MapToDto(incident)).ToList();
-
-            return Ok(incidentDtos);
+            return Ok(incidents.Select(MapToDto).ToList());
         }
 
         // GET: api/incidents/worker/{workerId}/closed
@@ -95,10 +95,11 @@ namespace PingIt.Api.Controllers
         public async Task<ActionResult<List<IncidentDto>>> GetClosedIncidentsByWorkerId(int workerId)
         {
             var incidents = await _context.Incidents
+                .Include(i => i.Photos)
                 .Where(i => i.HandledByUserId == workerId && i.Status == IncidentStatus.Resolved)
                 .ToListAsync();
-            var incidentDtos = incidents.Select(incident => MapToDto(incident)).ToList();
-            return Ok(incidentDtos);
+
+            return Ok(incidents.Select(MapToDto).ToList());
         }
 
         // GET: api/incidents/worker/{workerId}/active
@@ -107,10 +108,11 @@ namespace PingIt.Api.Controllers
         public async Task<ActionResult<List<IncidentDto>>> GetActiveIncidentsByWorkerId(int workerId)
         {
             var incidents = await _context.Incidents
+                .Include(i => i.Photos)
                 .Where(i => i.HandledByUserId == workerId && i.Status != IncidentStatus.Resolved)
                 .ToListAsync();
-            var incidentDtos = incidents.Select(incident => MapToDto(incident)).ToList();
-            return Ok(incidentDtos);
+
+            return Ok(incidents.Select(MapToDto).ToList());
         }
 
         // POST: api/incidents
@@ -134,9 +136,13 @@ namespace PingIt.Api.Controllers
             _context.Incidents.Add(incident);
             await _context.SaveChangesAsync();
 
-            var createdDto = MapToDto(incident);
+            // reload with photos (will be empty at creation)
+            await _context.Entry(incident).Collection(i => i.Photos).LoadAsync();
 
-            return CreatedAtAction(nameof(GetIncident), new { id = incident.Id }, createdDto);
+            return CreatedAtAction(
+                nameof(GetIncident),
+                new { id = incident.Id },
+                MapToDto(incident));
         }
 
         [HttpDelete("{id}")]
@@ -147,7 +153,7 @@ namespace PingIt.Api.Controllers
             if (incident == null)
                 return NotFound(new { Message = "Incident not found." });
 
-            var userId = User.GetUserId();
+            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)!);
             var isAdmin = User.IsInRole("Administrator");
 
             if (!isAdmin)
@@ -156,7 +162,7 @@ namespace PingIt.Api.Controllers
                     return Forbid();
 
                 if (incident.Status != IncidentStatus.Reported)
-                    return BadRequest(new { Message = "Only incidents with status 'Reported' can be deleted by their creator." });
+                    return BadRequest(new { Message = "Only 'Reported' incidents may be deleted." });
             }
 
             _context.Incidents.Remove(incident);
@@ -165,7 +171,7 @@ namespace PingIt.Api.Controllers
             return NoContent();
         }
 
-        // PUT: api/incident/{id}
+        // PUT: api/incidents/{id}
         [HttpPut("{id}")]
         public async Task<ActionResult<IncidentDto>> UpdateIncident(
             int id,
@@ -187,16 +193,28 @@ namespace PingIt.Api.Controllers
 
             await _context.SaveChangesAsync();
 
+            // ensure photos are loaded before mapping
+            await _context.Entry(incident).Collection(i => i.Photos).LoadAsync();
+
             return Ok(MapToDto(incident));
         }
 
         private IncidentDto MapToDto(Incident incident)
         {
+            var baseUrl = $"{Request.Scheme}://{Request.Host}";
             return new IncidentDto
             {
                 Id = incident.Id,
                 Title = incident.Title,
                 Description = incident.Description,
+                Photos = incident.Photos
+                                     .Select(p => new IncidentPhotoDto
+                                     {
+                                         Id = p.Id,
+                                         IncidentId = p.IncidentId,
+                                         PhotoUrl = baseUrl + p.PhotoUrl
+                                     })
+                                     .ToList(),
                 Latitude = incident.Latitude,
                 Longitude = incident.Longitude,
                 CreatedAt = incident.CreatedAt,

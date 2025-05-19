@@ -182,6 +182,7 @@ namespace PingIt.Maui.Views
                             Location = new Location((double)dto.Latitude, (double)dto.Longitude),
                             Type = PinType.Place
                         };
+                        
                         InternalMap.Pins.Add(pin);
                         System.Diagnostics.Debug.WriteLine($"[MapView] Added pin: {pin.Label} at {pin.Location.Latitude}, {pin.Location.Longitude}");
                     }

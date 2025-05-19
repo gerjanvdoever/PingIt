@@ -3,6 +3,7 @@ using System.Text.Json.Serialization;
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using PingIt.Api.Data;
 using PingIt.Api.Services;
@@ -83,6 +84,16 @@ app.UseCors("AllowBlazorClient");
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+var uploads = Path.Combine(builder.Environment.ContentRootPath, "Uploads");
+if (!Directory.Exists(uploads))
+    Directory.CreateDirectory(uploads);
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(uploads),
+    RequestPath = "/Uploads"
+});
 
 app.MapControllers();
 

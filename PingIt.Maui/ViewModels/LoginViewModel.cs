@@ -116,7 +116,7 @@ namespace PingIt.Maui.ViewModels
         [RelayCommand]
         private async void Anonymous()
         {
-            await Shell.Current.GoToAsync("//ReportIncidentPage");
+            await Shell.Current.GoToAsync(nameof(ReportIncidentPage));
         }
     }
 }

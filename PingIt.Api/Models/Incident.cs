@@ -11,6 +11,7 @@ namespace PingIt.Api.Models
 
         public decimal Latitude { get; set; }
         public decimal Longitude { get; set; }
+        public List<IncidentPhoto> Photos { get; set; } = new();
 
         public DateTime CreatedAt { get; set; }
         public IncidentStatus Status { get; set; } = IncidentStatus.Reported;

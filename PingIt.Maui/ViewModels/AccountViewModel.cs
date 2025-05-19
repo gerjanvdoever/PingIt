@@ -60,6 +60,12 @@ namespace PingIt.Maui.ViewModels
         }
 
         [RelayCommand]
+        private async Task NavigateReport()
+        {
+            await Shell.Current.GoToAsync(nameof(ReportIncidentPage));
+        }
+
+        [RelayCommand]
         private async Task NavigateList()
         {
             await Shell.Current.GoToAsync(nameof(MyIncidentList));
