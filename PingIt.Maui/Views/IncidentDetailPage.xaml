@@ -1,10 +1,114 @@
 <?xml version="1.0" encoding="utf-8" ?>
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="PingIt.Maui.Views.IncidentDetailPage"
-             xmlns:vm="clr-namespace:PingIt.Maui.ViewModels"
-             xmlns:views="clr-namespace:PingIt.Maui.Views"
-             xmlns:dto="clr-namespace:PingIt.Shared.Dtos;assembly=PingIt.Shared">
-    <VerticalStackLayout>
-    </VerticalStackLayout>
+<ContentPage
+  xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+  xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+  xmlns:vm="clr-namespace:PingIt.Maui.ViewModels"
+  xmlns:views="clr-namespace:PingIt.Maui.Views"
+  xmlns:dto="clr-namespace:PingIt.Shared.Dtos;assembly=PingIt.Shared"
+  xmlns:conv="clr-namespace:PingIt.Maui.Converters"
+  x:Class="PingIt.Maui.Views.IncidentDetailPage"
+  x:DataType="vm:IncidentDetailViewModel"
+  Shell.NavBarIsVisible="False"
+  Title="Incident Details">
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <conv:BoolToYesNoConverter x:Key="BoolToYesNoConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+
+        <!-- Top Bar -->
+        <views:TopNavBar
+      Grid.Row="0"
+      Title="{Binding Incident.Title}"
+      ShowBackButton="True" />
+
+        <!-- Main Scrollable Content -->
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="20" Spacing="16">
+
+                <!-- Photos -->
+                <CollectionView
+          ItemsSource="{Binding Incident.Photos}"
+          ItemsLayout="HorizontalList"
+          HeightRequest="120">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="dto:IncidentPhotoDto">
+                            <Image
+                Source="{Binding PhotoUrl}"
+                Aspect="AspectFill"
+                WidthRequest="100"
+                HeightRequest="100"
+                Margin="4" />
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+                <!-- Description -->
+                <Label Text="Description:" FontAttributes="Bold" />
+                <Label
+          Text="{Binding Incident.Description}"
+          LineBreakMode="WordWrap" />
+
+                <!-- Created at -->
+                <Label
+          Text="{Binding Incident.CreatedAt, StringFormat='Created at: {0:dd MMM yyyy HH:mm}'}" />
+
+                <!-- Status picker -->
+                <Label Text="Status:" FontAttributes="Bold" />
+                <Picker
+          ItemsSource="{Binding StatusOptions}"
+          SelectedItem="{Binding SelectedStatus, Mode=TwoWay}"
+          Title="Select status" />
+
+                <!-- Priority -->
+                <Label
+          Text="{Binding Incident.Priority, StringFormat='Priority: {0}'}" />
+
+                <!-- Deadline -->
+                <Label
+          Text="{Binding Incident.Deadline,
+                 StringFormat='Deadline: {0:dd MMM yyyy HH:mm}',
+                 TargetNullValue='No deadline'}" />
+
+                <!-- Handled Externally -->
+                <Label Text="Handled externally:" FontAttributes="Bold" />
+                <Label
+          Text="{Binding Incident.HandledByExternal,
+                         Converter={StaticResource BoolToYesNoConverter}}" />
+
+                <!-- Notes (editable) -->
+                <Label Text="Notes:" FontAttributes="Bold" />
+                <Editor
+          Text="{Binding Incident.Notes, Mode=TwoWay}"
+          AutoSize="TextChanges"
+          HeightRequest="100"
+          Placeholder="Enter notes here" />
+
+                <!-- Map -->
+                <Label Text="Location:" FontAttributes="Bold" />
+                <views:MapView
+          HeightRequest="200"
+          PinItems="{Binding PinItems}"
+          ShowUserLocation="True"
+          IsPinSelectionEnabled="False" />
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Save Button -->
+        <HorizontalStackLayout
+      Grid.Row="2"
+      Padding="10"
+      Spacing="20"
+      HorizontalOptions="Center">
+            <Button
+        Text="Save"
+        Command="{Binding ChangeStatusCommand}"
+        WidthRequest="120" />
+        </HorizontalStackLayout>
+
+    </Grid>
 </ContentPage>
