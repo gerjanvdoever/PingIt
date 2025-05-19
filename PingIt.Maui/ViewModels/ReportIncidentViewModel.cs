@@ -62,7 +62,6 @@ namespace PingIt.Maui.ViewModels
             IsBusy = true;
             try
             {
-                // 1) Build the payload
                 var incidentDto = new IncidentDto
                 {
                     Title = Title,
@@ -73,7 +72,6 @@ namespace PingIt.Maui.ViewModels
                     CreatedByUserId = _tokenStorage.UserId
                 };
 
-                // 2) POST the incident
                 var incidentResp = await _httpClient
                     .PostAsJsonAsync("api/incident", incidentDto);
 
@@ -86,7 +84,7 @@ namespace PingIt.Maui.ViewModels
                     return;
                 }
 
-                // 3) Read back the created incident (to get its Id)
+                // Read back the created incident (to get its Id)
                 var created = await incidentResp
                     .Content
                     .ReadFromJsonAsync<IncidentDto>();
@@ -102,7 +100,7 @@ namespace PingIt.Maui.ViewModels
 
                 int incidentId = created.Id;
 
-                // 4) Upload each photo
+                // Upload each photo
                 foreach (var img in Photos)
                 {
                     if (img is FileImageSource fis && File.Exists(fis.File))
@@ -124,18 +122,15 @@ namespace PingIt.Maui.ViewModels
                         {
                             Debug.WriteLine(
                               $"Photo upload failed for {fis.File}: {photoResp.StatusCode}");
-                            // optionally show a warning, but continue
                         }
                     }
                 }
 
-                // 5) Success!
                 await Shell.Current.DisplayAlert(
                     "Klaar",
                     "Incident succesvol verstuurd!",
                     "OK");
 
-                // go back one page
                 await Shell.Current.GoToAsync("..");
             }
             catch (Exception ex)
