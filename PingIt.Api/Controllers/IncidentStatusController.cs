@@ -23,6 +23,7 @@ namespace PingIt.Api.Controllers
             _emailService = emailService;
         }
 
+        // POST: api/incidents/{incidentId}/status
         [HttpPost]
         public async Task<IActionResult> ChangeStatus(int incidentId, [FromBody] IncidentStatusUpdateDto statusDto)
         {
@@ -34,7 +35,7 @@ namespace PingIt.Api.Controllers
 
             bool statusChanged = false;
 
-            // 1. Status change
+            // Status change
             if (statusDto.NewStatus.HasValue && incident.Status != statusDto.NewStatus.Value)
             {
                 incident.Status = statusDto.NewStatus.Value;
@@ -47,25 +48,25 @@ namespace PingIt.Api.Controllers
                 }
             }
 
-            // 2. Assign to worker
+            // Assign to worker
             if (statusDto.NewWorkerId.HasValue)
             {
                 incident.HandledByUserId = statusDto.NewWorkerId;
             }
 
-            // 3. Mark as handled externally
+            // Mark as handled externally
             if (statusDto.HandledByExternal.HasValue)
             {
                 incident.HandledByExternal = statusDto.HandledByExternal.Value;
             }
 
-            // 4. Update notes
+            // Update notes
             if (!string.IsNullOrWhiteSpace(statusDto.Notes))
             {
                 incident.Notes = statusDto.Notes;
             }
 
-            // 5. Priority change
+            // Priority change
             if (statusDto.NewPriority.HasValue && incident.Priority != statusDto.NewPriority.Value)
             {
                 incident.Priority = statusDto.NewPriority.Value;

@@ -5,6 +5,7 @@ using PingIt.Shared.Dtos;
 using PingIt.Maui.Services;
 using System.Net.Http.Json;
 using System.Collections.ObjectModel;
+using PingIt.Maui.Views;
 
 namespace PingIt.Maui.ViewModels;
 
@@ -13,21 +14,38 @@ public partial class IncidentListViewModel : ObservableObject
     private readonly TokenStorageService _tokenStorage;
     private readonly HttpClient _httpClient;
     private readonly ILogger<IncidentListViewModel> _logger;
+    private readonly IIncidentStore _store;
 
     [ObservableProperty] private ObservableCollection<IncidentDto> incidents = new();
     [ObservableProperty] private ObservableCollection<IncidentDto> closedIncidents = new();
     [ObservableProperty] private bool isLoading;
     [ObservableProperty] private string statusMessage = string.Empty;
     [ObservableProperty] private bool showClosed;
+    [ObservableProperty] private IncidentDto? selectedIncident;
 
     public IncidentListViewModel(
         TokenStorageService tokenStorage,
         IHttpClientFactory httpClientFactory,
-        ILogger<IncidentListViewModel> logger)
+        ILogger<IncidentListViewModel> logger,
+        IIncidentStore store)
     {
         _tokenStorage = tokenStorage;
         _httpClient = httpClientFactory.CreateClient("AuthenticatedClient");
         _logger = logger;
+        _store = store;
+    }
+
+    partial void OnSelectedIncidentChanged(IncidentDto? incident)
+        => HandleSelectionChangedAsync(incident);
+
+    private async Task HandleSelectionChangedAsync(IncidentDto? incident)
+    {
+        if (incident == null)
+            return;
+
+        _store.SelectedIncident = incident;
+        await Shell.Current.GoToAsync(nameof(IncidentDetailPage));
+        SelectedIncident = null;
     }
 
     [RelayCommand]

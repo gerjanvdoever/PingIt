@@ -38,6 +38,8 @@
                 <!-- Active Incidents List -->
                 <CollectionView
           ItemsSource="{Binding Incidents}"
+          SelectionMode="Single"
+          SelectedItem="{Binding SelectedIncident, Mode=TwoWay}"
           EmptyView="Geen actieve incidenten gevonden.">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="dto:IncidentDto">
@@ -78,10 +80,12 @@
           BackgroundColor="{AppThemeBinding Light=#E0E0E0, Dark=#2A2A2A}"
           TextColor="{AppThemeBinding Light=Black, Dark=White}" />
 
-                <!-- Closed Incidents List (hidden until requested) -->
+                <!-- Closed Incidents List -->
                 <CollectionView
           ItemsSource="{Binding ClosedIncidents}"
           IsVisible="{Binding ShowClosed}"
+          SelectionMode="Single"
+          SelectedItem="{Binding SelectedIncident, Mode=TwoWay}"
           EmptyView="Geen afgesloten incidenten gevonden.">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="dto:IncidentDto">
