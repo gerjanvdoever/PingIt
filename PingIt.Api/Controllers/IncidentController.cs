@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PingIt.Api.Data;
@@ -138,21 +139,55 @@ namespace PingIt.Api.Controllers
             return CreatedAtAction(nameof(GetIncident), new { id = incident.Id }, createdDto);
         }
 
-        // DELETE: api/incidents/{id}
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Administrator")]
+        [Authorize]
         public async Task<IActionResult> DeleteIncident(int id)
         {
             var incident = await _context.Incidents.FindAsync(id);
             if (incident == null)
-            {
                 return NotFound(new { Message = "Incident not found." });
+
+            var userId = User.GetUserId();
+            var isAdmin = User.IsInRole("Administrator");
+
+            if (!isAdmin)
+            {
+                if (incident.CreatedByUserId != userId)
+                    return Forbid();
+
+                if (incident.Status != IncidentStatus.Reported)
+                    return BadRequest(new { Message = "Only incidents with status 'Reported' can be deleted by their creator." });
             }
 
             _context.Incidents.Remove(incident);
             await _context.SaveChangesAsync();
 
             return NoContent();
+        }
+
+        // PUT: api/incident/{id}
+        [HttpPut("{id}")]
+        public async Task<ActionResult<IncidentDto>> UpdateIncident(
+            int id,
+            [FromBody] IncidentUpdateDto updateDto)
+        {
+            var incident = await _context.Incidents.FindAsync(id);
+            if (incident == null)
+                return NotFound(new { Message = "Incident not found." });
+
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userIdClaim, out var userId)
+                || incident.CreatedByUserId != userId)
+            {
+                return Forbid();
+            }
+
+            incident.Title = updateDto.Title;
+            incident.Description = updateDto.Description;
+
+            await _context.SaveChangesAsync();
+
+            return Ok(MapToDto(incident));
         }
 
         private IncidentDto MapToDto(Incident incident)

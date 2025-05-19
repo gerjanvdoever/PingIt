@@ -21,19 +21,34 @@
         <ScrollView Grid.Row="1">
             <VerticalStackLayout Spacing="12">
 
-                <Label Text="{Binding Incident.Description}" />
+                <!-- Editable Title -->
+                <Entry
+          Text="{Binding Incident.Title, Mode=TwoWay}"
+          FontSize="18"
+          FontAttributes="Bold"
+          Placeholder="Titel"
+          HorizontalOptions="FillAndExpand" />
+
+                <!-- Editable Description -->
+                <Editor
+          Text="{Binding Incident.Description, Mode=TwoWay}"
+          AutoSize="TextChanges"
+          Placeholder="Beschrijving"
+          HeightRequest="150"
+          HorizontalOptions="FillAndExpand" />
 
                 <Label
-          Text="{Binding Incident.CreatedAt, StringFormat='Aangemaakt op: {0:dd MMM yyyy}'}" />
+          Text="{Binding Incident.CreatedAt, StringFormat='Aangemaakt op: {0:dd MMM yyyy}'}"
+          FontSize="14" />
 
                 <Label
-          Text="{Binding Incident.Status, StringFormat='Status: {0}'}" />
+          Text="{Binding Incident.Status, StringFormat='Status: {0}'}"
+          FontSize="14" />
 
                 <Label
-    Text="{Binding Incident.HandledAt, StringFormat='Afgehandeld op: {0:dd MMM yyyy}'}"
-    FontSize="14"
-    IsVisible="{Binding HasHandledAt}" />
-
+          Text="{Binding Incident.HandledAt, StringFormat='Afgehandeld op: {0:dd MMM yyyy}'}"
+          FontSize="14"
+          IsVisible="{Binding HasHandledAt}" />
 
                 <!-- Photos -->
                 <CollectionView
@@ -52,14 +67,33 @@
                     </CollectionView.ItemTemplate>
                 </CollectionView>
 
-                <!--map-->
+                <!-- Map -->
                 <views:MapView
-                HeightRequest="200"
-                PinItems="{Binding PinItems}"
-                ShowUserLocation="False" 
-                IsPinSelectionEnabled="False"/>
+          HeightRequest="200"
+          PinItems="{Binding PinItems}"
+          ShowUserLocation="False"
+          IsPinSelectionEnabled="False" />
 
             </VerticalStackLayout>
         </ScrollView>
+
+        <!-- Save/Delete buttons -->
+        <HorizontalStackLayout
+      Grid.Row="2"
+      Spacing="20"
+      Padding="0,10"
+      HorizontalOptions="Center">
+            <Button
+        Text="Opslaan"
+        Command="{Binding SaveIncidentCommand}"
+        WidthRequest="120" />
+            <Button
+        Text="Verwijderen"
+        Command="{Binding DeleteIncidentCommand}"
+        BackgroundColor="Transparent"
+        TextColor="Red"
+        WidthRequest="120" />
+        </HorizontalStackLayout>
+
     </Grid>
 </ContentPage>

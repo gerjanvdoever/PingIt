@@ -14,7 +14,6 @@
             <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <!-- Square Back Button -->
         <Button
         x:Name="BackButton"
         Grid.Column="0"
@@ -30,7 +29,6 @@
         BackgroundColor="Transparent"
         TextColor="{AppThemeBinding Light=Black, Dark=White}" />
 
-        <!-- Centered Title -->
         <Label
         Grid.Column="1"
         VerticalOptions="Center"
