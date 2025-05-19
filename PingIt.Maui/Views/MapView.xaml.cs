@@ -11,7 +11,6 @@ namespace PingIt.Maui.Views
 {
     public partial class MapView : ContentView
     {
-        // 1) Pins to display
         public static readonly BindableProperty PinItemsProperty =
             BindableProperty.Create(
                 nameof(PinItems),
@@ -20,7 +19,6 @@ namespace PingIt.Maui.Views
                 null,
                 propertyChanged: OnMapDataChanged);
 
-        // 2) Show the blue-dot + auto-center when turned on
         public static readonly BindableProperty ShowUserLocationProperty =
             BindableProperty.Create(
                 nameof(ShowUserLocation),
@@ -30,7 +28,6 @@ namespace PingIt.Maui.Views
                 propertyChanged: (bindable, oldV, newV) =>
                     ((MapView)bindable).OnShowUserLocationChanged((bool)newV));
 
-        // 3) Two-way tap-to-pick
         public static readonly BindableProperty SelectedLocationProperty =
             BindableProperty.Create(
                 nameof(SelectedLocation),
@@ -40,7 +37,6 @@ namespace PingIt.Maui.Views
                 BindingMode.TwoWay,
                 propertyChanged: OnMapDataChanged);
 
-        // 4) Enable/disable tap-to-add
         public static readonly BindableProperty IsPinSelectionEnabledProperty =
             BindableProperty.Create(
                 nameof(IsPinSelectionEnabled),
@@ -48,7 +44,6 @@ namespace PingIt.Maui.Views
                 typeof(MapView),
                 true);
 
-        // 5) Map style
         public static readonly BindableProperty MapTypeProperty =
             BindableProperty.Create(
                 nameof(MapType),
@@ -89,31 +84,22 @@ namespace PingIt.Maui.Views
             set => SetValue(MapTypeProperty, value);
         }
 
-        // Whenever PinItems or SelectedLocation changes, rebuild pins:
         static void OnMapDataChanged(BindableObject bindable, object oldVal, object newVal)
             => ((MapView)bindable).UpdatePins();
 
-        // Whenever MapType changes (e.g. Street→Satellite):
         static void OnMapTypeChanged(BindableObject bindable, object oldVal, object newVal)
         {
             if (bindable is MapView mv && mv.InternalMap != null && newVal is MapType mt)
                 mv.InternalMap.MapType = mt;
         }
 
-        /// <summary>
-        /// Called when ShowUserLocation toggles.
-        /// Shows/hides the blue dot (IsShowingUser) and, if true,
-        /// centers the map on the device’s current location.
-        /// </summary>
         private async void OnShowUserLocationChanged(bool show)
         {
             if (InternalMap == null)
                 return;
 
-            // 1) Toggle the blue dot
             InternalMap.IsShowingUser = show;
 
-            // 2) If turning on, fetch & center on the GPS
             if (show)
             {
                 try
@@ -140,21 +126,15 @@ namespace PingIt.Maui.Views
             }
         }
 
-        /// <summary>
-        /// Rebuilds all pins (PinItems + SelectedLocation) and recenters.
-        /// </summary>
         private void UpdatePins()
         {
             if (InternalMap == null)
                 return;
 
-            // Ensure correct map style
             InternalMap.MapType = MapType;
 
-            // Clear old pins
             InternalMap.Pins.Clear();
 
-            // 1) Add all PinItems
             if (PinItems != null)
             {
                 foreach (var dto in PinItems)
@@ -167,7 +147,6 @@ namespace PingIt.Maui.Views
                     });
                 }
 
-                // Center on the first
                 var first = PinItems.FirstOrDefault();
                 if (first != null)
                 {
@@ -177,7 +156,6 @@ namespace PingIt.Maui.Views
                 }
             }
 
-            // 2) Overlay the SelectedLocation pin
             if (SelectedLocation != null)
             {
                 var sel = new Location(
@@ -196,10 +174,6 @@ namespace PingIt.Maui.Views
             }
         }
 
-        /// <summary>
-        /// Handles taps on the map: if selection is enabled,
-        /// updates SelectedLocation (and thus drops a pin).
-        /// </summary>
         void HandleMapClicked(object sender, MapClickedEventArgs e)
         {
             if (!IsPinSelectionEnabled)

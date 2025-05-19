@@ -44,7 +44,6 @@ namespace PingIt.Maui.ViewModels
 
             try
             {
-                // 1. Ask for Location permission
                 var status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();
                 if (status != PermissionStatus.Granted)
                 {
@@ -55,7 +54,6 @@ namespace PingIt.Maui.ViewModels
                     return;
                 }
 
-                // 2. Get last known or fresh location
                 var result = await Geolocation.GetLastKnownLocationAsync()
                            ?? await Geolocation.GetLocationAsync(
                                  new GeolocationRequest(
@@ -69,7 +67,6 @@ namespace PingIt.Maui.ViewModels
                         Latitude = (decimal)result.Latitude,
                         Longitude = (decimal)result.Longitude
                     };
-                    // show the blue-dot too
                     ShowUserLocation = true;
                 }
             }
@@ -97,6 +94,15 @@ namespace PingIt.Maui.ViewModels
             if (status != PermissionStatus.Granted)
             {
                 await Shell.Current.DisplayAlert("Permissie geweigerd", "Camera toegang is vereist.", "OK");
+                return;
+            }
+
+            var photoStatus = await Permissions.RequestAsync<Permissions.Photos>();
+            if (photoStatus != PermissionStatus.Granted)
+            {
+                await Shell.Current.DisplayAlert("Permission Denied",
+                                                  "Gallery access is required to choose a photo.",
+                                                  "OK");
                 return;
             }
 
@@ -131,8 +137,10 @@ namespace PingIt.Maui.ViewModels
 
                 if (result != null)
                 {
-                    string savedPath = await SavePhotoAsync(result);
-                    Photos.Add(ImageSource.FromFile(savedPath));
+                    var stream = await result.OpenReadAsync();
+                    var UploadPath = await UploadLocalAsync(result.FileName, stream);
+                    var imageSource = ImageSource.FromFile(UploadPath);
+                    Photos.Add(imageSource);
                 }
             }
             catch (Exception ex)
@@ -146,19 +154,15 @@ namespace PingIt.Maui.ViewModels
             }
         }
 
-        private async Task<string> SavePhotoAsync(FileResult photo)
+        private async Task<string> UploadLocalAsync(string fileName, Stream stream)
         {
-            var localFilePath = Path.Combine(
-                FileSystem.CacheDirectory,
-                photo.FileName);
+            var LocalPath = Path.Combine(FileSystem.AppDataDirectory, fileName);
+            using var fileStream = new FileStream(LocalPath, FileMode.Create, FileAccess.Write);
+            await stream.CopyToAsync(fileStream);
 
-            using Stream sourceStream = await photo.OpenReadAsync();
-            using FileStream destStream = File.OpenWrite(localFilePath);
-
-            await sourceStream.CopyToAsync(destStream);
-
-            return localFilePath;
+            return LocalPath;
         }
+           
 
         [RelayCommand(CanExecute = nameof(IsNotBusy))]
         private void Send()

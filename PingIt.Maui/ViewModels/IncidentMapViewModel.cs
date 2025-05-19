@@ -17,9 +17,6 @@ namespace PingIt.Maui.ViewModels
         private readonly TokenStorageService _tokenStorage;
         private readonly ILogger<IncidentMapViewModel> _logger;
 
-        /// <summary>
-        /// Pins to show on the map (bound to MapView.PinItems).
-        /// </summary>
         [ObservableProperty]
         private ObservableCollection<LocationDto> pinItems = new();
 
@@ -41,13 +38,9 @@ namespace PingIt.Maui.ViewModels
             _tokenStorage = tokenStorage;
             _logger = logger;
 
-            // Kick off the load immediately (or you can call from OnAppearing)
             _ = LoadIncidentsAsync();
         }
 
-        /// <summary>
-        /// Fetches the active incidents and assigns a NEW collection to PinItems.
-        /// </summary>
         [RelayCommand]
         public async Task LoadIncidentsAsync()
         {
