@@ -73,7 +73,7 @@ public partial class IncidentListViewModel : ObservableObject
             }
 
             var result = await response.Content.ReadFromJsonAsync<List<IncidentDto>>();
-            Incidents = new ObservableCollection<IncidentDto>(result ?? []);
+            Incidents = new ObservableCollection<IncidentDto>(result ?? new List<IncidentDto>());
         }
         catch (Exception ex)
         {
@@ -102,7 +102,7 @@ public partial class IncidentListViewModel : ObservableObject
             StatusMessage = string.Empty;
 
             int userId = _tokenStorage.UserId.Value;
-            var response = await _httpClient.GetAsync($"api/incident/worker/{userId}");
+            var response = await _httpClient.GetAsync($"api/incident/worker/{userId}/closed");
 
             if (!response.IsSuccessStatusCode)
             {
@@ -112,7 +112,7 @@ public partial class IncidentListViewModel : ObservableObject
             }
 
             var result = await response.Content.ReadFromJsonAsync<List<IncidentDto>>();
-            closedIncidents = new ObservableCollection<IncidentDto>(result ?? []);
+            ClosedIncidents = new ObservableCollection<IncidentDto>(result ?? new List<IncidentDto>());
         }
         catch (Exception ex)
         {

@@ -12,11 +12,10 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <!-- Map: bind PinItems -->
+        <!-- Map -->
         <views:MapView
       Grid.Row="0"
       PinItems="{Binding PinItems}"
-      ShowUserLocation="True"
       IsPinSelectionEnabled="False" />
         <views:BottomNavBar
       Grid.Row="1"

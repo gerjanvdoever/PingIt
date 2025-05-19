@@ -58,7 +58,8 @@ namespace PingIt.Maui.ViewModels
         {
             var dto = new IncidentStatusUpdateDto
             {
-                NewStatus = SelectedStatus
+                NewStatus = SelectedStatus,
+                Notes = Incident.Notes
             };
 
             try
@@ -70,7 +71,8 @@ namespace PingIt.Maui.ViewModels
                 {
                     Incident.Status = SelectedStatus;
                     OnPropertyChanged(nameof(Incident));
-                    await Toast.Make("Status updated", ToastDuration.Short).Show();
+
+                    await Toast.Make("Status and notes saved", ToastDuration.Short).Show();
                 }
                 else
                 {

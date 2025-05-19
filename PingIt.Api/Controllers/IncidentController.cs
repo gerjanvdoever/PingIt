@@ -90,7 +90,7 @@ namespace PingIt.Api.Controllers
         }
 
         // GET: api/incidents/worker/{workerId}/closed
-        [HttpGet("worker/{workerId}")]
+        [HttpGet("worker/{workerId}/closed")]
         [Authorize(Roles = "Worker, Administrator")]
         public async Task<ActionResult<List<IncidentDto>>> GetClosedIncidentsByWorkerId(int workerId)
         {
