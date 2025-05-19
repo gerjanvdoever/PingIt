@@ -16,6 +16,7 @@
         <views:MapView
       Grid.Row="0"
       PinItems="{Binding PinItems}"
+      ShowUserLocation="True"
       IsPinSelectionEnabled="False" />
         <views:BottomNavBar
       Grid.Row="1"

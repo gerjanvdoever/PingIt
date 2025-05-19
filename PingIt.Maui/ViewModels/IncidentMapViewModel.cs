@@ -72,7 +72,7 @@ namespace PingIt.Maui.ViewModels
                     .ReadFromJsonAsync<List<IncidentDto>>()
                     ?? new List<IncidentDto>();
 
-                pinItems = new ObservableCollection<LocationDto>(
+                PinItems = new ObservableCollection<LocationDto>(
                     incidents.Select(inc => new LocationDto
                     {
                         Latitude = inc.Latitude,

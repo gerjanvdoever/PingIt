@@ -52,7 +52,19 @@ namespace PingIt.Maui.Views
                 MapType.Street,
                 propertyChanged: OnMapTypeChanged);
 
-        public MapView() => InitializeComponent();
+        public MapView()
+        {
+            InitializeComponent();
+
+            // Ensure the map is initialized after the component is loaded
+            this.Loaded += OnMapViewLoaded;
+        }
+
+        private void OnMapViewLoaded(object sender, EventArgs e)
+        {
+            // Retry updating pins once the view is fully loaded
+            UpdatePins();
+        }
 
         public IEnumerable<LocationDto>? PinItems
         {
@@ -85,7 +97,14 @@ namespace PingIt.Maui.Views
         }
 
         static void OnMapDataChanged(BindableObject bindable, object oldVal, object newVal)
-            => ((MapView)bindable).UpdatePins();
+        {
+            if (bindable is MapView mapView)
+            {
+                // Add some debugging
+                System.Diagnostics.Debug.WriteLine($"[MapView] OnMapDataChanged called. PinItems count: {mapView.PinItems?.Count() ?? 0}");
+                mapView.UpdatePins();
+            }
+        }
 
         static void OnMapTypeChanged(BindableObject bindable, object oldVal, object newVal)
         {
@@ -96,7 +115,10 @@ namespace PingIt.Maui.Views
         private async void OnShowUserLocationChanged(bool show)
         {
             if (InternalMap == null)
+            {
+                System.Diagnostics.Debug.WriteLine("[MapView] InternalMap is null in OnShowUserLocationChanged");
                 return;
+            }
 
             InternalMap.IsShowingUser = show;
 
@@ -119,7 +141,6 @@ namespace PingIt.Maui.Views
                 }
                 catch (Exception ex)
                 {
-                    // handle or log (e.g. permission denied)
                     System.Diagnostics.Debug.WriteLine(
                         $"[MapView] Unable to get user location: {ex}");
                 }
@@ -129,30 +150,80 @@ namespace PingIt.Maui.Views
         private void UpdatePins()
         {
             if (InternalMap == null)
+            {
+                System.Diagnostics.Debug.WriteLine("[MapView] InternalMap is null in UpdatePins - deferring update");
+                // If the map isn't ready yet, try again after a short delay  
+                Dispatcher.Dispatch(async () =>
+                {
+                    await Task.Delay(100);
+                    if (InternalMap != null)
+                        UpdatePins();
+                });
                 return;
+            }
+
+            System.Diagnostics.Debug.WriteLine($"[MapView] UpdatePins called. Current pins: {InternalMap.Pins.Count}");
 
             InternalMap.MapType = MapType;
-
             InternalMap.Pins.Clear();
 
             if (PinItems != null)
             {
-                foreach (var dto in PinItems)
+                var pinItemsList = PinItems.ToList();
+                System.Diagnostics.Debug.WriteLine($"[MapView] Adding {pinItemsList.Count} pins");
+
+                foreach (var dto in pinItemsList)
                 {
-                    InternalMap.Pins.Add(new Pin
+                    try
                     {
-                        Label = dto.Label ?? "Location",
-                        Location = new Location((double)dto.Latitude, (double)dto.Longitude),
-                        Type = PinType.Place
-                    });
+                        var pin = new Pin
+                        {
+                            Label = dto.Label ?? "Location",
+                            Location = new Location((double)dto.Latitude, (double)dto.Longitude),
+                            Type = PinType.Place
+                        };
+                        InternalMap.Pins.Add(pin);
+                        System.Diagnostics.Debug.WriteLine($"[MapView] Added pin: {pin.Label} at {pin.Location.Latitude}, {pin.Location.Longitude}");
+                    }
+                    catch (Exception ex)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"[MapView] Error adding pin for {dto.Label}: {ex}");
+                    }
                 }
 
-                var first = PinItems.FirstOrDefault();
-                if (first != null)
+                System.Diagnostics.Debug.WriteLine($"[MapView] Total pins added: {InternalMap.Pins.Count}");
+
+                // Move to show all pins if we have multiple, or center on the first one  
+                if (pinItemsList.Count > 1)
                 {
+                    // Calculate bounds to show all pins  
+                    var latitudes = pinItemsList.Select(p => (double)p.Latitude);
+                    var longitudes = pinItemsList.Select(p => (double)p.Longitude);
+
+                    var minLat = latitudes.Min();
+                    var maxLat = latitudes.Max();
+                    var minLng = longitudes.Min();
+                    var maxLng = longitudes.Max();
+
+                    var centerLat = (minLat + maxLat) / 2;
+                    var centerLng = (minLng + maxLng) / 2;
+
+                    // Calculate appropriate zoom level  
+                    var latDelta = Math.Max(maxLat - minLat, 0.01); // Minimum delta for zoom  
+                    var lngDelta = Math.Max(maxLng - minLng, 0.01);
+                    var maxDelta = Math.Max(latDelta, lngDelta);
+
+                    var center = new Location(centerLat, centerLng);
+                    var radius = Distance.FromMeters(maxDelta * 111000 / 2); // Rough conversion from degrees to meters  
+
+                    InternalMap.MoveToRegion(MapSpan.FromCenterAndRadius(center, radius));
+                }
+                else if (pinItemsList.Count == 1)
+                {
+                    var first = pinItemsList.First();
                     var loc = new Location((double)first.Latitude, (double)first.Longitude);
                     InternalMap.MoveToRegion(
-                        MapSpan.FromCenterAndRadius(loc, Distance.FromMeters(500)));
+                        MapSpan.FromCenterAndRadius(loc, Distance.FromMeters(1000)));
                 }
             }
 
@@ -162,15 +233,18 @@ namespace PingIt.Maui.Views
                     (double)SelectedLocation.Latitude,
                     (double)SelectedLocation.Longitude);
 
-                InternalMap.Pins.Add(new Pin
+                var selectedPin = new Pin
                 {
                     Label = "Selected",
                     Location = sel,
                     Type = PinType.Place
-                });
+                };
+                InternalMap.Pins.Add(selectedPin);
+
+                System.Diagnostics.Debug.WriteLine($"[MapView] Added selected pin at {sel.Latitude}, {sel.Longitude}");
 
                 InternalMap.MoveToRegion(
-                    MapSpan.FromCenterAndRadius(sel, Distance.FromMeters(500)));
+                    MapSpan.FromCenterAndRadius(sel, Distance.FromMeters(1000)));
             }
         }
 
