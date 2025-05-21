@@ -16,8 +16,10 @@
         <views:MapView
       Grid.Row="0"
       PinItems="{Binding PinItems}"
+      SelectedLocation="{Binding SelectedLocation, Mode=TwoWay}"
       ShowUserLocation="True"
-      IsPinSelectionEnabled="False" />
+      IsPinSelectionEnabled="False"
+      AllowDetailNavigation="True"/>
         <views:BottomNavBar
       Grid.Row="1"
       CurrentPage="IncidentMapPage"

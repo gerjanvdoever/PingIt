@@ -37,6 +37,13 @@ namespace PingIt.Maui.Views
                 BindingMode.TwoWay,
                 propertyChanged: OnMapDataChanged);
 
+        public static readonly BindableProperty AllowDetailNavigationProperty =
+            BindableProperty.Create(
+                nameof(AllowDetailNavigation),
+                typeof(bool),
+                typeof(MapView),
+                true);
+
         public static readonly BindableProperty IsPinSelectionEnabledProperty =
             BindableProperty.Create(
                 nameof(IsPinSelectionEnabled),
@@ -82,6 +89,11 @@ namespace PingIt.Maui.Views
         {
             get => (LocationDto?)GetValue(SelectedLocationProperty);
             set => SetValue(SelectedLocationProperty, value);
+        }
+        public bool AllowDetailNavigation
+        {
+            get => (bool)GetValue(AllowDetailNavigationProperty);
+            set => SetValue(AllowDetailNavigationProperty, value);
         }
 
         public bool IsPinSelectionEnabled
@@ -182,7 +194,20 @@ namespace PingIt.Maui.Views
                             Location = new Location((double)dto.Latitude, (double)dto.Longitude),
                             Type = PinType.Place
                         };
-                        
+
+                        // first tap on marker
+                        pin.MarkerClicked += (s, args) =>
+                        {
+                            args.HideInfoWindow = false;
+                        };
+
+                        // second tap on the bubble
+                        pin.InfoWindowClicked += (s, args) =>
+                        {
+                            if (AllowDetailNavigation)
+                                SelectedLocation = dto;
+                        };
+
                         InternalMap.Pins.Add(pin);
                         System.Diagnostics.Debug.WriteLine($"[MapView] Added pin: {pin.Label} at {pin.Location.Latitude}, {pin.Location.Longitude}");
                     }

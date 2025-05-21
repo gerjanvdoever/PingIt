@@ -7,6 +7,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
 using PingIt.Maui.Services;
+using PingIt.Maui.Views;
 using PingIt.Shared.Dtos;
 
 namespace PingIt.Maui.ViewModels
@@ -16,6 +17,8 @@ namespace PingIt.Maui.ViewModels
         private readonly HttpClient _httpClient;
         private readonly TokenStorageService _tokenStorage;
         private readonly ILogger<IncidentMapViewModel> _logger;
+        private readonly IIncidentStore _store;
+        private List<IncidentDto> _incidents = new();
 
         [ObservableProperty]
         private ObservableCollection<LocationDto> pinItems = new();
@@ -32,11 +35,13 @@ namespace PingIt.Maui.ViewModels
         public IncidentMapViewModel(
             IHttpClientFactory factory,
             TokenStorageService tokenStorage,
-            ILogger<IncidentMapViewModel> logger)
+            ILogger<IncidentMapViewModel> logger,
+            IIncidentStore store)
         {
             _httpClient = factory.CreateClient("AuthenticatedClient");
             _tokenStorage = tokenStorage;
             _logger = logger;
+            _store = store;
 
             _ = LoadIncidentsAsync();
         }
@@ -71,13 +76,15 @@ namespace PingIt.Maui.ViewModels
                 var incidents = await response.Content
                     .ReadFromJsonAsync<List<IncidentDto>>()
                     ?? new List<IncidentDto>();
+                _incidents = incidents;
 
                 PinItems = new ObservableCollection<LocationDto>(
                     incidents.Select(inc => new LocationDto
                     {
                         Latitude = inc.Latitude,
                         Longitude = inc.Longitude,
-                        Label = inc.Title
+                        Label = inc.Title,
+                        Id = inc.Id
                     }));
             }
             catch (Exception ex)
@@ -89,6 +96,31 @@ namespace PingIt.Maui.ViewModels
             {
                 IsLoading = false;
             }
+        }
+
+        partial void OnSelectedLocationChanged(LocationDto? newLocation)
+            => _ = HandleLocationChangedAsync(newLocation);
+
+        private async Task HandleLocationChangedAsync(LocationDto? location)
+        {
+            if (location == null)
+                return;
+
+            // look up the full IncidentDto by the Id you carried through
+            var inc = _incidents
+                .FirstOrDefault(i => i.Id == location.Id);
+
+            if (inc is null)
+                return;
+
+            // push into your shared store
+            _store.SelectedIncident = inc;
+
+            // navigate
+            await Shell.Current.GoToAsync(nameof(IncidentDetailPage));
+
+            // reset SelectedLocation so another tap on the same pin will fire again
+            SelectedLocation = null;
         }
     }
 }
