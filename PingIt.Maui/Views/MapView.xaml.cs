@@ -1,6 +1,39 @@
-﻿using System;
+﻿// -----------------------------------------------------------------------------
+// <summary>
+//   MapView is a reusable MAUI component for displaying a map with pins
+//   based on a collection of LocationDto items, and optionally showing
+//   and centering on the user's current location. On initialization, the map
+//   will center on pins if any are provided, even when ShowUserLocation is enabled.
+//
+//   Usage Guide:
+//     1. Add the namespace to your XAML page:
+//        xmlns:views="clr-namespace:PingIt.Maui.Views;assembly=PingIt.Maui"
+//
+//     2. Declare the MapView in your page's layout:
+//        <views:MapView
+//           PinItems="{Binding YourLocationsCollection}"
+//           ShowUserLocation="True"
+//           SelectedLocation="{Binding SelectedLocation, Mode=TwoWay}"
+//           AllowDetailNavigation="True"
+//           IsPinSelectionEnabled="True"
+//           MapType="Street" />
+//
+//     3. In your ViewModel, expose:
+//         - IEnumerable<LocationDto> YourLocationsCollection
+//         - LocationDto SelectedLocation (TwoWay binding)
+//
+//     4. Handle selection changes to navigate or update UI when
+//        SelectedLocation is set.
+//
+//   The control will automatically update pins when PinItems
+//   or SelectedLocation changes, and on first location update it
+//   prioritizes pin centering over user location centering.
+// </summary>
+// -----------------------------------------------------------------------------
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Maui.Devices.Sensors;
 using Microsoft.Maui.Controls;
 using Microsoft.Maui.Controls.Maps;
@@ -59,18 +92,21 @@ namespace PingIt.Maui.Views
                 MapType.Street,
                 propertyChanged: OnMapTypeChanged);
 
+        private bool _isListening;
+        private bool _firstLocationUpdate = true;
+
         public MapView()
         {
             InitializeComponent();
-
-            // Ensure the map is initialized after the component is loaded
             this.Loaded += OnMapViewLoaded;
         }
 
         private void OnMapViewLoaded(object sender, EventArgs e)
         {
-            // Retry updating pins once the view is fully loaded
+            // Initial pin setup and centering
             UpdatePins();
+            // Reset flag so first location update won't override pin centering
+            _firstLocationUpdate = true;
         }
 
         public IEnumerable<LocationDto>? PinItems
@@ -90,6 +126,7 @@ namespace PingIt.Maui.Views
             get => (LocationDto?)GetValue(SelectedLocationProperty);
             set => SetValue(SelectedLocationProperty, value);
         }
+
         public bool AllowDetailNavigation
         {
             get => (bool)GetValue(AllowDetailNavigationProperty);
@@ -108,14 +145,11 @@ namespace PingIt.Maui.Views
             set => SetValue(MapTypeProperty, value);
         }
 
-        private bool _isListening;
-
         static void OnMapDataChanged(BindableObject bindable, object oldVal, object newVal)
         {
             if (bindable is MapView mapView)
             {
-                // Add some debugging
-                System.Diagnostics.Debug.WriteLine($"[MapView] OnMapDataChanged called. PinItems count: {mapView.PinItems?.Count() ?? 0}");
+                System.Diagnostics.Debug.WriteLine($"[MapView] Data changed. Pins: {mapView.PinItems?.Count() ?? 0}");
                 mapView.UpdatePins();
             }
         }
@@ -128,32 +162,61 @@ namespace PingIt.Maui.Views
 
         private async void OnShowUserLocationChanged(bool show)
         {
-            if (InternalMap == null) return;
+            if (InternalMap == null)
+                return;
 
             InternalMap.IsShowingUser = show;
 
             if (show && !_isListening)
             {
-                // 1) Subscribe
+                // 1) pre‐emptively mark as listening so re‐entrant calls won't jump in
+                _isListening = true;
+
+                // 2) wire up the event
                 Geolocation.Default.LocationChanged += OnLocationChanged;
-                // 2) Start listening (fires events while in foreground)
+
                 var request = new GeolocationListeningRequest(
                     GeolocationAccuracy.Best,
-                    TimeSpan.FromSeconds(1)); // adjust as needed
-                _isListening = await Geolocation.Default.StartListeningForegroundAsync(request);
+                    TimeSpan.FromSeconds(1));
+
+                try
+                {
+                    // this will throw if already listening
+                    await Geolocation.Default.StartListeningForegroundAsync(request);
+                }
+                catch (InvalidOperationException ioe)
+                {
+                    // MAUI complains "Already listening to location changes." — we can safely ignore
+                    System.Diagnostics.Debug.WriteLine($"[MapView] StartListening skipped: {ioe.Message}");
+                }
+                catch (Exception ex)
+                {
+                    // anything else: unwind our state so we don’t think we’re listening
+                    System.Diagnostics.Debug.WriteLine($"[MapView] Failed to start listening: {ex}");
+                    Geolocation.Default.LocationChanged -= OnLocationChanged;
+                    _isListening = false;
+                }
             }
             else if (!show && _isListening)
             {
-                // Stop listening
+                // stop listening and unwind
                 Geolocation.Default.LocationChanged -= OnLocationChanged;
                 Geolocation.Default.StopListeningForeground();
                 _isListening = false;
             }
         }
 
+
         private void OnLocationChanged(object sender, GeolocationLocationChangedEventArgs e)
         {
-            // 3) Re-center map on new user location
+            // Skip first update if we have pins to preserve initial centering
+            if (_firstLocationUpdate && PinItems != null && PinItems.Any())
+            {
+                _firstLocationUpdate = false;
+                return;
+            }
+            _firstLocationUpdate = false;
+
             var userLoc = e.Location;
             MainThread.BeginInvokeOnMainThread(() =>
             {
@@ -167,8 +230,6 @@ namespace PingIt.Maui.Views
         {
             if (InternalMap == null)
             {
-                System.Diagnostics.Debug.WriteLine("[MapView] InternalMap is null in UpdatePins - deferring update");
-                // If the map isn't ready yet, try again after a short delay  
                 Dispatcher.Dispatch(async () =>
                 {
                     await Task.Delay(100);
@@ -178,17 +239,13 @@ namespace PingIt.Maui.Views
                 return;
             }
 
-            System.Diagnostics.Debug.WriteLine($"[MapView] UpdatePins called. Current pins: {InternalMap.Pins.Count}");
-
             InternalMap.MapType = MapType;
             InternalMap.Pins.Clear();
 
             if (PinItems != null)
             {
-                var pinItemsList = PinItems.ToList();
-                System.Diagnostics.Debug.WriteLine($"[MapView] Adding {pinItemsList.Count} pins");
-
-                foreach (var dto in pinItemsList)
+                var list = PinItems.ToList();
+                foreach (var dto in list)
                 {
                     try
                     {
@@ -198,91 +255,50 @@ namespace PingIt.Maui.Views
                             Location = new Location((double)dto.Latitude, (double)dto.Longitude),
                             Type = PinType.Place
                         };
-
-                        // first tap on marker
-                        pin.MarkerClicked += (s, args) =>
-                        {
-                            args.HideInfoWindow = false;
-                        };
-
-                        // second tap on the bubble
+                        pin.MarkerClicked += (s, args) => args.HideInfoWindow = false;
                         pin.InfoWindowClicked += (s, args) =>
                         {
                             if (AllowDetailNavigation)
                                 SelectedLocation = dto;
                         };
-
                         InternalMap.Pins.Add(pin);
-                        System.Diagnostics.Debug.WriteLine($"[MapView] Added pin: {pin.Label} at {pin.Location.Latitude}, {pin.Location.Longitude}");
                     }
-                    catch (Exception ex)
-                    {
-                        System.Diagnostics.Debug.WriteLine($"[MapView] Error adding pin for {dto.Label}: {ex}");
-                    }
+                    catch { }
                 }
 
-                System.Diagnostics.Debug.WriteLine($"[MapView] Total pins added: {InternalMap.Pins.Count}");
-
-                // Move to show all pins if we have multiple, or center on the first one  
-                if (pinItemsList.Count > 1)
+                // Center on all pins or single pin
+                if (list.Count > 1)
                 {
-                    // Calculate bounds to show all pins  
-                    var latitudes = pinItemsList.Select(p => (double)p.Latitude);
-                    var longitudes = pinItemsList.Select(p => (double)p.Longitude);
-
-                    var minLat = latitudes.Min();
-                    var maxLat = latitudes.Max();
-                    var minLng = longitudes.Min();
-                    var maxLng = longitudes.Max();
-
+                    var minLat = list.Min(p => (double)p.Latitude);
+                    var maxLat = list.Max(p => (double)p.Latitude);
+                    var minLng = list.Min(p => (double)p.Longitude);
+                    var maxLng = list.Max(p => (double)p.Longitude);
                     var centerLat = (minLat + maxLat) / 2;
                     var centerLng = (minLng + maxLng) / 2;
-
-                    // Calculate appropriate zoom level  
-                    var latDelta = Math.Max(maxLat - minLat, 0.01); // Minimum delta for zoom  
-                    var lngDelta = Math.Max(maxLng - minLng, 0.01);
-                    var maxDelta = Math.Max(latDelta, lngDelta);
-
+                    var delta = Math.Max(maxLat - minLat, maxLng - minLng);
                     var center = new Location(centerLat, centerLng);
-                    var radius = Distance.FromMeters(maxDelta * 111000 / 2); // Rough conversion from degrees to meters  
-
+                    var radius = Distance.FromMeters(delta * 111000 / 2);
                     InternalMap.MoveToRegion(MapSpan.FromCenterAndRadius(center, radius));
                 }
-                else if (pinItemsList.Count == 1)
+                else if (list.Count == 1)
                 {
-                    var first = pinItemsList.First();
-                    var loc = new Location((double)first.Latitude, (double)first.Longitude);
-                    InternalMap.MoveToRegion(
-                        MapSpan.FromCenterAndRadius(loc, Distance.FromMeters(1000)));
+                    var dto = list[0];
+                    var loc = new Location((double)dto.Latitude, (double)dto.Longitude);
+                    InternalMap.MoveToRegion(MapSpan.FromCenterAndRadius(loc, Distance.FromMeters(1000)));
                 }
             }
 
             if (SelectedLocation != null)
             {
-                var sel = new Location(
-                    (double)SelectedLocation.Latitude,
-                    (double)SelectedLocation.Longitude);
-
-                var selectedPin = new Pin
-                {
-                    Label = "Selected",
-                    Location = sel,
-                    Type = PinType.Place
-                };
-                InternalMap.Pins.Add(selectedPin);
-
-                System.Diagnostics.Debug.WriteLine($"[MapView] Added selected pin at {sel.Latitude}, {sel.Longitude}");
-
-                InternalMap.MoveToRegion(
-                    MapSpan.FromCenterAndRadius(sel, Distance.FromMeters(1000)));
+                var sel = new Location((double)SelectedLocation.Latitude, (double)SelectedLocation.Longitude);
+                InternalMap.Pins.Add(new Pin { Label = "Selected", Location = sel, Type = PinType.Place });
+                InternalMap.MoveToRegion(MapSpan.FromCenterAndRadius(sel, Distance.FromMeters(1000)));
             }
         }
 
         void HandleMapClicked(object sender, MapClickedEventArgs e)
         {
-            if (!IsPinSelectionEnabled)
-                return;
-
+            if (!IsPinSelectionEnabled) return;
             SelectedLocation = new LocationDto
             {
                 Latitude = (decimal)e.Location.Latitude,
