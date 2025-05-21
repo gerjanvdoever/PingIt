@@ -108,6 +108,8 @@ namespace PingIt.Maui.Views
             set => SetValue(MapTypeProperty, value);
         }
 
+        private bool _isListening;
+
         static void OnMapDataChanged(BindableObject bindable, object oldVal, object newVal)
         {
             if (bindable is MapView mapView)
@@ -126,37 +128,39 @@ namespace PingIt.Maui.Views
 
         private async void OnShowUserLocationChanged(bool show)
         {
-            if (InternalMap == null)
-            {
-                System.Diagnostics.Debug.WriteLine("[MapView] InternalMap is null in OnShowUserLocationChanged");
-                return;
-            }
+            if (InternalMap == null) return;
 
             InternalMap.IsShowingUser = show;
 
-            if (show)
+            if (show && !_isListening)
             {
-                try
-                {
-                    var gps = await Geolocation.GetLastKnownLocationAsync()
-                           ?? await Geolocation.GetLocationAsync(
-                                 new GeolocationRequest(
-                                    GeolocationAccuracy.Medium,
-                                    TimeSpan.FromSeconds(10)));
-
-                    if (gps is not null)
-                    {
-                        var center = new Location(gps.Latitude, gps.Longitude);
-                        InternalMap.MoveToRegion(
-                            MapSpan.FromCenterAndRadius(center, Distance.FromMeters(500)));
-                    }
-                }
-                catch (Exception ex)
-                {
-                    System.Diagnostics.Debug.WriteLine(
-                        $"[MapView] Unable to get user location: {ex}");
-                }
+                // 1) Subscribe
+                Geolocation.Default.LocationChanged += OnLocationChanged;
+                // 2) Start listening (fires events while in foreground)
+                var request = new GeolocationListeningRequest(
+                    GeolocationAccuracy.Best,
+                    TimeSpan.FromSeconds(1)); // adjust as needed
+                _isListening = await Geolocation.Default.StartListeningForegroundAsync(request);
             }
+            else if (!show && _isListening)
+            {
+                // Stop listening
+                Geolocation.Default.LocationChanged -= OnLocationChanged;
+                Geolocation.Default.StopListeningForeground();
+                _isListening = false;
+            }
+        }
+
+        private void OnLocationChanged(object sender, GeolocationLocationChangedEventArgs e)
+        {
+            // 3) Re-center map on new user location
+            var userLoc = e.Location;
+            MainThread.BeginInvokeOnMainThread(() =>
+            {
+                var center = new Location(userLoc.Latitude, userLoc.Longitude);
+                InternalMap.MoveToRegion(
+                    MapSpan.FromCenterAndRadius(center, Distance.FromMeters(500)));
+            });
         }
 
         private void UpdatePins()
