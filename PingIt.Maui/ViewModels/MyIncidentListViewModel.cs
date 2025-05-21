@@ -1,11 +1,15 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
-using PingIt.Shared.Dtos;
+using Microsoft.Maui.Controls;
 using PingIt.Maui.Services;
-using System.Collections.ObjectModel;
-using System.Net.Http.Json;
 using PingIt.Maui.Views;
+using PingIt.Shared.Dtos;
 
 namespace PingIt.Maui.ViewModels
 {
@@ -42,7 +46,7 @@ namespace PingIt.Maui.ViewModels
         {
             if (_tokenStorage.UserId is null)
             {
-                StatusMessage = "Gebruiker niet ingelogd.";
+                StatusMessage = "User not logged in.";
                 return;
             }
 
@@ -55,7 +59,7 @@ namespace PingIt.Maui.ViewModels
                 var resp = await _httpClient.GetAsync($"api/incident/user/{userId}");
                 if (!resp.IsSuccessStatusCode)
                 {
-                    StatusMessage = "Kan incidenten niet ophalen.";
+                    StatusMessage = "Unable to fetch incidents.";
                     _logger.LogWarning("LoadMyIncidents failed: {StatusCode}", resp.StatusCode);
                     return;
                 }
@@ -65,8 +69,8 @@ namespace PingIt.Maui.ViewModels
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Fout bij ophalen eigen incidenten");
-                StatusMessage = "Er ging iets mis bij het ophalen van incidenten.";
+                _logger.LogError(ex, "Error fetching user's incidents");
+                StatusMessage = "Something went wrong while fetching incidents.";
             }
             finally
             {

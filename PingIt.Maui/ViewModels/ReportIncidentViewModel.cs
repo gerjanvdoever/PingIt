@@ -53,8 +53,8 @@ namespace PingIt.Maui.ViewModels
              || NewIncidentCoord is null)
             {
                 await Shell.Current.DisplayAlert(
-                    "Oeps",
-                    "Zorg dat je ten minste een titel en locatie hebt ingevoerd.",
+                    "Error",
+                    "Please fill in the necessary information.",
                     "OK");
                 return;
             }
@@ -68,7 +68,6 @@ namespace PingIt.Maui.ViewModels
                     Description = Description,
                     Latitude = NewIncidentCoord.Latitude,
                     Longitude = NewIncidentCoord.Longitude,
-                    // only send user ID when we have one
                     CreatedByUserId = _tokenStorage.UserId
                 };
 
@@ -78,13 +77,12 @@ namespace PingIt.Maui.ViewModels
                 if (!incidentResp.IsSuccessStatusCode)
                 {
                     await Shell.Current.DisplayAlert(
-                        "Fout",
-                        "Kon incident niet aanmaken.",
+                        "Error",
+                        "Unable to create incident.",
                         "OK");
                     return;
                 }
 
-                // Read back the created incident (to get its Id)
                 var created = await incidentResp
                     .Content
                     .ReadFromJsonAsync<IncidentDto>();
@@ -92,15 +90,14 @@ namespace PingIt.Maui.ViewModels
                 if (created?.Id == null)
                 {
                     await Shell.Current.DisplayAlert(
-                        "Fout",
-                        "Ontvangen onvolledige data van server.",
+                        "Error",
+                        "Received incomplete data from server.",
                         "OK");
                     return;
                 }
 
                 int incidentId = created.Id;
 
-                // Upload each photo
                 foreach (var img in Photos)
                 {
                     if (img is FileImageSource fis && File.Exists(fis.File))
@@ -108,10 +105,7 @@ namespace PingIt.Maui.ViewModels
                         byte[] bytes = File.ReadAllBytes(fis.File);
                         var base64 = Convert.ToBase64String(bytes);
 
-                        var photoDto = new IncidentPhotoDto
-                        {
-                            PhotoUrl = base64
-                        };
+                        var photoDto = new IncidentPhotoDto { PhotoUrl = base64 };
 
                         var photoResp = await _httpClient
                             .PostAsJsonAsync(
@@ -127,8 +121,8 @@ namespace PingIt.Maui.ViewModels
                 }
 
                 await Shell.Current.DisplayAlert(
-                    "Klaar",
-                    "Incident succesvol verstuurd!",
+                    "Done",
+                    "Incident sent successfully!",
                     "OK");
 
                 await Shell.Current.GoToAsync("..");
@@ -137,8 +131,8 @@ namespace PingIt.Maui.ViewModels
             {
                 Debug.WriteLine($"SendAsync failed: {ex}");
                 await Shell.Current.DisplayAlert(
-                    "Fout",
-                    "Er ging iets mis bij het versturen.",
+                    "Error",
+                    "Something went wrong while sending.",
                     "OK");
             }
             finally
@@ -161,7 +155,7 @@ namespace PingIt.Maui.ViewModels
                 {
                     await Shell.Current.DisplayAlert(
                         "Permission Denied",
-                        "Locatietoegang is vereist om uw positie te bepalen.",
+                        "Location access is required to determine your position.",
                         "OK");
                     return;
                 }
@@ -186,8 +180,8 @@ namespace PingIt.Maui.ViewModels
             {
                 Debug.WriteLine($"UseCurrentLocationAsync failed: {ex}");
                 await Shell.Current.DisplayAlert(
-                    "Fout",
-                    "Kon huidige locatie niet ophalen.",
+                    "Error",
+                    "Could not retrieve current location.",
                     "OK");
             }
             finally
@@ -205,16 +199,20 @@ namespace PingIt.Maui.ViewModels
             var status = await Permissions.RequestAsync<Permissions.Camera>();
             if (status != PermissionStatus.Granted)
             {
-                await Shell.Current.DisplayAlert("Permissie geweigerd", "Camera toegang is vereist.", "OK");
+                await Shell.Current.DisplayAlert(
+                    "Permission Denied",
+                    "Camera access is required.",
+                    "OK");
                 return;
             }
 
             var photoStatus = await Permissions.RequestAsync<Permissions.Photos>();
             if (photoStatus != PermissionStatus.Granted)
             {
-                await Shell.Current.DisplayAlert("Permission Denied",
-                                                  "Gallery access is required to choose a photo.",
-                                                  "OK");
+                await Shell.Current.DisplayAlert(
+                    "Permission Denied",
+                    "Gallery access is required to choose a photo.",
+                    "OK");
                 return;
             }
 
@@ -227,44 +225,44 @@ namespace PingIt.Maui.ViewModels
                 options.Add("Choose Photo");
 
                 var choice = await Shell.Current.DisplayActionSheet(
-                    "Foto toevoegen",
-                    "Annuleer",
+                    "Add Photo",
+                    "Cancel",
                     null,
                     options.ToArray());
 
-                if (choice == "Annuleer") return;
+                if (choice == "Cancel") return;
 
                 FileResult? result = choice switch
                 {
-                    "Take Photo" => await MediaPicker.CapturePhotoAsync(new MediaPickerOptions
-                    {
-                        Title = $"incident_{DateTime.Now:yyyyMMdd_HHmmss}"
-                    }),
-                    "Choose Photo" => await MediaPicker.PickPhotoAsync(new MediaPickerOptions
-                    {
-                        Title = "Select a photo"
-                    }),
+                    "Take Photo" => await MediaPicker.CapturePhotoAsync(
+                                          new MediaPickerOptions { Title = $"incident_{DateTime.Now:yyyyMMdd_HHmmss}" }),
+                    "Choose Photo" => await MediaPicker.PickPhotoAsync(
+                                          new MediaPickerOptions { Title = "Select a photo" }),
                     _ => null
                 };
 
                 if (result != null)
                 {
                     var stream = await result.OpenReadAsync();
-                    var UploadPath = await UploadLocalAsync(result.FileName, stream);
-                    var imageSource = ImageSource.FromFile(UploadPath);
+                    var uploadPath = await UploadLocalAsync(result.FileName, stream);
+                    var imageSource = ImageSource.FromFile(uploadPath);
                     Photos.Add(imageSource);
                 }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"AddPhotoAsync failed: {ex}");
-                await Shell.Current.DisplayAlert("Fout", "Kon de foto niet toevoegen.", "OK");
+                await Shell.Current.DisplayAlert(
+                    "Error",
+                    "Could not add the photo.",
+                    "OK");
             }
             finally
             {
                 IsBusy = false;
             }
         }
+
 
         private async Task<string> UploadLocalAsync(string fileName, Stream stream)
         {

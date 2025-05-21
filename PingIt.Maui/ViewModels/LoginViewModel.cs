@@ -52,7 +52,7 @@ namespace PingIt.Maui.ViewModels
             {
                 if (string.IsNullOrWhiteSpace(Email) || string.IsNullOrWhiteSpace(Password))
                 {
-                    ValidationError = "Vul zowel e-mailadres als wachtwoord in.";
+                    ValidationError = "Please fill in all required fields";
                     return;
                 }
 
@@ -74,12 +74,12 @@ namespace PingIt.Maui.ViewModels
                         }
                         else
                         {
-                            ValidationError = "Inloggen mislukt.";
+                            ValidationError = "Login failed";
                         }
                     }
                     catch
                     {
-                        ValidationError = "Inloggen mislukt.";
+                        ValidationError = "Login failed";
                     }
 
                     return;
@@ -88,7 +88,7 @@ namespace PingIt.Maui.ViewModels
                 var result = await response.Content.ReadFromJsonAsync<LoginResponseDto>();
                 if (result == null || string.IsNullOrEmpty(result.Token))
                 {
-                    ValidationError = "Geen geldig token ontvangen.";
+                    ValidationError = "Didn't receive valid token";
                     return;
                 }
 
@@ -98,7 +98,7 @@ namespace PingIt.Maui.ViewModels
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Login error");
-                ValidationError = "Er trad een fout op tijdens het inloggen.";
+                ValidationError = "Something went wrong when trying to log in.";
             }
             finally
             {

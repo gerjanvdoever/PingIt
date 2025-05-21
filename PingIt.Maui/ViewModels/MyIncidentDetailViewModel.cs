@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Maui.Alerts;
+using Microsoft.Maui.Controls;
 using PingIt.Maui.Services;
 using PingIt.Shared.Dtos;
 using CommunityToolkit.Maui.Core;
@@ -55,16 +56,16 @@ namespace PingIt.Maui.ViewModels
 
                 if (response.IsSuccessStatusCode)
                 {
-                    await Toast.Make("Incident opgeslagen", ToastDuration.Short).Show();
+                    await Toast.Make("Incident saved", ToastDuration.Short).Show();
                 }
                 else
                 {
-                    await Toast.Make($"Opslaan mislukt: {response.StatusCode}", ToastDuration.Long).Show();
+                    await Toast.Make($"Save failed: {response.StatusCode}", ToastDuration.Long).Show();
                 }
             }
             catch (Exception ex)
             {
-                await Toast.Make($"Fout bij opslaan: {ex.Message}", ToastDuration.Long).Show();
+                await Toast.Make($"Error saving: {ex.Message}", ToastDuration.Long).Show();
             }
         }
 
@@ -77,20 +78,18 @@ namespace PingIt.Maui.ViewModels
 
                 if (response.IsSuccessStatusCode)
                 {
-                    await Toast.Make("Incident verwijderd", ToastDuration.Short).Show();
+                    await Toast.Make("Incident deleted", ToastDuration.Short).Show();
                     await Shell.Current.GoToAsync("//MyIncidentList");
                 }
                 else
                 {
-                    await Toast.Make($"Verwijderen mislukt: {response.StatusCode}", ToastDuration.Long).Show();
+                    await Toast.Make($"Delete failed: {response.StatusCode}", ToastDuration.Long).Show();
                 }
             }
             catch (Exception ex)
             {
-                await Toast.Make($"Fout bij verwijderen: {ex.Message}", ToastDuration.Long).Show();
+                await Toast.Make($"Error deleting: {ex.Message}", ToastDuration.Long).Show();
             }
         }
-
-
     }
 }

@@ -21,7 +21,7 @@ namespace PingIt.Maui.ViewModels
         public bool AllowReport => DeviceInfo.Platform == DevicePlatform.Android;
 
         [ObservableProperty]
-        private string firstName = "Gebruiker ophalen...";
+        private string firstName = "Fetching user info...";
 
         [ObservableProperty]
         private string lastName = "";
@@ -54,12 +54,6 @@ namespace PingIt.Maui.ViewModels
         }
 
         [RelayCommand]
-        private async Task NavigateMap()
-        {
-            await Shell.Current.GoToAsync("//MapPage");
-        }
-
-        [RelayCommand]
         private async Task NavigateReport()
         {
             await Shell.Current.GoToAsync(nameof(ReportIncidentPage));
@@ -78,8 +72,7 @@ namespace PingIt.Maui.ViewModels
                 var userId = _tokenStorage.UserId;
                 if (userId == null)
                 {
-                    _logger.LogWarning("No user ID found in token storage");
-                    return;
+                    await Logout();
                 }
 
                 var response = await _httpClient.GetAsync($"api/user/{userId}");
@@ -87,7 +80,7 @@ namespace PingIt.Maui.ViewModels
                 if (!response.IsSuccessStatusCode)
                 {
                     _logger.LogWarning("Failed to load user info. Status: {StatusCode}", response.StatusCode);
-                    return;
+                    await Logout();
                 }
                 var rawResponse = await response.Content.ReadAsStringAsync();
                 _logger.LogDebug("Raw API response: {RawJson}", rawResponse);

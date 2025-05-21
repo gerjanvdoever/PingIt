@@ -1,11 +1,16 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Threading.Tasks;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
-using PingIt.Shared.Dtos;
+using Microsoft.Maui.Controls;
 using PingIt.Maui.Services;
-using System.Net.Http.Json;
-using System.Collections.ObjectModel;
 using PingIt.Maui.Views;
+using PingIt.Shared.Dtos;
 
 namespace PingIt.Maui.ViewModels;
 
@@ -53,7 +58,7 @@ public partial class IncidentListViewModel : ObservableObject
     {
         if (_tokenStorage.UserId is null)
         {
-            StatusMessage = "Gebruiker niet ingelogd.";
+            StatusMessage = "User not logged in.";
             return;
         }
 
@@ -67,7 +72,7 @@ public partial class IncidentListViewModel : ObservableObject
 
             if (!response.IsSuccessStatusCode)
             {
-                StatusMessage = "Kan incidenten niet ophalen.";
+                StatusMessage = "Couldn't retrieve incidents.";
                 _logger.LogWarning("Failed to fetch incidents: {StatusCode}", response.StatusCode);
                 return;
             }
@@ -77,8 +82,8 @@ public partial class IncidentListViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Fout bij ophalen incidenten");
-            StatusMessage = "Er ging iets mis bij het ophalen van incidenten.";
+            _logger.LogError(ex, "Error fetching active incidents");
+            StatusMessage = "Something went wrong while fetching your incidents.";
         }
         finally
         {
@@ -91,10 +96,9 @@ public partial class IncidentListViewModel : ObservableObject
     {
         if (_tokenStorage.UserId is null)
         {
-            StatusMessage = "Gebruiker niet ingelogd.";
+            StatusMessage = "User not logged in.";
             return;
         }
-
         try
         {
             ShowClosed = true;
@@ -106,7 +110,7 @@ public partial class IncidentListViewModel : ObservableObject
 
             if (!response.IsSuccessStatusCode)
             {
-                StatusMessage = "Kan afgesloten incidenten niet ophalen.";
+                StatusMessage = "Unable to fetch closed incidents.";
                 _logger.LogWarning("Failed to fetch closed incidents: {StatusCode}", response.StatusCode);
                 return;
             }
@@ -116,14 +120,12 @@ public partial class IncidentListViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Fout bij ophalen afgesloten incidenten");
-            StatusMessage = "Er ging iets mis bij het ophalen van afgesloten incidenten.";
+            _logger.LogError(ex, "Error fetching closed incidents");
+            StatusMessage = "Something went wrong while fetching closed incidents.";
         }
         finally
         {
             IsLoading = false;
         }
     }
-
-
 }

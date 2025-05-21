@@ -106,20 +106,16 @@ namespace PingIt.Maui.ViewModels
             if (location == null)
                 return;
 
-            // look up the full IncidentDto by the Id you carried through
             var inc = _incidents
                 .FirstOrDefault(i => i.Id == location.Id);
 
             if (inc is null)
                 return;
 
-            // push into your shared store
             _store.SelectedIncident = inc;
 
-            // navigate
             await Shell.Current.GoToAsync(nameof(IncidentDetailPage));
 
-            // reset SelectedLocation so another tap on the same pin will fire again
             SelectedLocation = null;
         }
     }

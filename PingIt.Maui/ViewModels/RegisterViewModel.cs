@@ -1,12 +1,14 @@
-﻿using System.Net.Http.Json;
+﻿using System;
+using System.Net.Http.Json;
 using System.Text.RegularExpressions;
-using System.Windows.Input;
-using Microsoft.Extensions.Logging;
-using PingIt.Shared.Dtos;
-using PingIt.Maui.Services;
-using PingIt.Maui.Dtos;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.Extensions.Logging;
+using PingIt.Maui.Services;
+using PingIt.Maui.Dtos;
+using PingIt.Shared.Dtos;
+using Microsoft.Maui.Controls;
 
 namespace PingIt.Maui.ViewModels
 {
@@ -101,28 +103,26 @@ namespace PingIt.Maui.ViewModels
                 var passwordRegex = new Regex(@"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{6,}$");
                 if (!passwordRegex.IsMatch(Password))
                 {
-                    ValidationError = "Password needs to be at least 6 digits long, with at least a Capital letter, small letter and number";
+                    ValidationError = "Password needs to be at least 6 characters long, with at least one uppercase letter, one lowercase letter, and one number";
                     return;
                 }
 
                 var emailRegex = new Regex(@"^\S+@\S+\.\S+$");
                 if (!emailRegex.IsMatch(Email))
                 {
-                    ValidationError = "Incorrect Email";
+                    ValidationError = "Incorrect email format";
                     return;
                 }
 
                 var cleanedPostalCode = PostalCode.Replace(" ", "").ToUpper();
                 if (!Regex.IsMatch(cleanedPostalCode, @"^\d{4}[A-Z]{2}$"))
                 {
-                    ValidationError = "Postcode moet in het formaat 1234AB zijn.";
+                    ValidationError = "Postal code must be in the format 1234AB.";
                     return;
                 }
-
                 PostalCode = cleanedPostalCode;
 
                 var client = _httpClientFactory.CreateClient("PingItClient");
-
                 var registerDto = new RegisterDto
                 {
                     FirstName = FirstName,
@@ -138,12 +138,11 @@ namespace PingIt.Maui.ViewModels
                 };
 
                 var response = await client.PostAsJsonAsync("api/auth/register", registerDto);
-
                 if (!response.IsSuccessStatusCode)
                 {
                     var error = await response.Content.ReadAsStringAsync();
                     _logger.LogWarning("Registration failed: {Error}", error);
-                    ValidationError = "Registratie mislukt: " + error;
+                    ValidationError = "Registration failed: " + error;
                     return;
                 }
 
@@ -156,13 +155,13 @@ namespace PingIt.Maui.ViewModels
                 else
                 {
                     _logger.LogWarning("No token received after registration.");
-                    ValidationError = "Ongeldig antwoord van de server.";
+                    ValidationError = "Invalid response from server.";
                 }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Registration error");
-                ValidationError = "Er ging iets mis tijdens registreren.";
+                ValidationError = "Something went wrong during registration.";
             }
             finally
             {
