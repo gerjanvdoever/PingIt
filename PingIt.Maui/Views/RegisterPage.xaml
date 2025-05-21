@@ -1,42 +1,67 @@
-<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:PingIt.Maui.ViewModels"
              x:Class="PingIt.Maui.Views.RegisterPage"
              x:DataType="vm:RegisterViewModel"
              Title="Registreren">
+    <Grid>
+        <ScrollView IsEnabled="{Binding IsNotBusy}">
+            <VerticalStackLayout Padding="30" Spacing="15">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="30" Spacing="15">
+                <Entry Placeholder="Voornaam"
+               Text="{Binding FirstName}" />
+                <Entry Placeholder="Achternaam"
+               Text="{Binding LastName}" />
+                <Entry Placeholder="E-mail"
+               Text="{Binding Email}"
+               Keyboard="Email" />
+                <Entry Placeholder="Wachtwoord"
+               Text="{Binding Password}"
+               IsPassword="True" />
+                <Entry Placeholder="Bevestig wachtwoord"
+               Text="{Binding ConfirmPassword}"
+               IsPassword="True" />
+                <Entry Placeholder="Telefoonnummer (optioneel)"
+               Text="{Binding PhoneNumber}"
+               Keyboard="Telephone" />
+                <Entry Placeholder="Straat"
+               Text="{Binding Street}" />
+                <Entry Placeholder="Huisnummer"
+               Text="{Binding HouseNumber}" />
+                <Entry Placeholder="Postcode (bv. 1234AB)"
+               Text="{Binding PostalCode}" />
+                <Entry Placeholder="Plaats"
+               Text="{Binding City}" />
 
-            <Image Source="logo.png" HeightRequest="100" HorizontalOptions="Center" />
+                <HorizontalStackLayout>
+                    <CheckBox IsChecked="{Binding WantsNotifications}" />
+                    <Label Text="Ik wil meldingen ontvangen"
+                 VerticalOptions="Center" />
+                </HorizontalStackLayout>
 
-            <Entry Placeholder="Voornaam" Text="{Binding FirstName}" />
-            <Entry Placeholder="Achternaam" Text="{Binding LastName}" />
-            <Entry Placeholder="E-mail" Text="{Binding Email}" Keyboard="Email" />
-            <Entry Placeholder="Wachtwoord" Text="{Binding Password}" IsPassword="True" />
-            <Entry Placeholder="Bevestig wachtwoord" Text="{Binding ConfirmPassword}" IsPassword="True" />
-            <Entry Placeholder="Telefoonnummer (optioneel)" Text="{Binding PhoneNumber}" Keyboard="Telephone" />
-            <Entry Placeholder="Straat" Text="{Binding Street}" />
-            <Entry Placeholder="Huisnummer" Text="{Binding HouseNumber}" />
-            <Entry Placeholder="Postcode (bv. 1234AB)" Text="{Binding PostalCode}" />
-            <Entry Placeholder="Plaats" Text="{Binding City}" />
+                <Label Text="{Binding ValidationError}"
+               TextColor="Red"
+               IsVisible="{Binding ValidationError,
+                           Converter={StaticResource StringNotEmptyConverter}}" />
 
-            <HorizontalStackLayout>
-                <CheckBox IsChecked="{Binding WantsNotifications}" />
-                <Label Text="Ik wil meldingen ontvangen" VerticalOptions="Center" />
-            </HorizontalStackLayout>
+                <Button Text="Registreren"
+                Command="{Binding RegisterCommand}"
+                IsEnabled="{Binding IsNotBusy}" />
 
-            <Label Text="{Binding ValidationError}"
-                   TextColor="Red"
-                   IsVisible="{Binding ValidationError, Converter={StaticResource StringNotEmptyConverter}}" />
+            </VerticalStackLayout>
+        </ScrollView>
 
-            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+        <Grid
+    IsVisible="{Binding IsBusy}"
+    InputTransparent="False"
+    BackgroundColor="{StaticResource OverlayDark}">
 
-            <Button Text="Registreren"
-                    Command="{Binding RegisterCommand}"
-                    IsEnabled="{Binding IsNotBusy}" />
+            <ActivityIndicator
+        IsRunning="{Binding IsBusy}"
+        HorizontalOptions="Center"
+        VerticalOptions="Center"
+        Color="White" />
 
-        </VerticalStackLayout>
-    </ScrollView>
+        </Grid>
+    </Grid>
 </ContentPage>

@@ -18,9 +18,9 @@
         <ImageButton
       x:Name="BackButton"
       Grid.Column="0"
-      Source="arrow_back.svg"
-      WidthRequest="24"
-      HeightRequest="24"
+      Source="arrow.png"
+      WidthRequest="5"
+      HeightRequest="5"
       BackgroundColor="Transparent"
       IsVisible="{Binding Source={x:Reference this}, Path=ShowBackButton}"
       Clicked="OnBackButtonClicked"/>
