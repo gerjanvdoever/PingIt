@@ -9,7 +9,7 @@
     <Grid RowDefinitions="Auto,*,Auto" Padding="0">
 
         <!-- Main Content -->
-        <ScrollView Grid.Row="1">
+        <ScrollView Grid.Row="1" IsEnabled="{Binding IsNotBusy}">
             <VerticalStackLayout Padding="30" Spacing="20" VerticalOptions="Center">
                 <!-- Profile Section -->
                 <VerticalStackLayout HorizontalOptions="Center" Spacing="10">
@@ -19,18 +19,45 @@
 
                 <!-- Actions Section -->
                 <VerticalStackLayout Spacing="15">
-                    <Button Text="Incident melden" IsEnabled="{Binding AllowReport}" Command="{Binding NavigateReportCommand}" ImageSource="incident_icon.png" HorizontalOptions="Fill"/>
-                    <Button Text="Mijn incidenten" Command="{Binding NavigateListCommand}" ImageSource="incidentlist_icon.png" HorizontalOptions="Fill"/>
+                    <Button Text="Incident melden"
+                  IsEnabled="{Binding AllowReport}"
+                  Command="{Binding NavigateReportCommand}"
+                  ImageSource="incident_icon.png"
+                  HorizontalOptions="Fill"/>
+                    <Button Text="Mijn incidenten"
+                  Command="{Binding NavigateListCommand}"
+                  ImageSource="incidentlist_icon.png"
+                  HorizontalOptions="Fill"/>
                 </VerticalStackLayout>
 
                 <!-- Logout -->
-                <Button Text="Uitloggen" Command="{Binding LogoutCommand}" Margin="0,20,0,0"/>
+                <Button Text="Uitloggen"
+                Command="{Binding LogoutCommand}"
+                Margin="0,20,0,0"/>
 
                 <!-- Role -->
-                <Label Text="{Binding Role}" HorizontalOptions="Center" FontSize="14"/>
+                <Label Text="{Binding Role}"
+               HorizontalOptions="Center"
+               FontSize="14"/>
             </VerticalStackLayout>
         </ScrollView>
-        <views:BottomNavBar Grid.Row="2" CurrentPage="AccountPage" />
+
+        <views:BottomNavBar Grid.Row="2"
+                        CurrentPage="AccountPage" />
+
+        <!-- Busy overlay -->
+        <Grid
+            Grid.Row="0"
+            Grid.RowSpan="3"
+            IsVisible="{Binding IsBusy}"
+            InputTransparent="False"
+            BackgroundColor="{StaticResource OverlayDark}">
+            <ActivityIndicator
+                IsRunning="{Binding IsBusy}"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                Color="White" />
+        </Grid>
 
     </Grid>
 </ContentPage>

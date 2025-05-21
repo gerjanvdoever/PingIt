@@ -25,6 +25,10 @@ namespace PingIt.Maui.ViewModels
         [ObservableProperty]
         private IncidentStatus selectedStatus;
 
+        [ObservableProperty]
+        private bool isBusy;
+        public bool IsNotBusy => !IsBusy;
+
         public List<IncidentStatus> StatusOptions { get; } =
             Enum.GetValues<IncidentStatus>().Cast<IncidentStatus>().ToList();
 
@@ -56,14 +60,19 @@ namespace PingIt.Maui.ViewModels
         [RelayCommand]
         public async Task ChangeStatusAsync()
         {
-            var dto = new IncidentStatusUpdateDto
-            {
-                NewStatus = SelectedStatus,
-                Notes = Incident.Notes
-            };
+            if (IsBusy)
+                return;
 
             try
             {
+                IsBusy = true;
+
+                var dto = new IncidentStatusUpdateDto
+                {
+                    NewStatus = SelectedStatus,
+                    Notes = Incident.Notes
+                };
+
                 var response = await _httpClient.PostAsJsonAsync(
                     $"api/incidents/{Incident.Id}/status", dto);
 
@@ -86,6 +95,10 @@ namespace PingIt.Maui.ViewModels
                 await Toast.Make(
                     $"Error: {ex.Message}",
                     ToastDuration.Long).Show();
+            }
+            finally
+            {
+                IsBusy = false;
             }
         }
     }

@@ -32,6 +32,11 @@ namespace PingIt.Maui.ViewModels
         [ObservableProperty]
         private bool isFooterVisible;
 
+        [ObservableProperty]
+        private bool isBusy;
+
+        public bool IsNotBusy => !IsBusy;
+
         public string FullName => $"{FirstName} {LastName}";
 
         public AccountViewModel(
@@ -49,20 +54,44 @@ namespace PingIt.Maui.ViewModels
         [RelayCommand]
         private async Task Logout()
         {
-            await _tokenStorage.ClearTokenAsync();
-            await Shell.Current.GoToAsync("//LoginPage");
+            try
+            {
+                IsBusy = true;
+                await _tokenStorage.ClearTokenAsync();
+                await Shell.Current.GoToAsync("//LoginPage");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         [RelayCommand]
         private async Task NavigateReport()
         {
-            await Shell.Current.GoToAsync(nameof(ReportIncidentPage));
+            try
+            {
+                IsBusy = true;
+                await Shell.Current.GoToAsync(nameof(ReportIncidentPage));
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         [RelayCommand]
         private async Task NavigateList()
         {
-            await Shell.Current.GoToAsync(nameof(MyIncidentList));
+            try
+            {
+                IsBusy = true;
+                await Shell.Current.GoToAsync(nameof(MyIncidentList));
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         private async Task LoadUserAsync()

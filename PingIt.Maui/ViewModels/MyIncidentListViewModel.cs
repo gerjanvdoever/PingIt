@@ -86,12 +86,20 @@ namespace PingIt.Maui.ViewModels
 
         private async Task HandleSelectionChangedAsync(IncidentDto? incident)
         {
-            if (incident is null)
-                return;
+            IsLoading = true;
+            try
+            {
+                if (incident is null)
+                    return;
 
-            _store.SelectedIncident = incident;
-            await Shell.Current.GoToAsync(nameof(MyIncidentDetail));
-            SelectedIncident = null;
-        }
+                _store.SelectedIncident = incident;
+                await Shell.Current.GoToAsync(nameof(MyIncidentDetail));
+                SelectedIncident = null;
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }      
     }
 }

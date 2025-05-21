@@ -264,7 +264,7 @@ namespace PingIt.Maui.ViewModels
         }
 
 
-        private async Task<string> UploadLocalAsync(string fileName, Stream stream)
+        private async static Task<string> UploadLocalAsync(string fileName, Stream stream)
         {
             var LocalPath = Path.Combine(FileSystem.AppDataDirectory, fileName);
             using var fileStream = new FileStream(LocalPath, FileMode.Create, FileAccess.Write);

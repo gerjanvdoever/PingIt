@@ -14,11 +14,6 @@
             <ScrollView Grid.Row="0">
                 <VerticalStackLayout Padding="20" Spacing="15">
 
-                    <ActivityIndicator
-            IsVisible="{Binding IsLoading}"
-            IsRunning="{Binding IsLoading}"
-            Color="{AppThemeBinding Light=Gray, Dark=LightGray}" />
-
                     <Label
             Text="{Binding StatusMessage}"
             TextColor="{AppThemeBinding Light=Red, Dark=OrangeRed}"

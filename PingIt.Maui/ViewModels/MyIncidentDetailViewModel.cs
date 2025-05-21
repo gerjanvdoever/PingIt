@@ -19,6 +19,11 @@ namespace PingIt.Maui.ViewModels
         private readonly HttpClient _httpClient;
 
         [ObservableProperty]
+        private bool isBusy;
+
+        public bool IsNotBusy => !IsBusy;
+
+        [ObservableProperty]
         private IncidentDto incident = default!;
 
         public IEnumerable<LocationDto> PinItems => new[]
