@@ -5,38 +5,35 @@
     x:Class="PingIt.Maui.Views.TopNavBar"
     x:Name="this">
     <Grid
-      BackgroundColor="{AppThemeBinding Light=White, Dark=#1C1C1E}"
-      Padding="10"
-      HeightRequest="50">
+    BackgroundColor="{AppThemeBinding Light=White, Dark=#1C1C1E}"
+    Padding="10"
+    HeightRequest="50">
+        
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <Button
-        x:Name="BackButton"
-        Grid.Column="0"
-        WidthRequest="40"
-        HeightRequest="40"
-        CornerRadius="8"
-        Text="◀"
-        FontSize="18"
-        VerticalOptions="Center"
-        HorizontalOptions="Center"
-        IsVisible="{Binding Source={x:Reference this}, Path=ShowBackButton}"
-        Clicked="OnBackButtonClicked"
-        BackgroundColor="Transparent"
-        TextColor="{AppThemeBinding Light=Black, Dark=White}" />
+        <ImageButton
+      x:Name="BackButton"
+      Grid.Column="0"
+      Source="arrow_back.svg"
+      WidthRequest="24"
+      HeightRequest="24"
+      BackgroundColor="Transparent"
+      IsVisible="{Binding Source={x:Reference this}, Path=ShowBackButton}"
+      Clicked="OnBackButtonClicked"/>
 
         <Label
-        Grid.Column="1"
-        VerticalOptions="Center"
-        HorizontalOptions="Center"
-        FontSize="18"
-        FontAttributes="Bold"
-        TextColor="{AppThemeBinding Light=Black, Dark=White}"
-        Text="{Binding Source={x:Reference this}, Path=Title}" />
+      Grid.Column="0"
+      Grid.ColumnSpan="3"
+      HorizontalOptions="Center"
+      VerticalOptions="Center"
+      FontSize="18"
+      FontAttributes="Bold"
+      TextColor="{AppThemeBinding Light=Black, Dark=White}"
+      Text="{Binding Source={x:Reference this}, Path=Title}" />
 
     </Grid>
 </ContentView>

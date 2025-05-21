@@ -52,7 +52,6 @@
       IsEnabled="{Binding IsNotBusy}" />
 
         <views:MapView
-      PinItems="{Binding PhotoPins, Mode=OneWay}"
             ShowUserLocation="{Binding ShowUserLocation}"
       SelectedLocation="{Binding NewIncidentCoord, Mode=TwoWay}"
       HeightRequest="300" />
