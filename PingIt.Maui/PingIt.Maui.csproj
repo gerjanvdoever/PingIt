@@ -80,7 +80,7 @@
 	<ItemGroup>
 		<!-- App Icon -->
 		<MauiIcon Include="Resources\AppIcon\appicon.png" />
-		<MauiSplashScreen Include="Resources\Splash\ping.png" Color="#1E90FF"/>
+		<MauiSplashScreen Include="Resources\Splash\ping.png" Color="#1E90FF" />
 
 		<!-- Splash Screen -->
 
@@ -143,9 +143,6 @@
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\MyIncidentDetail.xaml">
-	    <Generator>MSBuild:Compile</Generator>
-	  </MauiXaml>
-	  <MauiXaml Update="Views\MyIncidentList.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
 	  <MauiXaml Update="Views\RegisterPage.xaml">

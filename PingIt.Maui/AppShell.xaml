@@ -13,7 +13,6 @@
     <ShellContent ContentTemplate="{DataTemplate views:RegisterPage}" Route="RegisterPage" />
     <ShellContent ContentTemplate="{DataTemplate views:ReportIncidentPage}" Route="ReportIncidentPage" />
     <ShellContent ContentTemplate="{DataTemplate views:IncidentListPage}" Route="IncidentListPage" />
-    <ShellContent ContentTemplate="{DataTemplate views:MyIncidentList}" Route="MyIncidentList" />
     <ShellContent ContentTemplate="{DataTemplate views:MyIncidentDetail}" Route="MyIncidentDetail" />
     <ShellContent ContentTemplate="{DataTemplate views:IncidentMapPage}" Route="IncidentMapPage" />
     <ShellContent ContentTemplate="{DataTemplate views:IncidentDetailPage}" Route="IncidentDetailPage" />

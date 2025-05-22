@@ -8,32 +8,36 @@
     BackgroundColor="{AppThemeBinding Light=White, Dark=#1C1C1E}"
     Padding="10"
     HeightRequest="50">
-        
+
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <ImageButton
-      x:Name="BackButton"
-      Grid.Column="0"
-      Source="arrow.png"
-      WidthRequest="5"
-      HeightRequest="5"
-      BackgroundColor="Transparent"
-      IsVisible="{Binding Source={x:Reference this}, Path=ShowBackButton}"
-      Clicked="OnBackButtonClicked"/>
+        <Image
+            x:Name="BackButton"
+            Grid.Column="0"
+            Source="arrow.png"
+            WidthRequest="20"
+            HeightRequest="20"
+            Aspect="AspectFit"
+            VerticalOptions="Center"
+            BackgroundColor="Transparent"
+            IsVisible="{Binding Source={x:Reference this}, Path=ShowBackButton}">
+            <Image.GestureRecognizers>
+                <TapGestureRecognizer Tapped="OnBackButtonClicked" />
+            </Image.GestureRecognizers>
+        </Image>
 
         <Label
-      Grid.Column="0"
-      Grid.ColumnSpan="3"
-      HorizontalOptions="Center"
-      VerticalOptions="Center"
-      FontSize="18"
-      FontAttributes="Bold"
-      TextColor="{AppThemeBinding Light=Black, Dark=White}"
-      Text="{Binding Source={x:Reference this}, Path=Title}" />
-
+            Grid.Column="0"
+            Grid.ColumnSpan="3"
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
+            FontSize="18"
+            FontAttributes="Bold"
+            TextColor="{AppThemeBinding Light=Black, Dark=White}"
+            Text="{Binding Source={x:Reference this}, Path=Title}" />
     </Grid>
 </ContentView>
