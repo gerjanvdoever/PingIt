@@ -9,4 +9,10 @@ public partial class RegisterPage : ContentPage
 		InitializeComponent();
 		BindingContext = vm;
 	}
+
+    void OnNotificationsTapped(object sender, TappedEventArgs e)
+    {
+        if (BindingContext is RegisterViewModel vm)
+            vm.WantsNotifications = !vm.WantsNotifications;
+    }
 }

@@ -110,13 +110,29 @@ namespace PingIt.Maui.ViewModels
         [RelayCommand]
         private async Task Register()
         {
-            await Shell.Current.GoToAsync("//RegisterPage");
+            IsBusy = true;
+            try
+            {
+                await Shell.Current.GoToAsync(nameof(RegisterPage));
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
 
         [RelayCommand]
-        private async void Anonymous()
+        private async Task Anonymous()
         {
-            await Shell.Current.GoToAsync(nameof(ReportIncidentPage));
+            IsBusy = true;
+            try
+            {
+                await Shell.Current.GoToAsync(nameof(ReportIncidentPage));
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
     }
 }

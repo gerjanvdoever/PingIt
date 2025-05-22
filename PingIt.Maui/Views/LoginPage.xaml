@@ -1,58 +1,100 @@
-<ContentPage
-    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:vm="clr-namespace:PingIt.Maui.ViewModels"
-    x:Class="PingIt.Maui.Views.LoginPage"
-    x:DataType="vm:LoginViewModel"
-    Title="Login">
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:PingIt.Maui.ViewModels"
+             x:Class="PingIt.Maui.Views.LoginPage"
+             x:DataType="vm:LoginViewModel"
+             Title="Login">
+
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="{StaticResource Secondary}" Offset="0.0" />
+            <GradientStop Color="#6EE7FF" Offset="1.0" />
+        </LinearGradientBrush>
+    </ContentPage.Background>
+
     <Grid>
         <VerticalStackLayout
+      HorizontalOptions="Center"
+      VerticalOptions="Center"
+      Spacing="20"
+      IsEnabled="{Binding IsNotBusy}">
+
+            <Image
+        Source="logo.png"
+        HeightRequest="140"
+        HorizontalOptions="Center" />
+
+            <Border
+        Stroke="Transparent"
+        BackgroundColor="White"
+        StrokeShape="RoundRectangle 20"
         Padding="30"
-        Spacing="20"
-        VerticalOptions="Center"
-        IsEnabled="{Binding IsNotBusy}">
+        Margin="0"
+        WidthRequest="360"
+                HorizontalOptions="Center"
+        VerticalOptions="Center">
 
-            <Image Source="logo.png"
-             HeightRequest="100"
-             HorizontalOptions="Center" />
+                <VerticalStackLayout Spacing="20">
 
-            <Entry Placeholder="E-mail"
-             Text="{Binding Email}"
-             Keyboard="Email" />
+                    <Entry
+            Placeholder="Email"
+            Text="{Binding Email}"
+            Keyboard="Email"
+            HeightRequest="50"
+            FontSize="Medium"
+            HorizontalOptions="FillAndExpand" />
 
-            <Entry Placeholder="Wachtwoord"
-             Text="{Binding Password}"
-             IsPassword="True" />
+                    <Entry
+            Placeholder="Password"
+            Text="{Binding Password}"
+            IsPassword="True"
+            HeightRequest="50"
+            FontSize="Medium"
+            HorizontalOptions="FillAndExpand" />
 
-            <Label Text="{Binding ValidationError}"
-             TextColor="Red"
-             IsVisible="{Binding ValidationError,
-                         Converter={StaticResource StringNotEmptyConverter}}" />
+                    <Label
+            Text="{Binding ValidationError}"
+            TextColor="Red"
+            IsVisible="{Binding ValidationError,
+                        Converter={StaticResource StringNotEmptyConverter}}" />
 
-            <Button Text="Inloggen"
-              Command="{Binding LoginCommand}"
-              IsEnabled="{Binding IsNotBusy}" />
+                    <Button
+            Text="Login"
+            Command="{Binding LoginCommand}"
+            IsEnabled="{Binding IsNotBusy}"
+            CornerRadius="25"
+            FontAttributes="Bold" />
 
-            <Button Text="Registreren"
-              Command="{Binding RegisterCommand}"
-              IsEnabled="{Binding IsNotBusy}" />
+                    <Button
+            Text="Report anonymously"
+            Command="{Binding AnonymousCommand}"
+            IsEnabled="{Binding IsNotBusy}"
+            CornerRadius="25"
+            FontAttributes="Bold" />
 
-            <Button Text="Ik wil anoniem een incident melden"
-              Command="{Binding AnonymousCommand}"
-              IsEnabled="{Binding IsNotBusy}" />
+                    <Label
+            Text="Don't have an account? Register here"
+            FontSize="Small"
+            HorizontalOptions="Center"
+            TextColor="{StaticResource Primary}">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding RegisterCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
 
+                </VerticalStackLayout>
+            </Border>
         </VerticalStackLayout>
 
         <Grid
-        IsVisible="{Binding IsBusy}"
-        BackgroundColor="{StaticResource OverlayDark}"
-            InputTransparent="False">
-
+      IsVisible="{Binding IsBusy}"
+      InputTransparent="False"
+      BackgroundColor="{StaticResource OverlayDark}">
             <ActivityIndicator
-          IsRunning="{Binding IsBusy}"
-          HorizontalOptions="Center"
-          VerticalOptions="Center"
-          Color="White" />
+        IsRunning="{Binding IsBusy}"
+        HorizontalOptions="Center"
+        VerticalOptions="Center"
+        Color="White" />
         </Grid>
     </Grid>
 </ContentPage>

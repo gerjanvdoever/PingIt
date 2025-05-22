@@ -1,67 +1,144 @@
-<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:vm="clr-namespace:PingIt.Maui.ViewModels"
-             x:Class="PingIt.Maui.Views.RegisterPage"
-             x:DataType="vm:RegisterViewModel"
-             Title="Registreren">
-    <Grid>
-        <ScrollView IsEnabled="{Binding IsNotBusy}">
-            <VerticalStackLayout Padding="30" Spacing="15">
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:vm="clr-namespace:PingIt.Maui.ViewModels"
+    xmlns:views="clr-namespace:PingIt.Maui.Views"
+    x:Class="PingIt.Maui.Views.RegisterPage"
+    x:DataType="vm:RegisterViewModel"
+    Title="Register">
 
-                <Entry Placeholder="Voornaam"
-               Text="{Binding FirstName}" />
-                <Entry Placeholder="Achternaam"
-               Text="{Binding LastName}" />
-                <Entry Placeholder="E-mail"
-               Text="{Binding Email}"
-               Keyboard="Email" />
-                <Entry Placeholder="Wachtwoord"
-               Text="{Binding Password}"
-               IsPassword="True" />
-                <Entry Placeholder="Bevestig wachtwoord"
-               Text="{Binding ConfirmPassword}"
-               IsPassword="True" />
-                <Entry Placeholder="Telefoonnummer (optioneel)"
-               Text="{Binding PhoneNumber}"
-               Keyboard="Telephone" />
-                <Entry Placeholder="Straat"
-               Text="{Binding Street}" />
-                <Entry Placeholder="Huisnummer"
-               Text="{Binding HouseNumber}" />
-                <Entry Placeholder="Postcode (bv. 1234AB)"
-               Text="{Binding PostalCode}" />
-                <Entry Placeholder="Plaats"
-               Text="{Binding City}" />
+    <!-- page background gradient -->
+    <ContentPage.Background>
+        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+            <GradientStop Color="{StaticResource Secondary}" Offset="0" />
+            <GradientStop Color="#6EE7FF" Offset="1" />
+        </LinearGradientBrush>
+    </ContentPage.Background>
 
-                <HorizontalStackLayout>
-                    <CheckBox IsChecked="{Binding WantsNotifications}" />
-                    <Label Text="Ik wil meldingen ontvangen"
-                 VerticalOptions="Center" />
-                </HorizontalStackLayout>
+    <Grid RowDefinitions="Auto,*">
 
-                <Label Text="{Binding ValidationError}"
-               TextColor="Red"
-               IsVisible="{Binding ValidationError,
-                           Converter={StaticResource StringNotEmptyConverter}}" />
+        <!-- top nav bar -->
+        <views:TopNavBar
+        Grid.Row="0"
+        Title="Register"
+        ShowBackButton="True" />
 
-                <Button Text="Registreren"
-                Command="{Binding RegisterCommand}"
-                IsEnabled="{Binding IsNotBusy}" />
+        <!-- white rounded box -->
+        <Border
+        Grid.Row="1"
+        Stroke="Transparent"
+        BackgroundColor="White"
+        StrokeShape="RoundRectangle 20"
+        Padding="30"
+        Margin="20">
+            <ScrollView IsEnabled="{Binding IsNotBusy}">
+                <VerticalStackLayout Spacing="15">
 
-            </VerticalStackLayout>
-        </ScrollView>
+                    <Entry
+              Placeholder="First Name"
+              Text="{Binding FirstName}"
+              HeightRequest="50"
+              FontSize="Medium" />
 
+                    <Entry
+              Placeholder="Last Name"
+              Text="{Binding LastName}"
+              HeightRequest="50"
+              FontSize="Medium" />
+
+                    <Entry
+              Placeholder="E-mail"
+              Text="{Binding Email}"
+              Keyboard="Email"
+              HeightRequest="50"
+              FontSize="Medium" />
+
+                    <Entry
+              Placeholder="Password"
+              Text="{Binding Password}"
+              IsPassword="True"
+              HeightRequest="50"
+              FontSize="Medium" />
+
+                    <Entry
+              Placeholder="Confirm Password"
+              Text="{Binding ConfirmPassword}"
+              IsPassword="True"
+              HeightRequest="50"
+              FontSize="Medium" />
+
+                    <Entry
+              Placeholder="Phone Number (optional)"
+              Text="{Binding PhoneNumber}"
+              Keyboard="Telephone"
+              HeightRequest="50"
+              FontSize="Medium" />
+
+                    <Entry
+              Placeholder="Street"
+              Text="{Binding Street}"
+              HeightRequest="50"
+              FontSize="Medium" />
+
+                    <Entry
+              Placeholder="House Number"
+              Text="{Binding HouseNumber}"
+              HeightRequest="50"
+              FontSize="Medium" />
+
+                    <Entry
+              Placeholder="Postal Code (e.g. 1234AB)"
+              Text="{Binding PostalCode}"
+              HeightRequest="50"
+              FontSize="Medium" />
+
+                    <Entry
+              Placeholder="City"
+              Text="{Binding City}"
+              HeightRequest="50"
+              FontSize="Medium" />
+
+                    <!-- clickable row for notifications -->
+                    <HorizontalStackLayout Spacing="10">
+                        <HorizontalStackLayout.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnNotificationsTapped" />
+                        </HorizontalStackLayout.GestureRecognizers>
+                        <CheckBox IsChecked="{Binding WantsNotifications}" />
+                        <Label
+                Text="I want to receive notifications"
+                VerticalOptions="Center"
+                FontSize="Medium" />
+                    </HorizontalStackLayout>
+
+                    <Label
+              Text="{Binding ValidationError}"
+              TextColor="Red"
+              IsVisible="{Binding ValidationError, Converter={StaticResource StringNotEmptyConverter}}" />
+
+                    <Button
+              Text="Register"
+              Command="{Binding RegisterCommand}"
+              IsEnabled="{Binding IsNotBusy}"
+              CornerRadius="25"
+              FontAttributes="Bold" />
+
+                </VerticalStackLayout>
+            </ScrollView>
+        </Border>
+
+        <!-- busy overlay -->
         <Grid
-    IsVisible="{Binding IsBusy}"
-    InputTransparent="False"
-    BackgroundColor="{StaticResource OverlayDark}">
-
+        IsVisible="{Binding IsBusy}"
+        InputTransparent="False"
+        BackgroundColor="{StaticResource OverlayDark}"
+        Grid.RowSpan="2">
             <ActivityIndicator
-        IsRunning="{Binding IsBusy}"
-        HorizontalOptions="Center"
-        VerticalOptions="Center"
-        Color="White" />
-
+          IsRunning="{Binding IsBusy}"
+          HorizontalOptions="Center"
+          VerticalOptions="Center"
+          Color="White" />
         </Grid>
+
     </Grid>
 </ContentPage>
