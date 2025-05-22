@@ -16,40 +16,33 @@ namespace PingIt.Maui.ViewModels
 {
     public partial class AccountViewModel : ObservableObject
     {
+        // … your injected services …
         private readonly TokenStorageService _tokenStorage;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<AccountViewModel> _logger;
         private readonly IIncidentStore _store;
 
-        [ObservableProperty] private string firstName = string.Empty;
-        [ObservableProperty] private string lastName = string.Empty;
-        [ObservableProperty] private bool isBusy;
-        [ObservableProperty] private bool isLoading;
-        [ObservableProperty] private bool isFooterVisible;
-        [ObservableProperty] private ObservableCollection<IncidentDto> incidents = new();
-        [ObservableProperty] private IncidentDto? selectedIncident;
-
-        public IAsyncRelayCommand LoadIncidentsCommand { get; }
-        public IRelayCommand LogoutCommand { get; }
-        public IAsyncRelayCommand NewIncidentCommand { get; }
-
-        partial void OnSelectedIncidentChanged(IncidentDto? dto)
-            => _ = HandleSelection(dto);
+        // your observable props
+        [ObservableProperty] string firstName = string.Empty;
+        [ObservableProperty] string lastName = string.Empty;
+        [ObservableProperty] bool isBusy;
+        [ObservableProperty] bool isLoading;
+        [ObservableProperty] bool isFooterVisible;
+        [ObservableProperty] bool isDropdownVisible;
+        [ObservableProperty] ObservableCollection<IncidentDto> incidents = new();
+        [ObservableProperty] IncidentDto? selectedIncident;
 
         public string FullName
         {
             get
             {
                 var hour = DateTime.Now.Hour;
-                string greeting;
-
-                if (hour >= 5 && hour < 12)
-                    greeting = "Good Morning";
-                else if (hour >= 12 && hour < 17)
-                    greeting = "Good Afternoon";
-                else
-                    greeting = "Good Evening";
-
+                var greeting = hour switch
+                {
+                    >= 5 and < 12 => "Good Morning",
+                    >= 12 and < 17 => "Good Afternoon",
+                    _ => "Good Evening"
+                };
                 return $"{greeting}, {FirstName}";
             }
         }
@@ -64,10 +57,6 @@ namespace PingIt.Maui.ViewModels
             _httpClientFactory = httpClientFactory;
             _logger = logger;
             _store = store;
-
-            LoadIncidentsCommand = new AsyncRelayCommand(LoadIncidentsAsync);
-            LogoutCommand = new RelayCommand(OnLogout);
-            NewIncidentCommand = new AsyncRelayCommand(OnNewIncident);
         }
 
         public async Task InitializeAsync()
@@ -85,12 +74,77 @@ namespace PingIt.Maui.ViewModels
             }
         }
 
+        // ——— COMMANDS ———
+
+        [RelayCommand]
+        private void ToggleDropdown()
+            => IsDropdownVisible = !IsDropdownVisible;
+
+        [RelayCommand]
+        private void CloseDropdown()
+            => IsDropdownVisible = false;
+
+        [RelayCommand]
+        private void Logout()
+        {
+            CloseDropdown();
+            _tokenStorage
+                .ClearTokenAsync()
+                .ContinueWith(_ =>
+                    MainThread.BeginInvokeOnMainThread(async () =>
+                        await Shell.Current.GoToAsync("//LoginPage")));
+        }
+
+        [RelayCommand]
+        private async Task LoadIncidentsAsync()
+        {
+            if (_tokenStorage.UserId == null) return;
+
+            try
+            {
+                IsLoading = true;
+                var client = _httpClientFactory.CreateClient("AuthenticatedClient");
+                var resp = await client.GetAsync($"api/incident/user/{_tokenStorage.UserId}");
+                if (!resp.IsSuccessStatusCode) return;
+
+                var list = await resp
+                    .Content
+                    .ReadFromJsonAsync<IncidentDto[]>()
+                           ?? Array.Empty<IncidentDto>();
+                Incidents = new ObservableCollection<IncidentDto>(list);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error loading incidents");
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
+
+        [RelayCommand]
+        private async Task NewIncidentAsync()
+        {
+            IsBusy = true;
+            try
+            {
+                await Shell.Current.GoToAsync(nameof(ReportIncidentPage));
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+        }
+
+        // ——— end COMMANDS ———
+
         private async Task LoadUserAsync()
         {
             var userId = _tokenStorage.UserId;
             if (userId == null)
             {
-                OnLogout();
+                LogoutCommand.Execute(null);
                 return;
             }
 
@@ -98,7 +152,7 @@ namespace PingIt.Maui.ViewModels
             var resp = await client.GetAsync($"api/user/{userId}");
             if (!resp.IsSuccessStatusCode)
             {
-                OnLogout();
+                LogoutCommand.Execute(null);
                 return;
             }
 
@@ -112,29 +166,8 @@ namespace PingIt.Maui.ViewModels
             }
         }
 
-        private async Task LoadIncidentsAsync()
-        {
-            if (_tokenStorage.UserId == null) return;
-
-            try
-            {
-                IsLoading = true;
-                var client = _httpClientFactory.CreateClient("AuthenticatedClient");
-                var response = await client.GetAsync($"api/incident/user/{_tokenStorage.UserId}");
-                if (!response.IsSuccessStatusCode) return;
-
-                var list = await response.Content.ReadFromJsonAsync<IncidentDto[]>() ?? Array.Empty<IncidentDto>();
-                Incidents = new ObservableCollection<IncidentDto>(list);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error loading incidents");
-            }
-            finally
-            {
-                IsLoading = false;
-            }
-        }
+        partial void OnSelectedIncidentChanged(IncidentDto? dto)
+            => _ = HandleSelection(dto);
 
         private async Task HandleSelection(IncidentDto? dto)
         {
@@ -145,27 +178,5 @@ namespace PingIt.Maui.ViewModels
             SelectedIncident = null;
             IsLoading = false;
         }
-
-        private void OnLogout()
-            => _tokenStorage
-                .ClearTokenAsync()
-                .ContinueWith(_ =>
-                    MainThread.BeginInvokeOnMainThread(async () =>
-                        await Shell.Current.GoToAsync("//LoginPage")));
-
-        private async Task OnNewIncident()
-        {
-            IsBusy = true;
-            try
-            {
-                await Shell.Current.GoToAsync(nameof(ReportIncidentPage));
-            }
-            finally
-            {
-                IsBusy = false;
-            }
-
-        }
-
     }
 }

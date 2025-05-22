@@ -10,84 +10,85 @@
     Title="Account"
     BackgroundColor="White">
 
-  <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="0">
+    <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="0">
 
-    <!-- HEADER -->
-    <Grid Grid.Row="0" Padding="15, 10">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*" />
-        <ColumnDefinition Width="Auto" />
-      </Grid.ColumnDefinitions>
+        <!-- HEADER -->
+        <Grid Grid.Row="0" Padding="15, 10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
 
-      <!-- just the name -->
-      <Label
+            <!-- just the name -->
+            <Label
         Text="{Binding FullName}"
         FontSize="18"
         FontAttributes="Bold"
         VerticalOptions="Center" />
 
+            <!-- User Icon -->
             <Image
-    Grid.Column="1"
-    Source="user.png"
-    WidthRequest="30"
-    HeightRequest="30"
-    Aspect="AspectFit"
-    HorizontalOptions="Center"
-    VerticalOptions="Center"
-    BackgroundColor="Transparent">
+        Grid.Column="1"
+        Source="user.png"
+        WidthRequest="30"
+        HeightRequest="30"
+        Aspect="AspectFit"
+        HorizontalOptions="Center"
+        VerticalOptions="Center"
+        BackgroundColor="Transparent">
                 <Image.GestureRecognizers>
-                    <TapGestureRecognizer Tapped="OnProfileClicked" />
+                    <TapGestureRecognizer Command="{Binding ToggleDropdownCommand}" />
                 </Image.GestureRecognizers>
             </Image>
         </Grid>
 
-    <!-- DIVIDER -->
-    <BoxView
+        <!-- DIVIDER -->
+        <BoxView
       Grid.Row="1"
       HeightRequest="1"
       Color="#CCCCCC"
       HorizontalOptions="FillAndExpand" />
 
-    <!-- INCIDENT LIST + pull-to-refresh -->
-    <RefreshView
+        <!-- INCIDENT LIST + pull-to-refresh -->
+        <RefreshView
       Grid.Row="2"
       IsRefreshing="{Binding IsLoading}"
       Command="{Binding LoadIncidentsCommand}">
-      <CollectionView
+            <CollectionView
         ItemsSource="{Binding Incidents}"
         SelectionMode="Single"
         SelectedItem="{Binding SelectedIncident, Mode=TwoWay}"
         EmptyView="No incidents found. Tap + to create one.">
-        <CollectionView.ItemTemplate>
-          <DataTemplate x:DataType="dto:IncidentDto">
-            <Border
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="dto:IncidentDto">
+                        <Border
               Stroke="{AppThemeBinding Light=#CCCCCC, Dark=#444444}"
               StrokeThickness="1"
               BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1C1C1E}"
               StrokeShape="RoundRectangle 10"
               Margin="10,5"
               Padding="10">
-              <VerticalStackLayout Spacing="4">
-                <Label Text="{Binding Title}"
+                            <VerticalStackLayout Spacing="4">
+                                <Label Text="{Binding Title}"
                        FontSize="16"
                        FontAttributes="Bold"
                        TextColor="{AppThemeBinding Light=Black, Dark=White}" />
-                <Label Text="{Binding Status}"
+                                <Label Text="{Binding Status}"
                        FontSize="14"
                        FontAttributes="Italic"
                        TextColor="{AppThemeBinding Light=#777777, Dark=#BBBBBB}" />
-                <Label Text="{Binding CreatedAt, StringFormat='Created: {0:dd MMM yyyy}'}"
+                                <Label Text="{Binding CreatedAt, StringFormat='Created: {0:dd MMM yyyy}'}"
                        FontSize="14"
                        TextColor="{AppThemeBinding Light=#555555, Dark=#AAAAAA}" />
-              </VerticalStackLayout>
-            </Border>
-          </DataTemplate>
-        </CollectionView.ItemTemplate>
-      </CollectionView>
-    </RefreshView>
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </RefreshView>
 
-    <!-- "+" FAB -->
-    <Button
+        <!-- "+" FAB -->
+        <Button
       Grid.Row="2"
       HorizontalOptions="End"
       VerticalOptions="End"
@@ -100,24 +101,83 @@
       TextColor="White"
       Command="{Binding NewIncidentCommand}" />
 
-    <!-- BOTTOM NAV -->
-    <views:BottomNavBar
+        <!-- BOTTOM NAV -->
+        <views:BottomNavBar
       Grid.Row="3"
       CurrentPage="AccountPage"
       IsVisible="{Binding IsFooterVisible}" />
 
-    <!-- BUSY OVERLAY -->
-    <Grid
+        <!-- BUSY OVERLAY -->
+        <Grid
       Grid.RowSpan="4"
       IsVisible="{Binding IsBusy}"
       InputTransparent="False"
       BackgroundColor="{StaticResource OverlayDark}">
-      <ActivityIndicator
+            <ActivityIndicator
         IsRunning="{Binding IsBusy}"
         HorizontalOptions="Center"
         VerticalOptions="Center"
         Color="White" />
-    </Grid>
+        </Grid>
 
-  </Grid>
+        <!-- Dropdown Overlay (to close dropdown when tapping outside) -->
+        <Grid
+      Grid.RowSpan="4"
+      IsVisible="{Binding IsDropdownVisible}"
+      BackgroundColor="Transparent"
+      ZIndex="999">
+            <Grid.GestureRecognizers>
+                <TapGestureRecognizer Command="{Binding CloseDropdownCommand}" />
+            </Grid.GestureRecognizers>
+        </Grid>
+
+        <!-- Floating Dropdown Menu -->
+        <Border
+      Grid.RowSpan="4"
+      x:Name="DropdownMenu"
+      IsVisible="{Binding IsDropdownVisible}"
+      Stroke="#CCCCCC"
+      StrokeThickness="1"
+      BackgroundColor="White"
+      StrokeShape="RoundRectangle 8"
+      Padding="0"
+      HorizontalOptions="End"
+      VerticalOptions="Start"
+      Margin="15,50,15,0"
+      ZIndex="1000">
+            <Border.Shadow>
+                <Shadow Brush="Black" Opacity="0.3" Radius="10" Offset="0,2" />
+            </Border.Shadow>
+
+            <StackLayout Spacing="0">
+                <!-- Logout Option -->
+                <Grid Padding="15,10" BackgroundColor="Transparent">
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding LogoutCommand}" />
+                    </Grid.GestureRecognizers>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Image
+            Grid.Column="0"
+            Source="logout.png"
+            WidthRequest="20"
+            HeightRequest="20"
+            Aspect="AspectFit"
+            VerticalOptions="Center"
+            Margin="0,0,10,0" />
+
+                    <Label
+            Grid.Column="1"
+            Text="Logout"
+            FontSize="14"
+            VerticalOptions="Center"
+            TextColor="Black" />
+                </Grid>
+            </StackLayout>
+        </Border>
+
+    </Grid>
 </ContentPage>

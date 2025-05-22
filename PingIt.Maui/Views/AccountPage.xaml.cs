@@ -1,37 +1,20 @@
-﻿using System;
-using Microsoft.Maui.Controls;
-using PingIt.Maui.ViewModels;
+﻿using PingIt.Maui.ViewModels;
 
-namespace PingIt.Maui.Views
+namespace PingIt.Maui.Views;
+
+public partial class AccountPage : ContentPage
 {
-    public partial class AccountPage : ContentPage
+    private AccountViewModel ViewModel => (AccountViewModel)BindingContext;
+
+    public AccountPage(AccountViewModel viewModel)
     {
-        public AccountPage(AccountViewModel vm)
-        {
-            InitializeComponent();
-            BindingContext = vm;
-        }
+        InitializeComponent();
+        BindingContext = viewModel;
+    }
 
-        protected override async void OnAppearing()
-        {
-            base.OnAppearing();
-            if (BindingContext is AccountViewModel vm)
-                await vm.InitializeAsync();
-        }
-
-        // display logout action sheet without passing null buttons
-        async void OnProfileClicked(object sender, EventArgs e)
-        {
-            if (BindingContext is AccountViewModel vm)
-            {
-                var action = await DisplayActionSheet(
-                    title: null,
-                    cancel: "Cancel",
-                    destruction: "Logout");
-
-                if (action == "Logout")
-                    vm.LogoutCommand.Execute(null);
-            }
-        }
+    protected override async void OnAppearing()
+    {
+        base.OnAppearing();
+        await ViewModel.InitializeAsync();
     }
 }
