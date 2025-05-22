@@ -1,74 +1,123 @@
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage
+    x:Class="PingIt.Maui.Views.AccountPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:vm="clr-namespace:PingIt.Maui.ViewModels"
+    xmlns:dto="clr-namespace:PingIt.Shared.Dtos;assembly=PingIt.Shared"
     xmlns:views="clr-namespace:PingIt.Maui.Views"
-    x:Class="PingIt.Maui.Views.AccountPage"
     x:DataType="vm:AccountViewModel"
-    Title="Account">
+    Title="Account"
+    BackgroundColor="White">
 
-    <Grid RowDefinitions="Auto,*,Auto" Padding="0">
+  <Grid RowDefinitions="Auto,Auto,*,Auto" Padding="0">
 
-        <!-- Main Content -->
-        <ScrollView Grid.Row="1"
-                    IsEnabled="{Binding IsNotBusy}">
-            <VerticalStackLayout Padding="30"
-                                 Spacing="20"
-                                 VerticalOptions="Center">
+    <!-- HEADER -->
+    <Grid Grid.Row="0" Padding="15, 10">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
 
-                <!-- Profile Section -->
-                <VerticalStackLayout HorizontalOptions="Center"
-                                     Spacing="10">
-                    <Image Source="user.png"
-                           WidthRequest="40"
-                           HeightRequest="40" />
-                    <Label Text="{Binding FullName}"
-                           FontSize="18"
-                           FontAttributes="Bold"
-                           HorizontalOptions="Center"/>
-                </VerticalStackLayout>
+      <!-- just the name -->
+      <Label
+        Text="{Binding FullName}"
+        FontSize="18"
+        FontAttributes="Bold"
+        VerticalOptions="Center" />
 
-                <!-- Actions Section -->
-                <VerticalStackLayout Spacing="15">
-                    <Button Text="Report an incident"
-                            IsEnabled="{Binding AllowReport}"
-                            Command="{Binding NavigateReportCommand}"
-                            ImageSource="incident_icon.png"
-                            HorizontalOptions="Fill"
-                            CornerRadius="25"
-                            FontAttributes="Bold" />
-
-                    <Button Text="My incidents"
-                            Command="{Binding NavigateListCommand}"
-                            ImageSource="incidentlist_icon.png"
-                            HorizontalOptions="Fill"
-                            CornerRadius="25"
-                            FontAttributes="Bold" />
-                </VerticalStackLayout>
-
-                <!-- Logout -->
-                <Button Text="Logout"
-                        Command="{Binding LogoutCommand}"
-                        Margin="0,20,0,0"
-                        CornerRadius="25"
-                        FontAttributes="Bold" />
-            </VerticalStackLayout>
-        </ScrollView>
-
-        <views:BottomNavBar Grid.Row="2"
-                            CurrentPage="AccountPage" />
-
-        <!-- Busy overlay -->
-        <Grid Grid.Row="0"
-              Grid.RowSpan="3"
-              IsVisible="{Binding IsBusy}"
-              InputTransparent="False"
-              BackgroundColor="{StaticResource OverlayDark}">
-            <ActivityIndicator
-                IsRunning="{Binding IsBusy}"
-                HorizontalOptions="Center"
-                VerticalOptions="Center"
-                Color="White" />
+            <Image
+    Grid.Column="1"
+    Source="user.png"
+    WidthRequest="30"
+    HeightRequest="30"
+    Aspect="AspectFit"
+    HorizontalOptions="Center"
+    VerticalOptions="Center"
+    BackgroundColor="Transparent">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Tapped="OnProfileClicked" />
+                </Image.GestureRecognizers>
+            </Image>
         </Grid>
+
+    <!-- DIVIDER -->
+    <BoxView
+      Grid.Row="1"
+      HeightRequest="1"
+      Color="#CCCCCC"
+      HorizontalOptions="FillAndExpand" />
+
+    <!-- INCIDENT LIST + pull-to-refresh -->
+    <RefreshView
+      Grid.Row="2"
+      IsRefreshing="{Binding IsLoading}"
+      Command="{Binding LoadIncidentsCommand}">
+      <CollectionView
+        ItemsSource="{Binding Incidents}"
+        SelectionMode="Single"
+        SelectedItem="{Binding SelectedIncident, Mode=TwoWay}"
+        EmptyView="No incidents found. Tap + to create one.">
+        <CollectionView.ItemTemplate>
+          <DataTemplate x:DataType="dto:IncidentDto">
+            <Border
+              Stroke="{AppThemeBinding Light=#CCCCCC, Dark=#444444}"
+              StrokeThickness="1"
+              BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#1C1C1E}"
+              StrokeShape="RoundRectangle 10"
+              Margin="10,5"
+              Padding="10">
+              <VerticalStackLayout Spacing="4">
+                <Label Text="{Binding Title}"
+                       FontSize="16"
+                       FontAttributes="Bold"
+                       TextColor="{AppThemeBinding Light=Black, Dark=White}" />
+                <Label Text="{Binding Status}"
+                       FontSize="14"
+                       FontAttributes="Italic"
+                       TextColor="{AppThemeBinding Light=#777777, Dark=#BBBBBB}" />
+                <Label Text="{Binding CreatedAt, StringFormat='Created: {0:dd MMM yyyy}'}"
+                       FontSize="14"
+                       TextColor="{AppThemeBinding Light=#555555, Dark=#AAAAAA}" />
+              </VerticalStackLayout>
+            </Border>
+          </DataTemplate>
+        </CollectionView.ItemTemplate>
+      </CollectionView>
+    </RefreshView>
+
+    <!-- "+" FAB -->
+    <Button
+      Grid.Row="2"
+      HorizontalOptions="End"
+      VerticalOptions="End"
+      Margin="0,0,20,20"
+      WidthRequest="56" HeightRequest="56"
+      CornerRadius="28"
+      BackgroundColor="{StaticResource Primary}"
+      Text="+"
+      FontSize="24"
+      TextColor="White"
+      Command="{Binding NewIncidentCommand}" />
+
+    <!-- BOTTOM NAV -->
+    <views:BottomNavBar
+      Grid.Row="3"
+      CurrentPage="AccountPage"
+      IsVisible="{Binding IsFooterVisible}" />
+
+    <!-- BUSY OVERLAY -->
+    <Grid
+      Grid.RowSpan="4"
+      IsVisible="{Binding IsBusy}"
+      InputTransparent="False"
+      BackgroundColor="{StaticResource OverlayDark}">
+      <ActivityIndicator
+        IsRunning="{Binding IsBusy}"
+        HorizontalOptions="Center"
+        VerticalOptions="Center"
+        Color="White" />
     </Grid>
+
+  </Grid>
 </ContentPage>

@@ -1,92 +1,83 @@
-﻿using System.Net.Http.Headers;
+﻿using System;
+using System.Collections.ObjectModel;
+using System.Net.Http;
 using System.Net.Http.Json;
-using System.Windows.Input;
-using Microsoft.Extensions.Logging;
-using PingIt.Maui.Services;
-using PingIt.Shared.Dtos;
-using PingIt.Shared.Enums;
+using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using System.Data;
+using Microsoft.Extensions.Logging;
+using Microsoft.Maui.Controls;
+using PingIt.Maui.Services;
 using PingIt.Maui.Views;
+using PingIt.Shared.Dtos;
+using PingIt.Shared.Enums;
 
 namespace PingIt.Maui.ViewModels
 {
     public partial class AccountViewModel : ObservableObject
     {
         private readonly TokenStorageService _tokenStorage;
-        private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<AccountViewModel> _logger;
+        private readonly IIncidentStore _store;
 
-        public bool AllowReport => DeviceInfo.Platform == DevicePlatform.Android;
+        [ObservableProperty] private string firstName = string.Empty;
+        [ObservableProperty] private string lastName = string.Empty;
+        [ObservableProperty] private bool isBusy;
+        [ObservableProperty] private bool isLoading;
+        [ObservableProperty] private bool isFooterVisible;
+        [ObservableProperty] private ObservableCollection<IncidentDto> incidents = new();
+        [ObservableProperty] private IncidentDto? selectedIncident;
 
-        [ObservableProperty]
-        private string firstName = "Fetching user info...";
+        public IAsyncRelayCommand LoadIncidentsCommand { get; }
+        public IRelayCommand LogoutCommand { get; }
+        public IAsyncRelayCommand NewIncidentCommand { get; }
 
-        [ObservableProperty]
-        private string lastName = "";
+        partial void OnSelectedIncidentChanged(IncidentDto? dto)
+            => _ = HandleSelection(dto);
 
-        [ObservableProperty]
-        private UserRole role = UserRole.Resident;
+        public string FullName
+        {
+            get
+            {
+                var hour = DateTime.Now.Hour;
+                string greeting;
 
-        [ObservableProperty]
-        private bool isFooterVisible;
+                if (hour >= 5 && hour < 12)
+                    greeting = "Good Morning";
+                else if (hour >= 12 && hour < 17)
+                    greeting = "Good Afternoon";
+                else
+                    greeting = "Good Evening";
 
-        [ObservableProperty]
-        private bool isBusy;
-
-        public bool IsNotBusy => !IsBusy;
-
-        public string FullName => $"{FirstName} {LastName}";
+                return $"{greeting}, {FirstName}";
+            }
+        }
 
         public AccountViewModel(
             TokenStorageService tokenStorage,
             IHttpClientFactory httpClientFactory,
-            ILogger<AccountViewModel> logger)
+            ILogger<AccountViewModel> logger,
+            IIncidentStore store)
         {
             _tokenStorage = tokenStorage;
-            _httpClient = httpClientFactory.CreateClient("AuthenticatedClient");
+            _httpClientFactory = httpClientFactory;
             _logger = logger;
+            _store = store;
 
-            _ = LoadUserAsync();
+            LoadIncidentsCommand = new AsyncRelayCommand(LoadIncidentsAsync);
+            LogoutCommand = new RelayCommand(OnLogout);
+            NewIncidentCommand = new AsyncRelayCommand(OnNewIncident);
         }
 
-        [RelayCommand]
-        private async Task Logout()
+        public async Task InitializeAsync()
         {
+            if (IsBusy) return;
             try
             {
                 IsBusy = true;
-                await _tokenStorage.ClearTokenAsync();
-                await Shell.Current.GoToAsync("//LoginPage");
-            }
-            finally
-            {
-                IsBusy = false;
-            }
-        }
-
-        [RelayCommand]
-        private async Task NavigateReport()
-        {
-            try
-            {
-                IsBusy = true;
-                await Shell.Current.GoToAsync(nameof(ReportIncidentPage));
-            }
-            finally
-            {
-                IsBusy = false;
-            }
-        }
-
-        [RelayCommand]
-        private async Task NavigateList()
-        {
-            try
-            {
-                IsBusy = true;
-                await Shell.Current.GoToAsync(nameof(MyIncidentList));
+                await LoadUserAsync();
+                await LoadIncidentsAsync();
             }
             finally
             {
@@ -96,40 +87,85 @@ namespace PingIt.Maui.ViewModels
 
         private async Task LoadUserAsync()
         {
+            var userId = _tokenStorage.UserId;
+            if (userId == null)
+            {
+                OnLogout();
+                return;
+            }
+
+            var client = _httpClientFactory.CreateClient("AuthenticatedClient");
+            var resp = await client.GetAsync($"api/user/{userId}");
+            if (!resp.IsSuccessStatusCode)
+            {
+                OnLogout();
+                return;
+            }
+
+            var user = await resp.Content.ReadFromJsonAsync<UserDto>();
+            if (user != null)
+            {
+                FirstName = user.FirstName;
+                LastName = user.LastName;
+                OnPropertyChanged(nameof(FullName));
+                IsFooterVisible = user.Role is UserRole.Administrator or UserRole.Worker;
+            }
+        }
+
+        private async Task LoadIncidentsAsync()
+        {
+            if (_tokenStorage.UserId == null) return;
+
             try
             {
-                var userId = _tokenStorage.UserId;
-                if (userId == null)
-                {
-                    await Logout();
-                }
+                IsLoading = true;
+                var client = _httpClientFactory.CreateClient("AuthenticatedClient");
+                var response = await client.GetAsync($"api/incident/user/{_tokenStorage.UserId}");
+                if (!response.IsSuccessStatusCode) return;
 
-                var response = await _httpClient.GetAsync($"api/user/{userId}");
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    _logger.LogWarning("Failed to load user info. Status: {StatusCode}", response.StatusCode);
-                    await Logout();
-                }
-                var rawResponse = await response.Content.ReadAsStringAsync();
-                _logger.LogDebug("Raw API response: {RawJson}", rawResponse);
-
-                var user = await response.Content.ReadFromJsonAsync<UserDto>();
-                if (user != null)
-                {
-                    FirstName = user.FirstName;
-                    LastName = user.LastName;
-                    Role = user.Role;
-                    OnPropertyChanged(nameof(FullName));
-
-                    IsFooterVisible = Role == UserRole.Administrator || Role == UserRole.Worker;
-                }
-
+                var list = await response.Content.ReadFromJsonAsync<IncidentDto[]>() ?? Array.Empty<IncidentDto>();
+                Incidents = new ObservableCollection<IncidentDto>(list);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error loading user");
+                _logger.LogError(ex, "Error loading incidents");
+            }
+            finally
+            {
+                IsLoading = false;
             }
         }
+
+        private async Task HandleSelection(IncidentDto? dto)
+        {
+            if (dto == null) return;
+            IsLoading = true;
+            _store.SelectedIncident = dto;
+            await Shell.Current.GoToAsync(nameof(MyIncidentDetail));
+            SelectedIncident = null;
+            IsLoading = false;
+        }
+
+        private void OnLogout()
+            => _tokenStorage
+                .ClearTokenAsync()
+                .ContinueWith(_ =>
+                    MainThread.BeginInvokeOnMainThread(async () =>
+                        await Shell.Current.GoToAsync("//LoginPage")));
+
+        private async Task OnNewIncident()
+        {
+            IsBusy = true;
+            try
+            {
+                await Shell.Current.GoToAsync(nameof(ReportIncidentPage));
+            }
+            finally
+            {
+                IsBusy = false;
+            }
+
+        }
+
     }
 }
