@@ -8,6 +8,8 @@
         <ResourceDictionary>
             <converters:StringNotEmptyConverter x:Key="StringNotEmptyConverter" />
             <converters:PageToColorConverter x:Key="PageToColorConverter" />
+            <converters:PageToBackgroundConverter x:Key="PageToBackgroundConverter" />
+            <converters:BoolToStringConverter x:Key="BoolToStringConverter" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />

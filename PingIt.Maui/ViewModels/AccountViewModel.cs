@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
+using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Extensions.Logging;
@@ -44,6 +45,16 @@ namespace PingIt.Maui.ViewModels
                     _ => "Good Evening"
                 };
                 return $"{greeting}, {FirstName}";
+            }
+        }
+
+        public int ActiveIncidentsCount
+        {
+            get
+            {
+                return Incidents?.Count(i => i.Status == IncidentStatus.Reported ||
+                                           i.Status == IncidentStatus.Registered ||
+                                           i.Status == IncidentStatus.InProgress) ?? 0;
             }
         }
 
@@ -112,6 +123,9 @@ namespace PingIt.Maui.ViewModels
                     .ReadFromJsonAsync<IncidentDto[]>()
                            ?? Array.Empty<IncidentDto>();
                 Incidents = new ObservableCollection<IncidentDto>(list);
+
+                // Notify that ActiveIncidentsCount has changed
+                OnPropertyChanged(nameof(ActiveIncidentsCount));
             }
             catch (Exception ex)
             {
@@ -177,6 +191,12 @@ namespace PingIt.Maui.ViewModels
             await Shell.Current.GoToAsync(nameof(MyIncidentDetail));
             SelectedIncident = null;
             IsLoading = false;
+        }
+
+        // Override the Incidents property setter to notify ActiveIncidentsCount changes
+        partial void OnIncidentsChanged(ObservableCollection<IncidentDto> value)
+        {
+            OnPropertyChanged(nameof(ActiveIncidentsCount));
         }
     }
 }

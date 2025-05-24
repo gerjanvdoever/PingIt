@@ -84,10 +84,14 @@ namespace PingIt.Api.Controllers
             var incidents = await _context.Incidents
                 .Include(i => i.Photos)
                 .Where(i => i.CreatedByUserId == userId)
+                .OrderByDescending(i => i.CreatedAt)
                 .ToListAsync();
 
-            return Ok(incidents.Select(MapToDto).ToList());
+            return Ok(incidents
+                .Select(MapToDto)
+                .ToList());
         }
+
 
         // GET: api/incidents/worker/{workerId}/closed
         [HttpGet("worker/{workerId}/closed")]

@@ -4,31 +4,73 @@
              xmlns:converters="clr-namespace:PingIt.Maui.Converters"
              x:Class="PingIt.Maui.Views.BottomNavBar"
              x:Name="FooterRoot">
+    <ContentView.Resources>
+        <converters:PageToBackgroundConverter x:Key="PageToBackgroundConverter" />
+    </ContentView.Resources>
 
     <Grid ColumnDefinitions="*,*,*"
           BackgroundColor="{AppThemeBinding Light=#F0F0F0, Dark=#1C1C1E}"
           Padding="10">
 
-        <Button Text="Map"
-                Grid.Column="0"
-                Command="{Binding NavigateMapCommand, Source={x:Reference FooterRoot}}"
-                IsEnabled="{Binding AllowMap, Source={x:Reference FooterRoot}}"
-                FontSize="16"
-                BackgroundColor="Transparent"
-                TextColor="{Binding CurrentPage, Source={x:Reference FooterRoot}, Converter={StaticResource PageToColorConverter}, ConverterParameter=MapPage}" />
+        <!-- Map Navigation -->
+        <Border Grid.Column="0"
+                BackgroundColor="{Binding CurrentPage, Source={x:Reference FooterRoot}, Converter={StaticResource PageToBackgroundConverter}, ConverterParameter=IncidentMapPage}"
+                StrokeThickness="0"
+                Padding="8"
+                HorizontalOptions="Center"
+                VerticalOptions="Center">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="8" />
+            </Border.StrokeShape>
+            <Image Source="map.png"
+                   WidthRequest="32"
+                   HeightRequest="32"
+                   Aspect="AspectFit"
+                   IsEnabled="{Binding AllowMap, Source={x:Reference FooterRoot}}">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding NavigateMapCommand, Source={x:Reference FooterRoot}}" />
+                </Image.GestureRecognizers>
+            </Image>
+        </Border>
 
-        <Button Text="List"
-                Grid.Column="1"
-                Command="{Binding NavigateListCommand, Source={x:Reference FooterRoot}}"
-                FontSize="16"
-                BackgroundColor="Transparent"
-                TextColor="{Binding CurrentPage, Source={x:Reference FooterRoot}, Converter={StaticResource PageToColorConverter}, ConverterParameter=IncidentListPage}" />
+        <!-- List Navigation -->
+        <Border Grid.Column="1"
+                BackgroundColor="{Binding CurrentPage, Source={x:Reference FooterRoot}, Converter={StaticResource PageToBackgroundConverter}, ConverterParameter=IncidentListPage}"
+                StrokeThickness="0"
+                Padding="8"
+                HorizontalOptions="Center"
+                VerticalOptions="Center">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="8" />
+            </Border.StrokeShape>
+            <Image Source="list.png"
+                   WidthRequest="32"
+                   HeightRequest="32"
+                   Aspect="AspectFit">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding NavigateListCommand, Source={x:Reference FooterRoot}}" />
+                </Image.GestureRecognizers>
+            </Image>
+        </Border>
 
-        <Button Text="Account"
-                Grid.Column="2"
-                Command="{Binding NavigateAccountCommand, Source={x:Reference FooterRoot}}"
-                FontSize="16"
-                BackgroundColor="Transparent"
-                TextColor="{Binding CurrentPage, Source={x:Reference FooterRoot}, Converter={StaticResource PageToColorConverter}, ConverterParameter=AccountPage}" />
+        <!-- Account Navigation -->
+        <Border Grid.Column="2"
+                BackgroundColor="{Binding CurrentPage, Source={x:Reference FooterRoot}, Converter={StaticResource PageToBackgroundConverter}, ConverterParameter=AccountPage}"
+                StrokeThickness="0"
+                Padding="8"
+                HorizontalOptions="Center"
+                VerticalOptions="Center">
+            <Border.StrokeShape>
+                <RoundRectangle CornerRadius="8" />
+            </Border.StrokeShape>
+            <Image Source="profile.png"
+                   WidthRequest="32"
+                   HeightRequest="32"
+                   Aspect="AspectFit">
+                <Image.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding NavigateAccountCommand, Source={x:Reference FooterRoot}}" />
+                </Image.GestureRecognizers>
+            </Image>
+        </Border>
     </Grid>
 </ContentView>

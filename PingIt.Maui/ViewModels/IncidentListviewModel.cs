@@ -94,16 +94,24 @@ public partial class IncidentListViewModel : ObservableObject
     [RelayCommand]
     public async Task LoadClosedIncidentsAsync()
     {
+        if (ShowClosed)
+        {
+            ShowClosed = false;
+            ClosedIncidents.Clear();
+            return;
+        }
+
         if (_tokenStorage.UserId is null)
         {
             StatusMessage = "User not logged in.";
             return;
         }
+
         try
         {
-            ShowClosed = true;
             IsLoading = true;
             StatusMessage = string.Empty;
+            ShowClosed = true;
 
             int userId = _tokenStorage.UserId.Value;
             var response = await _httpClient.GetAsync($"api/incident/worker/{userId}/closed");
