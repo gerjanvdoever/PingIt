@@ -169,10 +169,10 @@ namespace PingIt.Maui.Views
 
             if (show && !_isListening)
             {
-                // 1) pre‐emptively mark as listening so re‐entrant calls won't jump in
+                // pre‐emptively mark as listening so re‐entrant calls won't jump in
                 _isListening = true;
 
-                // 2) wire up the event
+                // wire up the event
                 Geolocation.Default.LocationChanged += OnLocationChanged;
 
                 var request = new GeolocationListeningRequest(
@@ -186,12 +186,11 @@ namespace PingIt.Maui.Views
                 }
                 catch (InvalidOperationException ioe)
                 {
-                    // MAUI complains "Already listening to location changes." — we can safely ignore
+                    // Throws, which is fine, we just log it
                     System.Diagnostics.Debug.WriteLine($"[MapView] StartListening skipped: {ioe.Message}");
                 }
                 catch (Exception ex)
                 {
-                    // anything else: unwind our state so we don’t think we’re listening
                     System.Diagnostics.Debug.WriteLine($"[MapView] Failed to start listening: {ex}");
                     Geolocation.Default.LocationChanged -= OnLocationChanged;
                     _isListening = false;
@@ -266,7 +265,7 @@ namespace PingIt.Maui.Views
                     catch { }
                 }
 
-                // Center on all pins or single pin
+                // Center on all pins or single pin (big calculation)
                 if (list.Count > 1)
                 {
                     var minLat = list.Min(p => (double)p.Latitude);

@@ -53,8 +53,8 @@ namespace PingIt.Maui.ViewModels
              || NewIncidentCoord is null)
             {
                 await Shell.Current.DisplayAlert(
-                    "Error",
-                    "Please fill in the necessary information.",
+                    "Missing Information",
+                    "Please provide a title and select a location on the map before submitting your report.",
                     "OK");
                 return;
             }
@@ -77,8 +77,8 @@ namespace PingIt.Maui.ViewModels
                 if (!incidentResp.IsSuccessStatusCode)
                 {
                     await Shell.Current.DisplayAlert(
-                        "Error",
-                        "Unable to create incident.",
+                        "Submission Failed",
+                        "Unable to submit your incident report. Please check your connection and try again.",
                         "OK");
                     return;
                 }
@@ -91,7 +91,7 @@ namespace PingIt.Maui.ViewModels
                 {
                     await Shell.Current.DisplayAlert(
                         "Error",
-                        "Received incomplete data from server.",
+                        "Received incomplete data from server. Please try again.",
                         "OK");
                     return;
                 }
@@ -121,18 +121,19 @@ namespace PingIt.Maui.ViewModels
                 }
 
                 await Shell.Current.DisplayAlert(
-                    "Done",
-                    "Incident sent successfully!",
-                    "OK");
+                    "Thank You!",
+                    "Your incident report has been successfully submitted. Authorities have been notified and will respond accordingly.\n\nYour contribution helps keep our community safe!",
+                    "Great!");
 
+                await ClearFormAsync();
                 await Shell.Current.GoToAsync("..");
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"SendAsync failed: {ex}");
                 await Shell.Current.DisplayAlert(
-                    "Error",
-                    "Something went wrong while sending.",
+                    "Submission Error",
+                    "Something went wrong while submitting your report. Please try again later.",
                     "OK");
             }
             finally
@@ -154,8 +155,8 @@ namespace PingIt.Maui.ViewModels
                 if (status != PermissionStatus.Granted)
                 {
                     await Shell.Current.DisplayAlert(
-                        "Permission Denied",
-                        "Location access is required to determine your position.",
+                        "Location Permission Required",
+                        "Location access is needed to mark where the incident occurred. Please enable location permissions in your device settings.",
                         "OK");
                     return;
                 }
@@ -175,13 +176,20 @@ namespace PingIt.Maui.ViewModels
                     };
                     ShowUserLocation = true;
                 }
+                else
+                {
+                    await Shell.Current.DisplayAlert(
+                        "Location Unavailable",
+                        "Could not determine your current location. Please mark the location manually on the map.",
+                        "OK");
+                }
             }
             catch (Exception ex)
             {
                 Debug.WriteLine($"UseCurrentLocationAsync failed: {ex}");
                 await Shell.Current.DisplayAlert(
-                    "Error",
-                    "Could not retrieve current location.",
+                    "Location Error",
+                    "Could not retrieve your current location. Please mark the location manually on the map or try again.",
                     "OK");
             }
             finally
@@ -196,48 +204,52 @@ namespace PingIt.Maui.ViewModels
             if (IsBusy) return;
             IsBusy = true;
 
-            var status = await Permissions.RequestAsync<Permissions.Camera>();
-            if (status != PermissionStatus.Granted)
-            {
-                await Shell.Current.DisplayAlert(
-                    "Permission Denied",
-                    "Camera access is required.",
-                    "OK");
-                return;
-            }
-
-            var photoStatus = await Permissions.RequestAsync<Permissions.Photos>();
-            if (photoStatus != PermissionStatus.Granted)
-            {
-                await Shell.Current.DisplayAlert(
-                    "Permission Denied",
-                    "Gallery access is required to choose a photo.",
-                    "OK");
-                return;
-            }
-
             try
             {
+                var cameraStatus = await Permissions.RequestAsync<Permissions.Camera>();
+                var photoStatus = await Permissions.RequestAsync<Permissions.Photos>();
+
+                if (cameraStatus != PermissionStatus.Granted && photoStatus != PermissionStatus.Granted)
+                {
+                    await Shell.Current.DisplayAlert(
+                        "Permissions Required",
+                        "Camera and photo access are needed to add images to your report. Please enable these permissions in your device settings.",
+                        "OK");
+                    return;
+                }
+
                 var options = new List<string>();
-                bool canCapture = DeviceInfo.Platform != DevicePlatform.WinUI;
+                bool canCapture = DeviceInfo.Platform != DevicePlatform.WinUI && cameraStatus == PermissionStatus.Granted;
+
                 if (canCapture)
                     options.Add("Take Photo");
-                options.Add("Choose Photo");
+
+                if (photoStatus == PermissionStatus.Granted)
+                    options.Add("Choose from Gallery");
+
+                if (options.Count == 0)
+                {
+                    await Shell.Current.DisplayAlert(
+                        "No Options Available",
+                        "Unable to access camera or photo gallery. Please check your permissions.",
+                        "OK");
+                    return;
+                }
 
                 var choice = await Shell.Current.DisplayActionSheet(
-                    "Add Photo",
+                    "Add Photo to Report",
                     "Cancel",
                     null,
                     options.ToArray());
 
-                if (choice == "Cancel") return;
+                if (choice == "Cancel" || choice == null) return;
 
                 FileResult? result = choice switch
                 {
                     "Take Photo" => await MediaPicker.CapturePhotoAsync(
                                           new MediaPickerOptions { Title = $"incident_{DateTime.Now:yyyyMMdd_HHmmss}" }),
-                    "Choose Photo" => await MediaPicker.PickPhotoAsync(
-                                          new MediaPickerOptions { Title = "Select a photo" }),
+                    "Choose from Gallery" => await MediaPicker.PickPhotoAsync(
+                                          new MediaPickerOptions { Title = "Select a photo for your report" }),
                     _ => null
                 };
 
@@ -253,8 +265,8 @@ namespace PingIt.Maui.ViewModels
             {
                 Debug.WriteLine($"AddPhotoAsync failed: {ex}");
                 await Shell.Current.DisplayAlert(
-                    "Error",
-                    "Could not add the photo.",
+                    "Photo Error",
+                    "Could not add the photo to your report. Please try again.",
                     "OK");
             }
             finally
@@ -263,6 +275,14 @@ namespace PingIt.Maui.ViewModels
             }
         }
 
+        private async Task ClearFormAsync()
+        {
+            Title = string.Empty;
+            Description = string.Empty;
+            Photos.Clear();
+            NewIncidentCoord = null;
+            ShowUserLocation = false;
+        }
 
         private async static Task<string> UploadLocalAsync(string fileName, Stream stream)
         {
