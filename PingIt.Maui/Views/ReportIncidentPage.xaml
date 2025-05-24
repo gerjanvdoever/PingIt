@@ -179,27 +179,26 @@
                                 </Border>
 
                                 <CollectionView ItemsSource="{Binding Photos}"
-                                                ItemsLayout="HorizontalList">
+                                    ItemsLayout="HorizontalList">
                                     <CollectionView.ItemTemplate>
-                                        <DataTemplate>
+                                        <DataTemplate x:DataType="ImageSource">
                                             <Border Margin="0,0,12,0"
-                                                    StrokeShape="RoundRectangle 12"
-                                                    BackgroundColor="Transparent">
+                                                StrokeShape="RoundRectangle 12"
+                                                BackgroundColor="Transparent">
                                                 <Border.Shadow>
-                                                    <Shadow Brush="{AppThemeBinding Light=#E1E4E8, Dark=#21262D}"
-                                                            Offset="0,2"
-                                                            Radius="6"
-                                                            Opacity="0.15" />
+                                                <Shadow Brush="{AppThemeBinding Light=#E1E4E8, Dark=#21262D}"
+                                                Offset="0,2"
+                                                Radius="6"
+                                                Opacity="0.15" />
                                                 </Border.Shadow>
-
                                                 <Border StrokeShape="RoundRectangle 12"
-                                                        Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#30363D}"
-                                                        StrokeThickness="1"
-                                                        BackgroundColor="{AppThemeBinding Light=White, Dark=#21262D}">
+                                                Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#30363D}"
+                                                StrokeThickness="1"
+                                                BackgroundColor="{AppThemeBinding Light=White, Dark=#21262D}">
                                                     <Image Source="{Binding .}"
-                                                           Aspect="AspectFill"
-                                                           WidthRequest="120"
-                                                           HeightRequest="120" />
+                                                Aspect="AspectFill"
+                                                WidthRequest="120"
+                                                HeightRequest="120" />
                                                 </Border>
                                             </Border>
                                         </DataTemplate>

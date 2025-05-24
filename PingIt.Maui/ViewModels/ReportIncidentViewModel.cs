@@ -257,8 +257,13 @@ namespace PingIt.Maui.ViewModels
                 {
                     var stream = await result.OpenReadAsync();
                     var uploadPath = await UploadLocalAsync(result.FileName, stream);
+
+                    // Create ImageSource from the saved file path
                     var imageSource = ImageSource.FromFile(uploadPath);
                     Photos.Add(imageSource);
+
+                    // Force UI update
+                    OnPropertyChanged(nameof(Photos));
                 }
             }
             catch (Exception ex)
