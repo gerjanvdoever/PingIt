@@ -12,7 +12,6 @@
     <Grid>
         <Grid RowDefinitions="Auto,*,Auto" Padding="0">
 
-            <!-- Header Section -->
             <Border Grid.Row="0" 
                     BackgroundColor="{AppThemeBinding Light=White, Dark=#161B22}"
                     Padding="20,15,20,10">
@@ -25,7 +24,6 @@
 
                 <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto">
 
-                    <!-- Status Message -->
                     <Label Grid.Row="0" Grid.ColumnSpan="2"
                            Text="{Binding StatusMessage}"
                            TextColor="{AppThemeBinding Light=#D73A49, Dark=#F85149}"
@@ -34,7 +32,6 @@
                            IsVisible="{Binding StatusMessage.Length}"
                            Margin="0,0,0,10" />
 
-                    <!-- Title and Actions -->
                     <Label Grid.Row="1" Grid.Column="0"
                            Text="Incident Overview"
                            FontSize="24"
@@ -81,7 +78,6 @@
                             </Border.Shadow>
 
                             <VerticalStackLayout Spacing="0">
-                                <!-- Section Header -->
                                 <Border BackgroundColor="{AppThemeBinding Light=#F6F8FA, Dark=#21262D}"
                                         Padding="20,16"
                                         StrokeShape="RoundRectangle 12,12,0,0">
@@ -168,7 +164,6 @@
                             </VerticalStackLayout>
                         </Border>
 
-                        <!-- Closed Incidents Toggle Button -->
                         <Button Text="{Binding ShowClosed, Converter={StaticResource BoolToStringConverter}, ConverterParameter='Hide Closed Incidents,Show Closed Incidents'}"
                                 Command="{Binding LoadClosedIncidentsCommand}"
                                 FontSize="15"
@@ -181,7 +176,6 @@
                                 Padding="16,12"
                                 Margin="16,8,16,8" />
 
-                        <!-- Closed Incidents Section -->
                         <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#161B22}"
                                 Margin="16,8,16,16"
                                 Padding="0"
@@ -197,7 +191,6 @@
                             </Border.Shadow>
 
                             <VerticalStackLayout Spacing="0">
-                                <!-- Section Header -->
                                 <Border BackgroundColor="{AppThemeBinding Light=#F6F8FA, Dark=#21262D}"
                                         Padding="20,16"
                                         StrokeShape="RoundRectangle 12,12,0,0">
@@ -283,7 +276,6 @@
                 </ScrollView>
             </RefreshView>
 
-            <!-- Bottom Navigation -->
             <views:BottomNavBar Grid.Row="2" CurrentPage="IncidentListPage" />
 
         </Grid>

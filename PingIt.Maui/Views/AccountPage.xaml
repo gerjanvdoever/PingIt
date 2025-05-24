@@ -129,7 +129,7 @@
                     </Border>
                 </Grid>
 
-                <Label Text="All Incidents"
+                <Label Text="My incidents"
                        FontSize="18"
                        FontAttributes="Bold"
                        TextColor="{AppThemeBinding Light=Black, Dark=White}" />

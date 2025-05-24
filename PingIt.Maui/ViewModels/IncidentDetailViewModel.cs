@@ -27,6 +27,13 @@ namespace PingIt.Maui.ViewModels
 
         [ObservableProperty]
         private bool isBusy;
+
+        [ObservableProperty]
+        private bool isImageFullscreen;
+
+        [ObservableProperty]
+        private string fullscreenImageUrl = string.Empty;
+
         public bool IsNotBusy => !IsBusy;
 
         public List<IncidentStatus> StatusOptions { get; } =
@@ -51,17 +58,16 @@ namespace PingIt.Maui.ViewModels
 
             Incident = store.SelectedIncident
                        ?? throw new InvalidOperationException("No incident selected");
-
             SelectedStatus = Incident.Status;
 
+            // recompute when Incident changes
             OnPropertyChanged(nameof(PinItems));
         }
 
         [RelayCommand]
         public async Task ChangeStatusAsync()
         {
-            if (IsBusy)
-                return;
+            if (IsBusy) return;
 
             try
             {
@@ -80,25 +86,43 @@ namespace PingIt.Maui.ViewModels
                 {
                     Incident.Status = SelectedStatus;
                     OnPropertyChanged(nameof(Incident));
-
                     await Toast.Make("Status and notes saved", ToastDuration.Short).Show();
                 }
                 else
                 {
-                    await Toast.Make(
-                        $"Update failed: {response.StatusCode}",
-                        ToastDuration.Long).Show();
+                    await Toast.Make($"Update failed: {response.StatusCode}", ToastDuration.Long).Show();
                 }
             }
             catch (Exception ex)
             {
-                await Toast.Make(
-                    $"Error: {ex.Message}",
-                    ToastDuration.Long).Show();
+                await Toast.Make($"Error: {ex.Message}", ToastDuration.Long).Show();
             }
             finally
             {
                 IsBusy = false;
+            }
+        }
+
+        [RelayCommand]
+        void ShowFullscreenImage(string imageUrl)
+        {
+            FullscreenImageUrl = imageUrl;
+            IsImageFullscreen = true;
+        }
+
+        [RelayCommand]
+        void CloseFullscreenImage()
+        {
+            IsImageFullscreen = false;
+            FullscreenImageUrl = string.Empty;
+        }
+
+        protected override void OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            base.OnPropertyChanged(e);
+            if (e.PropertyName == nameof(Incident))
+            {
+                OnPropertyChanged(nameof(PinItems));
             }
         }
     }
