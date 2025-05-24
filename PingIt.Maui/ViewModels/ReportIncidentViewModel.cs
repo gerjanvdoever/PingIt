@@ -280,6 +280,37 @@ namespace PingIt.Maui.ViewModels
             }
         }
 
+        [RelayCommand]
+        private void RemovePhoto(ImageSource photo)
+        {
+            if (photo == null) return;
+
+            try
+            {
+                // If it's a FileImageSource, try to delete the local file
+                if (photo is FileImageSource fis && !string.IsNullOrEmpty(fis.File) && File.Exists(fis.File))
+                {
+                    try
+                    {
+                        File.Delete(fis.File);
+                        Debug.WriteLine($"Deleted local file: {fis.File}");
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Could not delete local file {fis.File}: {ex.Message}");
+                        // Continue anyway - the file might be in use or already deleted
+                    }
+                }
+
+                Photos.Remove(photo);
+                OnPropertyChanged(nameof(Photos));
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"RemovePhoto failed: {ex}");
+            }
+        }
+
         private async Task ClearFormAsync()
         {
             Title = string.Empty;

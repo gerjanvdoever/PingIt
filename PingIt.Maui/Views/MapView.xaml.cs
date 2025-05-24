@@ -172,7 +172,7 @@ namespace PingIt.Maui.Views
                 // pre‐emptively mark as listening so re‐entrant calls won't jump in
                 _isListening = true;
 
-                // wire up the event
+                // 2) wire up the event
                 Geolocation.Default.LocationChanged += OnLocationChanged;
 
                 var request = new GeolocationListeningRequest(

@@ -5,6 +5,7 @@
     xmlns:vm="clr-namespace:PingIt.Maui.ViewModels"
     xmlns:views="clr-namespace:PingIt.Maui.Views"
     x:Class="PingIt.Maui.Views.ReportIncidentPage"
+    x:Name="MainPage"
     x:DataType="vm:ReportIncidentViewModel"
     Shell.NavBarIsVisible="False"
     BackgroundColor="{AppThemeBinding Light=#F8F9FA, Dark=#0D1117}">
@@ -182,25 +183,55 @@
                                     ItemsLayout="HorizontalList">
                                     <CollectionView.ItemTemplate>
                                         <DataTemplate x:DataType="ImageSource">
-                                            <Border Margin="0,0,12,0"
-                                                StrokeShape="RoundRectangle 12"
-                                                BackgroundColor="Transparent">
-                                                <Border.Shadow>
-                                                <Shadow Brush="{AppThemeBinding Light=#E1E4E8, Dark=#21262D}"
-                                                Offset="0,2"
-                                                Radius="6"
-                                                Opacity="0.15" />
-                                                </Border.Shadow>
+                                            <Grid Margin="0,0,12,0">
+                                                <!-- Main photo container -->
                                                 <Border StrokeShape="RoundRectangle 12"
-                                                Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#30363D}"
-                                                StrokeThickness="1"
-                                                BackgroundColor="{AppThemeBinding Light=White, Dark=#21262D}">
-                                                    <Image Source="{Binding .}"
-                                                Aspect="AspectFill"
-                                                WidthRequest="120"
-                                                HeightRequest="120" />
+                                                        BackgroundColor="Transparent">
+                                                    <Border.Shadow>
+                                                        <Shadow Brush="{AppThemeBinding Light=#E1E4E8, Dark=#21262D}"
+                                                                Offset="0,2"
+                                                                Radius="6"
+                                                                Opacity="0.15" />
+                                                    </Border.Shadow>
+                                                    <Border StrokeShape="RoundRectangle 12"
+                                                            Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#30363D}"
+                                                            StrokeThickness="1"
+                                                            BackgroundColor="{AppThemeBinding Light=White, Dark=#21262D}">
+                                                        <Image Source="{Binding .}"
+                                                               Aspect="AspectFill"
+                                                               WidthRequest="120"
+                                                               HeightRequest="120" />
+                                                    </Border>
                                                 </Border>
-                                            </Border>
+
+                                                <!-- Delete button - positioned in top-right corner -->
+                                                <Border BackgroundColor="{AppThemeBinding Light=#DC2626, Dark=#EF4444}"
+                                                        StrokeShape="RoundRectangle 12"
+                                                        WidthRequest="24"
+                                                        HeightRequest="24"
+                                                        HorizontalOptions="End"
+                                                        VerticalOptions="Start"
+                                                        Margin="0,-8,-8,0">
+                                                    <Border.Shadow>
+                                                        <Shadow Brush="Black"
+                                                                Offset="0,2"
+                                                                Radius="4"
+                                                                Opacity="0.3" />
+                                                    </Border.Shadow>
+                                                    <Border.GestureRecognizers>
+                                                        <TapGestureRecognizer Command="{Binding Path=BindingContext.RemovePhotoCommand, Source={x:Reference Name=MainPage}}"
+                                                                              CommandParameter="{Binding .}" />
+                                                    </Border.GestureRecognizers>
+
+                                                    <Label Text="×"
+                                                           FontSize="16"
+                                                           FontFamily="OpenSansSemibold"
+                                                           TextColor="White"
+                                                           HorizontalOptions="Center"
+                                                           VerticalOptions="Center"
+                                                           LineHeight="1" />
+                                                </Border>
+                                            </Grid>
                                         </DataTemplate>
                                     </CollectionView.ItemTemplate>
                                 </CollectionView>
