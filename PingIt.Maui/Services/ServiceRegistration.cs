@@ -12,6 +12,7 @@ public static class ServiceRegistration
         // Services
         services.AddSingleton<TokenStorageService>();
         services.AddSingleton<IIncidentStore, IncidentStore>();
+        services.AddSingleton<IUserStore, UserStore>();
 
         // ViewModels
         services.AddTransient<LoginViewModel>();
@@ -22,6 +23,7 @@ public static class ServiceRegistration
         services.AddTransient<MyIncidentDetailViewModel>();
         services.AddTransient<IncidentMapViewModel>();
         services.AddTransient<IncidentDetailViewModel>();
+        services.AddTransient<MyAccountDetailViewModel>();
 
         // Views
         services.AddTransient<LoginPage>();
@@ -34,6 +36,7 @@ public static class ServiceRegistration
         services.AddTransient<MyIncidentDetail>();
         services.AddTransient<IncidentMapPage>();
         services.AddTransient<IncidentDetailPage>();
+        services.AddTransient<MyAccountDetailPage>();
 
         return services;
     }

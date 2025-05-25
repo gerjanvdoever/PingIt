@@ -11,6 +11,7 @@ namespace PingIt.Maui
             Routing.RegisterRoute(nameof(ReportIncidentPage), typeof(ReportIncidentPage));
             Routing.RegisterRoute(nameof(IncidentDetailPage), typeof(IncidentDetailPage));
             Routing.RegisterRoute(nameof(RegisterPage), typeof(RegisterPage));
+            Routing.RegisterRoute(nameof(MyAccountDetailPage), typeof(MyAccountDetailPage));
         }
     }
 }

@@ -142,6 +142,9 @@
 	  <MauiXaml Update="Views\MapView.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>
+	  <MauiXaml Update="Views\MyAccountDetailPage.xaml">
+	    <Generator>MSBuild:Compile</Generator>
+	  </MauiXaml>
 	  <MauiXaml Update="Views\MyIncidentDetail.xaml">
 	    <Generator>MSBuild:Compile</Generator>
 	  </MauiXaml>

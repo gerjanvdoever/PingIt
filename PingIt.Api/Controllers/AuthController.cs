@@ -121,12 +121,20 @@ namespace PingIt.Api.Controllers
                 return NotFound(new { Message = "User not found." });
             }
 
+            // Check old password
             var hashedOldPassword = HashPassword(passwordDto.OldPassword);
             if (user.PasswordHash != hashedOldPassword)
             {
                 return Unauthorized(new { Message = "Old password is incorrect." });
             }
 
+            // Check that new password and confirmation match
+            if (passwordDto.NewPassword != passwordDto.ConfirmPassword)
+            {
+                return BadRequest(new { Message = "New password and confirmation do not match." });
+            }
+
+            // Validate new password format
             var passwordRegex = new Regex(@"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,}$");
             if (!passwordRegex.IsMatch(passwordDto.NewPassword))
             {
@@ -141,8 +149,9 @@ namespace PingIt.Api.Controllers
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
 
-            return Ok();
+            return Ok(new { Message = "Password changed successfully." });
         }
+
 
         private string HashPassword(string password)
         {

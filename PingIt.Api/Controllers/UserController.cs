@@ -66,13 +66,8 @@ namespace PingIt.Api.Controllers
 
         // PUT: api/user/{id}
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, [FromBody] UserDto userDto)
+        public async Task<IActionResult> UpdateUser(int id, [FromBody] UpdateUserDto userDto)
         {
-            if (id != userDto.Id)
-            {
-                return BadRequest(new { Message = "User ID mismatch." });
-            }
-
             try
             {
                 var userIdFromToken = User.GetUserId();
@@ -99,20 +94,24 @@ namespace PingIt.Api.Controllers
                 return BadRequest(new { Message = validationResult });
             }
 
-            user.FirstName = userDto.FirstName;
-            user.LastName = userDto.LastName;
-            user.PhoneNumber = userDto.PhoneNumber;
-            user.WantsNotifications = userDto.WantsNotifications;
-            user.Street = userDto.Street;
-            user.HouseNumber = userDto.HouseNumber;
-            user.PostalCode = userDto.PostalCode;
-            user.City = userDto.City;
+            // Apply updates only if values are provided
+            if (userDto.Email != null) user.Email = userDto.Email;
+            if (userDto.FirstName != null) user.FirstName = userDto.FirstName;
+            if (userDto.LastName != null) user.LastName = userDto.LastName;
+            if (userDto.PhoneNumber != null) user.PhoneNumber = userDto.PhoneNumber;
+            if (userDto.WantsNotifications.HasValue) user.WantsNotifications = userDto.WantsNotifications.Value;
+            if (userDto.Street != null) user.Street = userDto.Street;
+            if (userDto.HouseNumber != null) user.HouseNumber = userDto.HouseNumber;
+            if (userDto.PostalCode != null) user.PostalCode = userDto.PostalCode;
+            if (userDto.City != null) user.City = userDto.City;
 
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok();
         }
+
+
 
         // GET: api/user
         [HttpGet]
@@ -179,29 +178,35 @@ namespace PingIt.Api.Controllers
             return NoContent();
         }
 
-        private string ValidateUserDto(UserDto dto)
+        private string ValidateUserDto(UpdateUserDto dto)
         {
-            if (string.IsNullOrWhiteSpace(dto.FirstName) ||
-                string.IsNullOrWhiteSpace(dto.LastName) ||
-                string.IsNullOrWhiteSpace(dto.Email) ||
-                string.IsNullOrWhiteSpace(dto.Street) ||
-                string.IsNullOrWhiteSpace(dto.HouseNumber) ||
-                string.IsNullOrWhiteSpace(dto.PostalCode) ||
-                string.IsNullOrWhiteSpace(dto.City))
+            // Check string fields only if they are provided (non-null)
+            if (dto.FirstName is { Length: 0 } ||
+                dto.LastName is { Length: 0 } ||
+                dto.Street is { Length: 0 } ||
+                dto.HouseNumber is { Length: 0 } ||
+                dto.PostalCode is { Length: 0 } ||
+                dto.City is { Length: 0 })
             {
-                return "All fields are required.";
+                return "Fields cannot be empty if provided.";
             }
 
-            var emailRegex = new Regex(@"^\S+@\S+\.\S+$");
-            if (!emailRegex.IsMatch(dto.Email))
+            if (!string.IsNullOrWhiteSpace(dto.Email))
             {
-                return "Invalid email format.";
+                var emailRegex = new Regex(@"^\S+@\S+\.\S+$");
+                if (!emailRegex.IsMatch(dto.Email))
+                {
+                    return "Invalid email format.";
+                }
             }
 
-            var postalCodeRegex = new Regex(@"^\d{4}[A-Z]{2}$");
-            if (!postalCodeRegex.IsMatch(dto.PostalCode))
+            if (!string.IsNullOrWhiteSpace(dto.PostalCode))
             {
-                return "Postal code must be in the format 1234AB.";
+                var postalCodeRegex = new Regex(@"^\d{4}[A-Z]{2}$");
+                if (!postalCodeRegex.IsMatch(dto.PostalCode))
+                {
+                    return "Postal code must be in the format 1234AB.";
+                }
             }
 
             return string.Empty;

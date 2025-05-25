@@ -271,6 +271,34 @@
             </Border.Shadow>
 
             <StackLayout Spacing="0">
+                <!-- Details Option -->
+                <Grid Padding="20,15" BackgroundColor="Transparent">
+                    <Grid.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding ShowDetailsCommand}" />
+                    </Grid.GestureRecognizers>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <Border Grid.Column="0"
+                    WidthRequest="32" HeightRequest="32"
+                    StrokeThickness="0"
+                    BackgroundColor="{AppThemeBinding Light=#F0F4FF, Dark=#2E3A59}"
+                    StrokeShape="RoundRectangle 8"
+                    Margin="0,0,12,0">
+                    <Image Source="personaldetails.png"
+                    WidthRequest="16" HeightRequest="16"
+                    Aspect="AspectFit" />
+                  </Border>
+
+                <Label Grid.Column="1"
+                Text="Details"
+                FontSize="15"
+                VerticalOptions="Center"
+                TextColor="{AppThemeBinding Light=#1976D2, Dark=#64B5F6}" />
+                </Grid>
+
                 <Grid Padding="20,15" BackgroundColor="Transparent">
                     <Grid.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding LogoutCommand}" />

@@ -17,13 +17,14 @@ namespace PingIt.Maui.ViewModels
 {
     public partial class AccountViewModel : ObservableObject
     {
-        // … your injected services …
+        // injected services
         private readonly TokenStorageService _tokenStorage;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<AccountViewModel> _logger;
         private readonly IIncidentStore _store;
+        private readonly IUserStore _userStore;
 
-        // your observable props
+        // observable properties
         [ObservableProperty] string firstName = string.Empty;
         [ObservableProperty] string lastName = string.Empty;
         [ObservableProperty] bool isBusy;
@@ -32,6 +33,7 @@ namespace PingIt.Maui.ViewModels
         [ObservableProperty] bool isDropdownVisible;
         [ObservableProperty] ObservableCollection<IncidentDto> incidents = new();
         [ObservableProperty] IncidentDto? selectedIncident;
+        [ObservableProperty] UserDto? currentUser;
 
         public string FullName
         {
@@ -62,12 +64,14 @@ namespace PingIt.Maui.ViewModels
             TokenStorageService tokenStorage,
             IHttpClientFactory httpClientFactory,
             ILogger<AccountViewModel> logger,
-            IIncidentStore store)
+            IIncidentStore store,
+            IUserStore userStore)
         {
             _tokenStorage = tokenStorage;
             _httpClientFactory = httpClientFactory;
             _logger = logger;
             _store = store;
+            _userStore = userStore;
         }
 
         public async Task InitializeAsync()
@@ -84,8 +88,6 @@ namespace PingIt.Maui.ViewModels
                 IsBusy = false;
             }
         }
-
-        // ——— COMMANDS ———
 
         [RelayCommand]
         private void ToggleDropdown()
@@ -151,8 +153,6 @@ namespace PingIt.Maui.ViewModels
             }
         }
 
-        // ——— end COMMANDS ———
-
         private async Task LoadUserAsync()
         {
             var userId = _tokenStorage.UserId;
@@ -173,6 +173,7 @@ namespace PingIt.Maui.ViewModels
             var user = await resp.Content.ReadFromJsonAsync<UserDto>();
             if (user != null)
             {
+                CurrentUser = user;
                 FirstName = user.FirstName;
                 LastName = user.LastName;
                 OnPropertyChanged(nameof(FullName));
@@ -180,8 +181,53 @@ namespace PingIt.Maui.ViewModels
             }
         }
 
-        partial void OnSelectedIncidentChanged(IncidentDto? dto)
-            => _ = HandleSelection(dto);
+        [RelayCommand]
+        private async Task ShowDetails()
+        {
+            try
+            {
+                // Capture CurrentUser to avoid race conditions
+                var user = CurrentUser;
+
+                if (user == null)
+                {
+                    _logger.LogWarning("CurrentUser is null when ShowDetails was called");
+                    return;
+                }
+
+                if (_userStore == null)
+                {
+                    _logger.LogError("UserStore is null");
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(user.FirstName) || string.IsNullOrEmpty(user.LastName))
+                {
+                    _logger.LogWarning("CurrentUser has null/empty name properties");
+                    return;
+                }
+
+                IsLoading = true;
+
+                // Ensure we're on the main thread and use captured user
+                await MainThread.InvokeOnMainThreadAsync(async () =>
+                {
+                    _userStore.CurrentUser = user;
+                    await Shell.Current.GoToAsync(nameof(MyAccountDetailPage));
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error in ShowDetails");
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
+
+        partial void OnSelectedIncidentChanged(IncidentDto? value)
+           => _ = HandleSelection(value);
 
         private async Task HandleSelection(IncidentDto? dto)
         {

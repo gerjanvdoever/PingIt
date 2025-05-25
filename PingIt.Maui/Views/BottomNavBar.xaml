@@ -22,15 +22,21 @@
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="8" />
             </Border.StrokeShape>
-            <Image Source="map.png"
-                   WidthRequest="32"
-                   HeightRequest="32"
-                   Aspect="AspectFit"
-                   IsEnabled="{Binding AllowMap, Source={x:Reference FooterRoot}}">
-                <Image.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding NavigateMapCommand, Source={x:Reference FooterRoot}}" />
-                </Image.GestureRecognizers>
-            </Image>
+            <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
+                <Image Source="map.png"
+                       WidthRequest="32"
+                       HeightRequest="32"
+                       Aspect="AspectFit"
+                       IsEnabled="{Binding AllowMap, Source={x:Reference FooterRoot}}">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding NavigateMapCommand, Source={x:Reference FooterRoot}}" />
+                    </Image.GestureRecognizers>
+                </Image>
+                <Label Text="Map"
+                       FontSize="12"
+                       HorizontalTextAlignment="Center"
+                       TextColor="{AppThemeBinding Light=#333333, Dark=#FFFFFF}" />
+            </StackLayout>
         </Border>
 
         <!-- List Navigation -->
@@ -43,14 +49,20 @@
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="8" />
             </Border.StrokeShape>
-            <Image Source="list.png"
-                   WidthRequest="32"
-                   HeightRequest="32"
-                   Aspect="AspectFit">
-                <Image.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding NavigateListCommand, Source={x:Reference FooterRoot}}" />
-                </Image.GestureRecognizers>
-            </Image>
+            <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
+                <Image Source="list.png"
+                       WidthRequest="32"
+                       HeightRequest="32"
+                       Aspect="AspectFit">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding NavigateListCommand, Source={x:Reference FooterRoot}}" />
+                    </Image.GestureRecognizers>
+                </Image>
+                <Label Text="List"
+                       FontSize="12"
+                       HorizontalTextAlignment="Center"
+                       TextColor="{AppThemeBinding Light=#333333, Dark=#FFFFFF}" />
+            </StackLayout>
         </Border>
 
         <!-- Account Navigation -->
@@ -63,14 +75,21 @@
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="8" />
             </Border.StrokeShape>
-            <Image Source="profile.png"
-                   WidthRequest="32"
-                   HeightRequest="32"
-                   Aspect="AspectFit">
-                <Image.GestureRecognizers>
-                    <TapGestureRecognizer Command="{Binding NavigateAccountCommand, Source={x:Reference FooterRoot}}" />
-                </Image.GestureRecognizers>
-            </Image>
+            <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
+                <Image Source="profile.png"
+                       WidthRequest="32"
+                       HeightRequest="32"
+                       Aspect="AspectFit">
+                    <Image.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding NavigateAccountCommand, Source={x:Reference FooterRoot}}" />
+                    </Image.GestureRecognizers>
+                </Image>
+                <Label Text="Account"
+                       FontSize="12"
+                       HorizontalTextAlignment="Center"
+                       TextColor="{AppThemeBinding Light=#333333, Dark=#FFFFFF}" />
+            </StackLayout>
         </Border>
+
     </Grid>
 </ContentView>
