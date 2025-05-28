@@ -7,7 +7,7 @@ namespace PingIt.Web.Pages
     public partial class Dashboard
     {
         [Inject]
-        private IAuthService? AuthService { get; set; }
+        private IAuthService AuthService { get; set; }
 
         private async Task Logout()
         {

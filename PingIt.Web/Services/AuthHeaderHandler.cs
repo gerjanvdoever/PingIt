@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components;
 
-namespace PingIt.Web.Services   // keep the namespace that matches your project
+namespace PingIt.Web.Services
 {
     public class AuthHeaderHandler : DelegatingHandler
     {
@@ -22,7 +22,7 @@ namespace PingIt.Web.Services   // keep the namespace that matches your project
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            // 1. Paste the token (if any) into the Authorization header
+            // Paste the token (if any) into the Authorization header
             var token = await _storage.GetItemAsStringAsync("authToken");
             if (!string.IsNullOrWhiteSpace(token))
                 request.Headers.Authorization =
@@ -30,7 +30,7 @@ namespace PingIt.Web.Services   // keep the namespace that matches your project
 
             var response = await base.SendAsync(request, cancellationToken);
 
-            // 2. If the server says 401, bounce user back to /login
+            // If the server says 401, bounce user back to /login
             if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
                 await _storage.RemoveItemAsync("authToken");

@@ -37,7 +37,7 @@ namespace PingIt.Api.Controllers
             return Ok(incidents.Select(MapToDto).ToList());
         }
 
-        // GET: api/incidents/active
+        // GET: api/incident/active
         [HttpGet("active")]
         [Authorize(Roles = "Worker, Administrator")]
         public async Task<ActionResult<List<IncidentDto>>> GetActiveIncidents()

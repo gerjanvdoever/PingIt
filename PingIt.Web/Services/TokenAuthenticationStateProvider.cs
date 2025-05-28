@@ -38,7 +38,6 @@ public class TokenAuthenticationStateProvider : AuthenticationStateProvider
                 return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
             }
 
-            // Normalize claims
             var claims = jwt.Claims.Select(c =>
                 (c.Type == "Role" || c.Type == "role")
                     ? new Claim(ClaimTypes.Role, c.Value)
