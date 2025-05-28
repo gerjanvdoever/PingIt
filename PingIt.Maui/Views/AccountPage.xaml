@@ -7,6 +7,7 @@
     xmlns:dto="clr-namespace:PingIt.Shared.Dtos;assembly=PingIt.Shared"
     xmlns:views="clr-namespace:PingIt.Maui.Views"
     x:DataType="vm:AccountViewModel"
+    x:Name="RootPage"
     Title="Account">
 
     <Grid RowDefinitions="Auto,*,Auto" Padding="0">
@@ -228,9 +229,12 @@
         </Border>
 
         <!-- BOTTOM NAV -->
-        <views:BottomNavBar Grid.Row="2"
-                          CurrentPage="AccountPage"
-                          IsVisible="{Binding IsFooterVisible}" />
+        <views:BottomNavBar
+    Grid.Row="2"
+    CurrentPage="AccountPage"
+    IsVisible="{Binding 
+       Source={x:Reference RootPage}, 
+       Path=BindingContext.IsFooterVisible}"/>
 
         <!-- BUSY OVERLAY -->
         <Grid Grid.RowSpan="3"

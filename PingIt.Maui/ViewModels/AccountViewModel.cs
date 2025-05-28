@@ -29,7 +29,7 @@ namespace PingIt.Maui.ViewModels
         [ObservableProperty] string lastName = string.Empty;
         [ObservableProperty] bool isBusy;
         [ObservableProperty] bool isLoading;
-        [ObservableProperty] bool isFooterVisible;
+        [ObservableProperty] bool isFooterVisible = false;
         [ObservableProperty] bool isDropdownVisible;
         [ObservableProperty] ObservableCollection<IncidentDto> incidents = new();
         [ObservableProperty] IncidentDto? selectedIncident;
