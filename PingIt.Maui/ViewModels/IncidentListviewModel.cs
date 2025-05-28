@@ -40,16 +40,18 @@ public partial class IncidentListViewModel : ObservableObject
         _store = store;
     }
 
-    partial void OnSelectedIncidentChanged(IncidentDto? incident)
-        => HandleSelectionChangedAsync(incident);
-
-    private async Task HandleSelectionChangedAsync(IncidentDto? incident)
+    partial void OnSelectedIncidentChanged(IncidentDto? value)
     {
-        if (incident == null)
+        if (value is null)
             return;
 
-        _store.SelectedIncident = incident;
-        await Shell.Current.GoToAsync(nameof(IncidentDetailPage));
+        _store.SelectedIncident = value;
+
+        var targetPage = DeviceInfo.Platform == DevicePlatform.WinUI
+            ? nameof(IncidentDetailWindowsPage)
+            : nameof(IncidentDetailPage);
+
+        _ = Shell.Current.GoToAsync(targetPage);
         SelectedIncident = null;
     }
 

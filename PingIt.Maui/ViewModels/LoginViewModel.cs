@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using PingIt.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Maui.Alerts;
 
 namespace PingIt.Maui.ViewModels
 {
@@ -127,7 +128,23 @@ namespace PingIt.Maui.ViewModels
             IsBusy = true;
             try
             {
-                await Shell.Current.GoToAsync(nameof(ReportIncidentPage));
+                if (DeviceInfo.Platform != DevicePlatform.WinUI)
+                {
+                    await Shell.Current.GoToAsync(nameof(ReportIncidentPage));
+                }
+                else
+                {
+                    var window = Application.Current?.Windows.FirstOrDefault();
+                    var currentPage = window?.Page;
+
+                    if (currentPage != null)
+                    {
+                        await currentPage.DisplayAlert(
+                            "Notice",
+                            "This feature is not available on Windows devices.",
+                            "OK");
+                    }
+                }
             }
             finally
             {

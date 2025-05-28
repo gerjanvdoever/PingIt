@@ -145,7 +145,23 @@ namespace PingIt.Maui.ViewModels
             IsBusy = true;
             try
             {
-                await Shell.Current.GoToAsync(nameof(ReportIncidentPage));
+                if (DeviceInfo.Platform != DevicePlatform.WinUI)
+                {
+                    await Shell.Current.GoToAsync(nameof(ReportIncidentPage));
+                }
+                else
+                {
+                    var window = Application.Current?.Windows.FirstOrDefault();
+                    var currentPage = window?.Page;
+
+                    if (currentPage != null)
+                    {
+                        await currentPage.DisplayAlert(
+                            "Notice",
+                            "This feature is not available on Windows devices.",
+                            "OK");
+                    }
+                }
             }
             finally
             {
@@ -227,17 +243,20 @@ namespace PingIt.Maui.ViewModels
         }
 
         partial void OnSelectedIncidentChanged(IncidentDto? value)
-           => _ = HandleSelection(value);
-
-        private async Task HandleSelection(IncidentDto? dto)
         {
-            if (dto == null) return;
-            IsLoading = true;
-            _store.SelectedIncident = dto;
-            await Shell.Current.GoToAsync(nameof(MyIncidentDetail));
+            if (value is null)
+                return;
+
+            _store.SelectedIncident = value;
+
+            var targetPage = DeviceInfo.Platform == DevicePlatform.WinUI
+                ? nameof(MyIncidentDetailWindowsPage)
+                : nameof(MyIncidentDetail);
+
+            _ = Shell.Current.GoToAsync(targetPage);
             SelectedIncident = null;
-            IsLoading = false;
         }
+
 
         // Override the Incidents property setter to notify ActiveIncidentsCount changes
         partial void OnIncidentsChanged(ObservableCollection<IncidentDto> value)

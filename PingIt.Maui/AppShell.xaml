@@ -17,4 +17,6 @@
     <ShellContent ContentTemplate="{DataTemplate views:IncidentMapPage}" Route="IncidentMapPage" />
     <ShellContent ContentTemplate="{DataTemplate views:IncidentDetailPage}" Route="IncidentDetailPage" />
     <ShellContent ContentTemplate="{DataTemplate views:MyAccountDetailPage}" Route="MyAccountDetailPage" />
+    <ShellContent ContentTemplate="{DataTemplate views:IncidentDetailWindowsPage}" Route="IncidentDetailWindowsPage" />
+    <ShellContent ContentTemplate="{DataTemplate views:MyIncidentDetailWindowsPage}" Route="MyIncidentDetailWindowsPage" />
 </Shell>

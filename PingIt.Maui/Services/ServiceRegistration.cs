@@ -36,6 +36,7 @@ public static class ServiceRegistration
         services.AddTransient<MyIncidentDetail>();
         services.AddTransient<IncidentMapPage>();
         services.AddTransient<IncidentDetailPage>();
+        services.AddTransient<IncidentDetailWindowsPage>();
         services.AddTransient<MyAccountDetailPage>();
 
         return services;

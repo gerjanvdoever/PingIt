@@ -117,6 +117,23 @@ namespace PingIt.Maui.ViewModels
             FullscreenImageUrl = string.Empty;
         }
 
+        [RelayCommand]
+        public async Task OpenInGoogleMapsAsync()
+        {
+            if (Incident is null)
+                return;
+
+            var url = $"https://www.google.com/maps?q={Incident.Latitude},{Incident.Longitude}";
+            try
+            {
+                await Launcher.Default.OpenAsync(new Uri(url));
+            }
+            catch (Exception ex)
+            {
+                await Toast.Make($"Failed to open map: {ex.Message}", ToastDuration.Long).Show();
+            }
+        }
+
         protected override void OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);

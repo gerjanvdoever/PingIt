@@ -1,3 +1,6 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using Microsoft.Maui.Devices;
 using System.Windows.Input;
 
 namespace PingIt.Maui.Views;
@@ -7,12 +10,11 @@ public partial class BottomNavBar : ContentView
     public BottomNavBar()
     {
         InitializeComponent();
+        BindingContext = this;
     }
 
     public static readonly BindableProperty CurrentPageProperty =
         BindableProperty.Create(nameof(CurrentPage), typeof(string), typeof(BottomNavBar), string.Empty);
-
-    public bool AllowMap => DeviceInfo.Platform == DevicePlatform.Android;
 
     public string CurrentPage
     {
@@ -20,21 +22,46 @@ public partial class BottomNavBar : ContentView
         set => SetValue(CurrentPageProperty, value);
     }
 
-    public ICommand NavigateMapCommand => new Command(async () =>
+    [RelayCommand]
+    private async Task NavigateMapAsync()
     {
         if (CurrentPage != "IncidentMapPage")
-            await Shell.Current.GoToAsync("//IncidentMapPage");
-    });
+        {
+            if (DeviceInfo.Platform != DevicePlatform.WinUI)
+            {
+                await Shell.Current.GoToAsync("//IncidentMapPage");
+            }
+            else
+            {
+                var window = Application.Current?.Windows.FirstOrDefault();
+                var currentPage = window?.Page;
 
-    public ICommand NavigateListCommand => new Command(async () =>
+                if (currentPage != null)
+                {
+                    await currentPage.DisplayAlert(
+                        "Notice",
+                        "This feature is not available on Windows devices.",
+                        "OK");
+                }
+            }
+        }
+    }
+
+    [RelayCommand]
+    private async Task NavigateListAsync()
     {
         if (CurrentPage != "IncidentListPage")
+        {
             await Shell.Current.GoToAsync("//IncidentListPage");
-    });
+        }
+    }
 
-    public ICommand NavigateAccountCommand => new Command(async () =>
+    [RelayCommand]
+    private async Task NavigateAccountAsync()
     {
         if (CurrentPage != "AccountPage")
+        {
             await Shell.Current.GoToAsync("//AccountPage");
-    });
+        }
+    }
 }

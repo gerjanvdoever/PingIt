@@ -26,10 +26,9 @@
                 <Image Source="map.png"
                        WidthRequest="32"
                        HeightRequest="32"
-                       Aspect="AspectFit"
-                       IsEnabled="{Binding AllowMap, Source={x:Reference FooterRoot}}">
+                       Aspect="AspectFit">
                     <Image.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding NavigateMapCommand, Source={x:Reference FooterRoot}}" />
+                        <TapGestureRecognizer Command="{Binding NavigateMapCommand}" />
                     </Image.GestureRecognizers>
                 </Image>
                 <Label Text="Map"
@@ -41,7 +40,7 @@
 
         <!-- List Navigation -->
         <Border Grid.Column="1"
-                BackgroundColor="{Binding CurrentPage, Source={x:Reference FooterRoot}, Converter={StaticResource PageToBackgroundConverter}, ConverterParameter=IncidentListPage}"
+                BackgroundColor="{Binding CurrentPage, Converter={StaticResource PageToBackgroundConverter}, ConverterParameter=IncidentListPage}"
                 StrokeThickness="0"
                 Padding="8"
                 HorizontalOptions="Center"
@@ -55,7 +54,7 @@
                        HeightRequest="32"
                        Aspect="AspectFit">
                     <Image.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding NavigateListCommand, Source={x:Reference FooterRoot}}" />
+                        <TapGestureRecognizer Command="{Binding NavigateListCommand}" />
                     </Image.GestureRecognizers>
                 </Image>
                 <Label Text="List"
@@ -67,7 +66,7 @@
 
         <!-- Account Navigation -->
         <Border Grid.Column="2"
-                BackgroundColor="{Binding CurrentPage, Source={x:Reference FooterRoot}, Converter={StaticResource PageToBackgroundConverter}, ConverterParameter=AccountPage}"
+                BackgroundColor="{Binding CurrentPage, Converter={StaticResource PageToBackgroundConverter}, ConverterParameter=AccountPage}"
                 StrokeThickness="0"
                 Padding="8"
                 HorizontalOptions="Center"
@@ -81,7 +80,7 @@
                        HeightRequest="32"
                        Aspect="AspectFit">
                     <Image.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding NavigateAccountCommand, Source={x:Reference FooterRoot}}" />
+                        <TapGestureRecognizer Command="{Binding NavigateAccountCommand}" />
                     </Image.GestureRecognizers>
                 </Image>
                 <Label Text="Account"
