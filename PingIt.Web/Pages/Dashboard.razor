@@ -1,5 +1,10 @@
 ﻿@page "/dashboard"
+@using PingIt.Web.Pages.Base
+@attribute [Authorize(Roles = "Administrator")]
+@inherits BaseAdminPage
 
 <h3>Welcome, Admin 👋</h3>
 
 <p>This will list aggregate stats, user management, incident queues, …</p>
+
+<button @onclick="Logout">Logout</button>

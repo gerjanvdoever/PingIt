@@ -13,24 +13,47 @@ public class TokenAuthenticationStateProvider : AuthenticationStateProvider
     public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
         var token = await _storage.GetItemAsStringAsync("authToken");
+
         if (string.IsNullOrWhiteSpace(token))
-            return new AuthenticationState(
-                new ClaimsPrincipal(new ClaimsIdentity()));
+            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
 
-        // 1. Decode the JWT
-        var handler = new JwtSecurityTokenHandler();
-        var jwt = handler.ReadJwtToken(token);
+        if (token.StartsWith("\"") && token.EndsWith("\""))
+            token = token.Trim('"');
 
-        // 2. Normalise “role” → ClaimTypes.Role so AuthorizeView works
-        var claims = jwt.Claims.Select(c =>
-            c.Type is "Role"
-                ? new Claim(ClaimTypes.Role, c.Value)
-                : c);
+        try
+        {
+            var handler = new JwtSecurityTokenHandler();
 
-        // 3. Build the identity
-        var identity = new ClaimsIdentity(claims, authenticationType: "jwt");
-        return new AuthenticationState(new ClaimsPrincipal(identity));
+            if (!handler.CanReadToken(token))
+            {
+                await _storage.RemoveItemAsync("authToken");
+                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+            }
+
+            var jwt = handler.ReadJwtToken(token);
+
+            if (jwt.ValidTo < DateTime.UtcNow)
+            {
+                await _storage.RemoveItemAsync("authToken");
+                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+            }
+
+            // Normalize claims
+            var claims = jwt.Claims.Select(c =>
+                (c.Type == "Role" || c.Type == "role")
+                    ? new Claim(ClaimTypes.Role, c.Value)
+                    : c);
+
+            var identity = new ClaimsIdentity(claims, authenticationType: "jwt");
+            return new AuthenticationState(new ClaimsPrincipal(identity));
+        }
+        catch (Exception)
+        {
+            await _storage.RemoveItemAsync("authToken");
+            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+        }
     }
+
 
 
     public void NotifyUserAuthentication(string token)

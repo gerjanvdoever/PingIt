@@ -34,11 +34,13 @@ public class AuthService : IAuthService
         var loginResp =
             await resp.Content.ReadFromJsonAsync<LoginResponseDto>();
 
-        // 1. Reject non-admins *client side*
-        if (loginResp!.Role != UserRole.Administrator.ToString())
+        // Reject non-admins *client side*
+        bool isAdmin = loginResp!.Role == "Administrator";
+
+        if (!isAdmin)
             return false;
 
-        // 2. Persist token and notify auth pipeline
+        // Persist token and notify auth pipeline
         await _storage.SetItemAsync("authToken", loginResp.Token);
         ((TokenAuthenticationStateProvider)_authStateProvider)
             .NotifyUserAuthentication(loginResp.Token);
