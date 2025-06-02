@@ -1,6 +1,24 @@
-﻿@page "/incidentdetail"
+﻿@page "/incidentdetail/{IncidentId:int}"
 @using PingIt.Web.Pages.Base
 @attribute [Authorize(Roles = "Administrator")]
 @inherits BaseAdminPage
 
 <h3>Incident Detail</h3>
+
+@if (incident == null)
+{
+    <p>Loading incident...</p>
+}
+else
+{
+    <div>
+        <h4>@incident.Title</h4>
+        <p><strong>Status:</strong> @incident.Status</p>
+        <p><strong>Priority:</strong> @incident.Priority</p>
+        <p><strong>Deadline:</strong> @incident.Deadline?.ToString("g")</p>
+        <p><strong>Handled By:</strong> @incident.HandledByUserId</p>
+        <p><strong>External:</strong> @(incident.HandledByExternal ? "Yes" : "No")</p>
+        <p><strong>Created At:</strong> @incident.CreatedAt.ToString("g")</p>
+    </div>
+}
+

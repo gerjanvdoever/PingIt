@@ -63,7 +63,7 @@ namespace PingIt.Api.Controllers
             return Ok(incidents.Select(MapToDto).ToList());
         }
 
-        // GET: api/incidents/{id}
+        // GET: api/incident/{id}
         [HttpGet("{id}")]
         public async Task<ActionResult<IncidentDto>> GetIncident(int id)
         {

@@ -13,11 +13,13 @@ namespace PingIt.Web.Pages
         [Inject] private IAuthService AuthService { get; set; }
         [Inject] private IUserService UserService { get; set; }
         [Inject] private IJSRuntime JS { get; set; }
+        [Inject] private NavigationManager Nav { get; set; }
 
         private List<UserDto> Workers { get; set; } = new();
         private List<IncidentDto> Incidents { get; set; } = new();
         private string CurrentSortColumn = "Status";
         private bool SortAscending = true;
+        private bool IsLoading = true;
 
         private string TitleFilter { get; set; } = "";
 
@@ -28,15 +30,28 @@ namespace PingIt.Web.Pages
 
         protected override async Task OnInitializedAsync()
         {
-            var incidentTask = IncidentService.GetActiveIncidentsAsync();
-            var workersTask = UserService.GetAllWorkersAsync();
+            try
+            {
+                var incidentTask = IncidentService.GetActiveIncidentsAsync();
+                var workersTask = UserService.GetAllWorkersAsync();
 
-            await Task.WhenAll(incidentTask, workersTask);
+                await Task.WhenAll(incidentTask, workersTask);
 
-            Incidents = incidentTask.Result;
-            Workers = workersTask.Result;
+                Incidents = incidentTask.Result;
+                Workers = workersTask.Result;
 
-            SortIncidents();
+                SortIncidents();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading dashboard data: {ex.Message}");
+                // You might want to show an error message to the user
+            }
+            finally
+            {
+                IsLoading = false;
+                StateHasChanged(); // Ensure the UI updates after loading
+            }
         }
 
         private async void OnWorkerSelected(IncidentDto incident, string selectedWorkerId)
@@ -119,7 +134,6 @@ namespace PingIt.Web.Pages
             }
         }
 
-
         private void SortIncidents()
         {
             Incidents = CurrentSortColumn switch
@@ -152,6 +166,7 @@ namespace PingIt.Web.Pages
                 {
                     Incidents.Remove(incident);
                     SortIncidents();
+                    StateHasChanged(); // Trigger re-render to update the map
                 }
             }
             catch (HttpRequestException ex)
@@ -183,5 +198,10 @@ namespace PingIt.Web.Pages
             await AuthService.LogoutAsync();
             Nav.NavigateTo("/login", replace: true);
         }
+
+        private void NavigateToDetail(int incidentId)
+        {
+            Nav.NavigateTo($"/incidentdetail/{incidentId}");
+        }
     }
-}
+}   

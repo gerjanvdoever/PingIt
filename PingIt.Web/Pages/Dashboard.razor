@@ -1,6 +1,7 @@
 ﻿@page "/dashboard"
 @using PingIt.Web.Pages.Base
 @using PingIt.Shared.Enums
+@using PingIt.Web.Components
 @attribute [Authorize(Roles = "Administrator")]
 @inherits BaseAdminPage
 
@@ -73,6 +74,9 @@
                            class="form-control" />
                 </td>
                 <td>
+                    <button class="btn btn-primary btn-sm" @onclick="@(() => NavigateToDetail(incident.Id))">Details</button>
+                </td>
+                <td>
                     <button class="btn btn-danger btn-sm" @onclick="() => DeleteIncidentAsync(incident)">Delete</button>
                 </td>
             </tr>
@@ -80,4 +84,11 @@
     </tbody>
 </table>
 
-<button @onclick="Logout" class="btn btn-secondary">Logout</button>
+@if (Incidents?.Any() == true)
+{
+    <div class="mt-4">
+        <IncidentMap Incidents="FilteredIncidents.ToList()" />
+    </div>
+}
+
+<button @onclick="Logout" class="btn btn-secondary mt-3">Logout</button>

@@ -488,3 +488,6 @@ Secrets.props
 
 # Uploads folder so additional pictures aside from seeddata won't be uploaded'
 /PingIt.Api/Uploads/
+
+appsettings.Development.json
+

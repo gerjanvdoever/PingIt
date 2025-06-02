@@ -1,0 +1,142 @@
+﻿@inject IJSRuntime JS
+@inject HttpClient Http
+@using PingIt.Shared.Dtos
+@using System.Text.Json
+
+@if (string.IsNullOrEmpty(GoogleMapsApiKey))
+{
+    <div class="alert alert-info">
+        <i class="fas fa-spinner fa-spin"></i>
+        Loading map...
+    </div>
+}
+else if (HasError)
+{
+    <div class="alert alert-danger">
+        <i class="fas fa-exclamation-triangle"></i>
+        Failed to load map. Please refresh the page.
+    </div>
+}
+else
+{
+    <div id="map"
+         style="width: 100%; height: 500px; border: 1px solid #ccc; border-radius: 4px;">
+    </div>
+}
+
+@code {
+    [Parameter]
+    public List<IncidentDto> Incidents { get; set; } = new();
+
+    private string? GoogleMapsApiKey;
+    private bool _mapInitialized = false;
+    private bool HasError = false;
+    private List<IncidentDto> _lastRenderedIncidents = new();
+
+    // Counts only those incidents where latitude/longitude parse to valid doubles
+    private int ValidIncidentsCount =>
+        Incidents?.Count(i =>
+            !string.IsNullOrEmpty(i.Latitude.ToString()) &&
+            !string.IsNullOrEmpty(i.Longitude.ToString()) &&
+            double.TryParse(i.Latitude.ToString(), out _) &&
+            double.TryParse(i.Longitude.ToString(), out _)
+        ) ?? 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var result = await Http.GetFromJsonAsync<ApiKeyResponse>("api/config/google-maps-key");
+            GoogleMapsApiKey = result?.ApiKey;
+
+            if (string.IsNullOrEmpty(GoogleMapsApiKey))
+            {
+                Console.WriteLine("Warning: No Google Maps API key received");
+                HasError = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading Google Maps API key: {ex.Message}");
+            HasError = true;
+        }
+
+        StateHasChanged();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!_mapInitialized &&
+            !string.IsNullOrEmpty(GoogleMapsApiKey) &&
+            !HasError)
+        {
+            try
+            {
+                _mapInitialized = true;
+
+                Console.WriteLine($"Initializing map with {Incidents?.Count ?? 0} incidents");
+                await JS.InvokeVoidAsync("loadGoogleMaps", GoogleMapsApiKey, Incidents ?? new List<IncidentDto>());
+
+                _lastRenderedIncidents = new List<IncidentDto>(Incidents ?? new List<IncidentDto>());
+                Console.WriteLine("Map initialization call completed");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error initializing map: {ex.Message}");
+                HasError = true;
+                StateHasChanged();
+            }
+        }
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        // Only update if map is already initialized, no error, and the list has changed
+        if (_mapInitialized &&
+            !HasError &&
+            !IncidentsEqual(_lastRenderedIncidents, Incidents ?? new List<IncidentDto>()))
+        {
+            try
+            {
+                Console.WriteLine($"Updating map with {Incidents?.Count ?? 0} incidents");
+                await JS.InvokeVoidAsync("updateMapIncidents", Incidents ?? new List<IncidentDto>());
+
+                _lastRenderedIncidents = new List<IncidentDto>(Incidents ?? new List<IncidentDto>());
+                StateHasChanged(); // so that ValidIncidentsCount and warning/message area re-render
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error updating map markers: {ex.Message}");
+                // Don’t set HasError here since a marker-update failure might be temporary
+            }
+        }
+    }
+
+    private bool IncidentsEqual(List<IncidentDto> list1, List<IncidentDto> list2)
+    {
+        if (list1 == null && list2 == null) return true;
+        if (list1 == null || list2 == null) return false;
+        if (list1.Count != list2.Count) return false;
+
+        for (int i = 0; i < list1.Count; i++)
+        {
+            var inc1 = list1[i];
+            var inc2 = list2[i];
+
+            if (inc1.Id != inc2.Id ||
+                inc1.Latitude != inc2.Latitude ||
+                inc1.Longitude != inc2.Longitude ||
+                inc1.Title != inc2.Title)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private class ApiKeyResponse
+    {
+        public string ApiKey { get; set; } = string.Empty;
+    }
+}
