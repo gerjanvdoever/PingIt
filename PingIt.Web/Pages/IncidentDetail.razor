@@ -1,9 +1,13 @@
 ﻿@page "/incidentdetail/{IncidentId:int}"
 @using PingIt.Web.Pages.Base
+@using PingIt.Shared.Enums
+@using PingIt.Shared.Dtos
+@using PingIt.Web.Components
 @attribute [Authorize(Roles = "Administrator")]
 @inherits BaseAdminPage
 
 <h3>Incident Detail</h3>
+<button class="btn btn-secondary mb-3 mt-3" @onclick="GoBack">Back</button>
 
 @if (incident == null)
 {
@@ -11,14 +15,84 @@
 }
 else
 {
-    <div>
+    <div class="mb-4">
         <h4>@incident.Title</h4>
-        <p><strong>Status:</strong> @incident.Status</p>
-        <p><strong>Priority:</strong> @incident.Priority</p>
-        <p><strong>Deadline:</strong> @incident.Deadline?.ToString("g")</p>
-        <p><strong>Handled By:</strong> @incident.HandledByUserId</p>
-        <p><strong>External:</strong> @(incident.HandledByExternal ? "Yes" : "No")</p>
+        <p><strong>Description:</strong> @incident.Description</p>
         <p><strong>Created At:</strong> @incident.CreatedAt.ToString("g")</p>
-    </div>
-}
+        
+        <div class="mb-2">
+            <label>Status:</label>
+            <select @bind="incident.Status">
+                @foreach (var status in Enum.GetValues<IncidentStatus>())
+                {
+                    <option value="@status">@status</option>
+                }
+            </select>
+        </div>
 
+        <div class="mb-2">
+            <label>Priority:</label>
+            <select @onchange="OnPriorityChanged">
+                @foreach (var level in Enum.GetValues<PriorityLevel>())
+                {
+                    <option value="@level" selected="@(incident.Priority == level)">
+                        @level
+                    </option>
+                }
+            </select>
+        </div>
+
+        <div class="mb-2">
+            <label>Deadline:</label>
+            <input type="datetime-local"
+                   class="form-control"
+                   value="@deadlineString"
+                   @onchange="OnDeadlineChanged" />
+        </div>
+
+        <div class="mb-2">
+            <label>Handled By:</label>
+            <select @bind="incident.HandledByUserId">
+                <option value="">-- Select --</option>
+                @foreach (var worker in Workers)
+                {
+                    <option value="@worker.Id">@worker.FirstName @worker.LastName</option>
+                }
+            </select>
+        </div>
+
+        <div class="mb-2">
+            <label>Handled By External:</label>
+            <select @bind="incident.HandledByExternal">
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+            </select>
+        </div>
+
+        <div class="mb-2">
+            <label>Notes:</label>
+            <textarea class="form-control" @bind="incident.Notes"></textarea>
+        </div>
+
+        <button class="btn btn-primary mt-2" @onclick="SaveChangesAsync">Save</button>
+        <button class="btn btn-danger me-2 mt-2" @onclick="ConfirmDeleteAsync">Delete</button>
+    </div>
+
+    <h5>Photos</h5>
+    @if (incident.Photos.Any())
+    {
+        <div class="d-flex flex-wrap">
+            @foreach (var photo in incident.Photos)
+            {
+                <img src="@photo.PhotoUrl" alt="Incident Photo" width="200" class="mb-2 me-2" />
+            }
+        </div>
+    }
+    else
+    {
+        <p>No photos available.</p>
+    }
+
+    <h5>Location</h5>
+    <IncidentMap Incidents="@singleIncidentList" />
+}

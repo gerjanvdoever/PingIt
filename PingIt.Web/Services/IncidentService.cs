@@ -10,6 +10,7 @@ namespace PingIt.Web.Services
         Task<bool> DeleteIncidentAsync(int incidentId);
         Task<bool> UpdateIncidentAsync(int incidentId, IncidentStatusUpdateDto updateDto);
         Task<IncidentDto> GetIncidentByIdAsync(int id);
+        Task<List<IncidentDto>> GetClosedIncidentsAsync();
     }
 
     public class IncidentService : IIncidentService
@@ -74,6 +75,19 @@ namespace PingIt.Web.Services
                 var error = await response.Content.ReadAsStringAsync();
                 throw new HttpRequestException($"Error fetching incident: {error}");
             }
+        }
+
+        public async Task<List<IncidentDto>> GetClosedIncidentsAsync()
+        {
+            var response = await _http.GetAsync("api/incident/closed");
+
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadFromJsonAsync<List<IncidentDto>>() ?? new List<IncidentDto>();
+            }
+
+            var error = await response.Content.ReadAsStringAsync();
+            throw new HttpRequestException($"Error fetching closed incidents: {error}");
         }
     }
 

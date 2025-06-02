@@ -13,18 +13,40 @@ namespace PingIt.Web.Pages
         [Inject] private IAuthService AuthService { get; set; }
         [Inject] private IUserService UserService { get; set; }
         [Inject] private IJSRuntime JS { get; set; }
-        [Inject] private NavigationManager Nav { get; set; }
 
         private List<UserDto> Workers { get; set; } = new();
         private List<IncidentDto> Incidents { get; set; } = new();
+        private List<IncidentDto> ClosedIncidents { get; set; } = new();
         private string CurrentSortColumn = "Status";
         private bool SortAscending = true;
         private bool IsLoading = true;
 
         private string TitleFilter { get; set; } = "";
 
-        private IEnumerable<IncidentDto> FilteredIncidents =>
-            Incidents
+        private int ActivePage = 1;
+        private int ClosedPage = 1;
+        private const int PageSize = 50;
+
+        private bool ShowClosedIncidents = false;
+        private bool IsClosedLoading = false;
+
+        private IEnumerable<IncidentDto> PagedActive =>
+            FilteredActive
+                .Skip((ActivePage - 1) * PageSize)
+                .Take(PageSize);
+
+        private IEnumerable<IncidentDto> PagedClosed =>
+            FilteredClosed
+                .Skip((ClosedPage - 1) * PageSize)
+                .Take(PageSize);
+
+        private IEnumerable<IncidentDto> FilteredActive =>
+        Incidents
+        .Where(i => string.IsNullOrWhiteSpace(TitleFilter) || i.Title.Contains(TitleFilter, StringComparison.OrdinalIgnoreCase))
+        .ToList();
+
+        private IEnumerable<IncidentDto> FilteredClosed =>
+        ClosedIncidents
                 .Where(i => string.IsNullOrWhiteSpace(TitleFilter) || i.Title.Contains(TitleFilter, StringComparison.OrdinalIgnoreCase))
                 .ToList();
 
@@ -32,12 +54,13 @@ namespace PingIt.Web.Pages
         {
             try
             {
-                var incidentTask = IncidentService.GetActiveIncidentsAsync();
+                var activeTask = IncidentService.GetActiveIncidentsAsync();
+                var closedTask = IncidentService.GetClosedIncidentsAsync();
                 var workersTask = UserService.GetAllWorkersAsync();
 
-                await Task.WhenAll(incidentTask, workersTask);
+                await Task.WhenAll(activeTask, closedTask, workersTask);
 
-                Incidents = incidentTask.Result;
+                Incidents = activeTask.Result;
                 Workers = workersTask.Result;
 
                 SortIncidents();
@@ -45,12 +68,11 @@ namespace PingIt.Web.Pages
             catch (Exception ex)
             {
                 Console.WriteLine($"Error loading dashboard data: {ex.Message}");
-                // You might want to show an error message to the user
             }
             finally
             {
                 IsLoading = false;
-                StateHasChanged(); // Ensure the UI updates after loading
+                StateHasChanged();
             }
         }
 
@@ -134,6 +156,12 @@ namespace PingIt.Web.Pages
             }
         }
 
+        private string GetWorkerName(int? workerId)
+        {
+            var worker = Workers.FirstOrDefault(w => w.Id == workerId);
+            return worker is null ? "N/A" : $"{worker.FirstName} {worker.LastName}";
+        }
+
         private void SortIncidents()
         {
             Incidents = CurrentSortColumn switch
@@ -192,6 +220,28 @@ namespace PingIt.Web.Pages
                 await JS.InvokeVoidAsync("alert", "error changing incident info");
             }
         }
+
+        private async Task LoadClosedIncidentsAsync()
+        {
+            if (ShowClosedIncidents || IsClosedLoading) return;
+
+            IsClosedLoading = true;
+            try
+            {
+                ClosedIncidents = await IncidentService.GetClosedIncidentsAsync();
+                ShowClosedIncidents = true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error loading closed incidents: {ex.Message}");
+            }
+            finally
+            {
+                IsClosedLoading = false;
+                StateHasChanged();
+            }
+        }
+
 
         private async Task Logout()
         {
