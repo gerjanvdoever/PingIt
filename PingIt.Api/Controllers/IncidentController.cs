@@ -149,6 +149,7 @@ namespace PingIt.Api.Controllers
                 MapToDto(incident));
         }
 
+        // DELETE: api/incident/{id}
         [HttpDelete("{id}")]
         [Authorize]
         public async Task<IActionResult> DeleteIncident(int id)

@@ -1,10 +1,83 @@
 ﻿@page "/dashboard"
 @using PingIt.Web.Pages.Base
+@using PingIt.Shared.Enums
 @attribute [Authorize(Roles = "Administrator")]
 @inherits BaseAdminPage
 
-<h3>Welcome, Admin 👋</h3>
+<input type="text"
+       placeholder="Search title..."
+       @bind="TitleFilter"
+       @bind:event="oninput"
+       class="form-control mb-2" />
 
-<p>This will list aggregate stats, user management, incident queues, …</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th @onclick='() => SortBy("Title")'>Title</th>
+            <th @onclick='() => SortBy("CreatedAt")'>Created At</th>
+            <th @onclick='() => SortBy("Status")'>Status</th>
+            <th @onclick='() => SortBy("Priority")'>Priority</th>
+            <th @onclick='() => SortBy("HandledByUserId")'>Handled By User</th>
+            <th @onclick='() => SortBy("HandledByExternal")'>External?</th>
+            <th>Deadline</th>
+            <th></th> <!-- Delete column -->
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var incident in FilteredIncidents)
+        {
+            <tr>
+                <td>@incident.Title</td>
+                <td>@incident.CreatedAt.ToString("g")</td>
+                <td>
+                    <select @onchange="e => OnStatusChanged(incident, e.Value?.ToString())">
+                        @foreach (var status in Enum.GetValues<IncidentStatus>())
+                        {
+                            <option value="@status" selected="@(incident.Status == status)">
+                                @status
+                            </option>
+                        }
+                    </select>
+                </td>
+                <td>
+                    <select @onchange="e => OnPriorityChanged(incident, e.Value?.ToString())">
+                        @foreach (var level in Enum.GetValues<PriorityLevel>())
+                        {
+                            <option value="@level" selected="@(incident.Priority == level)">
+                                @level
+                            </option>
+                        }
+                    </select>
+                </td>
+                <td>
+                    <select @onchange="e => OnWorkerSelected(incident, e.Value?.ToString())">
+                        <option value="">-- Select --</option>
+                        @foreach (var worker in Workers)
+                        {
+                            <option value="@worker.Id" selected="@(incident.HandledByUserId == worker.Id)">
+                                @worker.FirstName @worker.LastName
+                            </option>
+                        }
+                    </select>
+                </td>
+                <td>
+                    <select @onchange="e => OnExternalSelected(incident, e.Value?.ToString())">
+                        <option value="true" selected="@(incident.HandledByExternal)">Yes</option>
+                        <option value="false" selected="@(!incident.HandledByExternal)">No</option>
+                    </select>
+                </td>
+                <td>
+                    <input type="datetime-local"
+                           value="@incident.Deadline?.ToString("yyyy-MM-ddTHH:mm")"
+                           @onchange="e => OnDeadlineChanged(e, incident)"
+                           class="form-control" />
+                </td>
+                <td>
+                    <button class="btn btn-danger btn-sm" @onclick="() => DeleteIncidentAsync(incident)">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
 
-<button @onclick="Logout">Logout</button>
+<button @onclick="Logout" class="btn btn-secondary">Logout</button>

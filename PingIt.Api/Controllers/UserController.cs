@@ -150,7 +150,6 @@ namespace PingIt.Api.Controllers
                     Id = user.Id,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
-                    Role = user.Role
                 })
                 .ToListAsync();
 

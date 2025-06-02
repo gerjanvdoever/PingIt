@@ -70,19 +70,14 @@ namespace PingIt.Api.Controllers
             if (statusDto.NewPriority.HasValue && incident.Priority != statusDto.NewPriority.Value)
             {
                 incident.Priority = statusDto.NewPriority.Value;
-
-                if (incident.Priority != PriorityLevel.Unknown)
-                {
-                    incident.Deadline = incident.Priority switch
-                    {
-                        PriorityLevel.Low => DateTime.UtcNow.AddDays(42),      // 6 weeks
-                        PriorityLevel.Normal => DateTime.UtcNow.AddDays(21),   // 3 weeks
-                        PriorityLevel.High => DateTime.UtcNow.AddDays(7),      // 1 week
-                        PriorityLevel.Emergency => DateTime.UtcNow.AddDays(1), // 1 day
-                        _ => null
-                    };
-                }
             }
+
+            // Deadline
+            if (statusDto.NewDeadline.HasValue)
+            {
+                incident.Deadline = statusDto.NewDeadline;
+            }
+
 
             // Save changes
             _context.Incidents.Update(incident);
@@ -127,7 +122,11 @@ namespace PingIt.Api.Controllers
                 }
             }
 
-            return Ok(new { Message = "Incident updated successfully." });
+            return Ok(new
+            {
+                Message = "Incident updated successfully.",
+                NewDeadline = incident.Deadline
+            });
         }
 
 

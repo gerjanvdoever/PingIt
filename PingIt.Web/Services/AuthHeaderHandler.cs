@@ -22,15 +22,20 @@ namespace PingIt.Web.Services
         protected override async Task<HttpResponseMessage> SendAsync(
             HttpRequestMessage request, CancellationToken cancellationToken)
         {
-            // Paste the token (if any) into the Authorization header
-            var token = await _storage.GetItemAsStringAsync("authToken");
+            var token = (await _storage.GetItemAsStringAsync("authToken"))?.Trim('"');
+
             if (!string.IsNullOrWhiteSpace(token))
-                request.Headers.Authorization =
-                    new AuthenticationHeaderValue("Bearer", token);
+            {
+                request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token.Trim());
+                Console.WriteLine("Authorization header set.");
+            }
+            else
+            {
+                Console.WriteLine("No token found!");
+            }
 
             var response = await base.SendAsync(request, cancellationToken);
 
-            // If the server says 401, bounce user back to /login
             if (response.StatusCode == HttpStatusCode.Unauthorized)
             {
                 await _storage.RemoveItemAsync("authToken");
