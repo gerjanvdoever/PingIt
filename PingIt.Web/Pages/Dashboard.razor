@@ -5,147 +5,382 @@
 @attribute [Authorize(Roles = "Administrator")]
 @inherits BaseAdminPage
 
-<input type="text"
-       placeholder="Search title..."
-       @bind="TitleFilter"
-       @bind:event="oninput"
-       class="form-control mb-3" />
-
-<h5>Active Incidents</h5>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th @onclick='() => SortBy("Title")'>Title</th>
-            <th @onclick='() => SortBy("CreatedAt")'>Created At</th>
-            <th @onclick='() => SortBy("Status")'>Status</th>
-            <th @onclick='() => SortBy("Priority")'>Priority</th>
-            <th @onclick='() => SortBy("HandledByUserId")'>Handled By User</th>
-            <th @onclick='() => SortBy("HandledByExternal")'>External?</th>
-            <th>Deadline</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var incident in PagedActive)
-        {
-            <tr>
-                <td>@incident.Title</td>
-                <td>@incident.CreatedAt.ToString("g")</td>
-                <td>
-                    <select @onchange="e => OnStatusChanged(incident, e.Value?.ToString())">
-                        @foreach (var status in Enum.GetValues<IncidentStatus>())
-                        {
-                            <option value="@status" selected="@(incident.Status == status)">
-                                @status
-                            </option>
-                        }
-                    </select>
-                </td>
-                <td>
-                    <select @onchange="e => OnPriorityChanged(incident, e.Value?.ToString())">
-                        @foreach (var level in Enum.GetValues<PriorityLevel>())
-                        {
-                            <option value="@level" selected="@(incident.Priority == level)">
-                                @level
-                            </option>
-                        }
-                    </select>
-                </td>
-                <td>
-                    <select @onchange="e => OnWorkerSelected(incident, e.Value?.ToString())">
-                        <option value="">-- Select --</option>
-                        @foreach (var worker in Workers)
-                        {
-                            <option value="@worker.Id" selected="@(incident.HandledByUserId == worker.Id)">
-                                @worker.FirstName @worker.LastName
-                            </option>
-                        }
-                    </select>
-                </td>
-                <td>
-                    <select @onchange="e => OnExternalSelected(incident, e.Value?.ToString())">
-                        <option value="true" selected="@(incident.HandledByExternal)">Yes</option>
-                        <option value="false" selected="@(!incident.HandledByExternal)">No</option>
-                    </select>
-                </td>
-                <td>
-                    <input type="datetime-local"
-                           value="@incident.Deadline?.ToString("yyyy-MM-ddTHH:mm")"
-                           @onchange="e => OnDeadlineChanged(e, incident)"
-                           class="form-control" />
-                </td>
-                <td>
-                    <button class="btn btn-primary btn-sm" @onclick="@(() => NavigateToDetail(incident.Id))">Details</button>
-                    <button class="btn btn-danger btn-sm" @onclick="() => DeleteIncidentAsync(incident)">Delete</button>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
-<div class="d-flex justify-content-between mt-2">
-    <button class="btn btn-sm btn-secondary me-2" @onclick="() => ActivePage--" disabled="@(ActivePage == 1)">Prev</button>
-    <button class="btn btn-sm btn-secondary" @onclick="() => ActivePage++" disabled="@(ActivePage * PageSize >= FilteredActive.Count())">Next</button>
-</div>
-
-
-@if (FilteredActive.Any())
-{
-    <div class="mt-4">
-        <IncidentMap Incidents="FilteredActive.ToList()" />
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <div class="border-b border-gray-200 bg-white px-6 py-4 shadow-sm">
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-900">Dashboard</h1>
+                <p class="text-gray-600">Manage incidents and community</p>
+            </div>
+            <div class="flex space-x-3">
+                <button @onclick="NavigateAdminPanel"
+                        class="inline-flex items-center rounded-lg bg-gray-500 px-4 py-2 font-medium text-white transition-colors duration-200 hover:bg-gray-600">
+                    <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-2.248m3 2.248h6a2 2 0 002-2v-7a2 2 0 00-2-2H9a2 2 0 00-2 2v7a2 2 0 002 2z"></path>
+                    </svg>
+                    Admin Panel
+                </button>
+                <button @onclick="Logout"
+                        class="inline-flex items-center rounded-lg bg-red-500 px-4 py-2 font-medium text-white transition-colors duration-200 hover:bg-red-600">
+                    <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                    </svg>
+                    Logout
+                </button>
+            </div>
+        </div>
     </div>
-}
 
-<h5 class="mt-5">Closed Incidents</h5>
+    <!-- Main Content -->
+    <div class="px-6 py-8">
+        <div class="mx-auto max-w-[95%] space-y-8 xl:max-w-[1600px]">
+            <!-- Search Bar -->
+            <div class="rounded-2xl bg-white p-6 shadow-lg">
+                <div class="flex items-center space-x-3">
+                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <input type="text"
+                           placeholder="Search incidents by title..."
+                           @bind="TitleFilter"
+                           @bind:event="oninput"
+                           class="flex-1 rounded-xl border-0 bg-gray-50 px-4 py-3 text-gray-900 placeholder-gray-500 transition-all duration-200 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+                </div>
+            </div>
 
-@if (!ShowClosedIncidents)
-{
-    <button class="btn btn-info" @onclick="LoadClosedIncidentsAsync">Load Closed Incidents</button>
-}
-else
-{
-    @if (IsClosedLoading)
-    {
-        <p>Loading closed incidents...</p>
-    }
-    else
-    {
-        <table class="table-bordered table">
-            <thead>
-                <tr>
-                    <th>Title</th>
-                    <th>Created At</th>
-                    <th>Status</th>
-                    <th>Priority</th>
-                    <th>Handled By</th>
-                    <th>External?</th>
-                    <th>Deadline</th>
-                    <th>Details</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var incident in PagedClosed)
+            <!-- Active Incidents Section -->
+            <div class="overflow-hidden rounded-2xl bg-white shadow-lg">
+                <div class="border-b border-gray-200 bg-gray-50 px-6 py-4">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-xl font-semibold text-gray-900">Active Incidents</h2>
+                        <span class="rounded-full bg-blue-100 px-3 py-1 text-sm font-medium text-blue-800">@FilteredActive.Count() incidents</span>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="border-b border-gray-200 bg-gray-50">
+                            <tr>
+                                <th class="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 transition-colors duration-150 hover:bg-gray-100" @onclick='() => SortBy("Title")'>
+                                    <div class="flex items-center space-x-1">
+                                        <span>Title</span>
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+                                        </svg>
+                                    </div>
+                                </th>
+                                <th class="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 transition-colors duration-150 hover:bg-gray-100" @onclick='() => SortBy("CreatedAt")'>
+                                    <div class="flex items-center space-x-1">
+                                        <span>Created At</span>
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+                                        </svg>
+                                    </div>
+                                </th>
+                                <th class="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 transition-colors duration-150 hover:bg-gray-100" @onclick='() => SortBy("Status")'>
+                                    <div class="flex items-center space-x-1">
+                                        <span>Status</span>
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+                                        </svg>
+                                    </div>
+                                </th>
+                                <th class="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 transition-colors duration-150 hover:bg-gray-100" @onclick='() => SortBy("Priority")'>
+                                    <div class="flex items-center space-x-1">
+                                        <span>Priority</span>
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+                                        </svg>
+                                    </div>
+                                </th>
+                                <th class="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 transition-colors duration-150 hover:bg-gray-100" @onclick='() => SortBy("HandledByUserId")'>
+                                    <div class="flex items-center space-x-1">
+                                        <span>Assigned to</span>
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+                                        </svg>
+                                    </div>
+                                </th>
+                                <th class="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 transition-colors duration-150 hover:bg-gray-100" @onclick='() => SortBy("HandledByExternal")'>
+                                    <div class="flex items-center space-x-1">
+                                        <span>External</span>
+                                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+                                        </svg>
+                                    </div>
+                                </th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Deadline</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200 bg-white">
+                            @foreach (var incident in PagedActive)
+                            {
+                                <tr class="transition-colors duration-150 hover:bg-gray-50">
+                                    <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">@incident.Title</td>
+                                    <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600">@incident.CreatedAt.ToString("g")</td>
+                                    <td class="whitespace-nowrap px-6 py-4">
+                                        <select @onchange="e => OnStatusChanged(incident, e.Value?.ToString())"
+                                                class="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                                            @foreach (var status in Enum.GetValues<IncidentStatus>())
+                                            {
+                                                <option value="@status" selected="@(incident.Status == status)">@status</option>
+                                            }
+                                        </select>
+                                    </td>
+                                    <td class="whitespace-nowrap px-6 py-4">
+                                        <select @onchange="e => OnPriorityChanged(incident, e.Value?.ToString())"
+                                                class="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                                            @foreach (var level in Enum.GetValues<PriorityLevel>())
+                                            {
+                                                <option value="@level" selected="@(incident.Priority == level)">@level</option>
+                                            }
+                                        </select>
+                                    </td>
+                                    <td class="whitespace-nowrap px-6 py-4">
+                                        <select @onchange="e => OnWorkerSelected(incident, e.Value?.ToString())"
+                                                class="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 min-w-[140px]">
+                                            <option value="">-- Select --</option>
+                                            @foreach (var worker in Workers)
+                                            {
+                                                <option value="@worker.Id" selected="@(incident.HandledByUserId == worker.Id)">
+                                                    @worker.FirstName @worker.LastName
+                                                </option>
+                                            }
+                                        </select>
+                                    </td>
+                                    <td class="whitespace-nowrap px-6 py-4">
+                                        <select @onchange="e => OnExternalSelected(incident, e.Value?.ToString())"
+                                                class="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200">
+                                            <option value="true" selected="@(incident.HandledByExternal)">Yes</option>
+                                            <option value="false" selected="@(!incident.HandledByExternal)">No</option>
+                                        </select>
+                                    </td>
+                                    <td class="whitespace-nowrap px-6 py-4">
+                                        <input type="datetime-local"
+                                               value="@incident.Deadline?.ToString("yyyy-MM-ddTHH:mm")"
+                                               @onchange="e => OnDeadlineChanged(e, incident)"
+                                               class="px-3 py-2 bg-white border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200" />
+                                    </td>
+                                    <td class="space-x-2 whitespace-nowrap px-6 py-4 text-sm font-medium">
+                                        <button class="inline-flex items-center rounded-lg bg-blue-500 px-3 py-2 text-sm text-white transition-colors duration-200 hover:bg-blue-600"
+                                                @onclick="@(() => NavigateToDetail(incident.Id))">
+                                            Details
+                                        </button>
+                                        <button class="inline-flex items-center rounded-lg bg-red-500 px-3 py-2 text-sm text-white transition-colors duration-200 hover:bg-red-600"
+                                                @onclick="() => DeleteIncidentAsync(incident)">
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-6 py-4">
+                    <div class="text-sm text-gray-600">
+                        Showing @((ActivePage - 1) * PageSize + 1) to @Math.Min(ActivePage * PageSize, FilteredActive.Count()) of @FilteredActive.Count() results
+                    </div>
+                    <div class="flex space-x-2">
+                        <button class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm transition-colors duration-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                @onclick="() => ActivePage--"
+                                disabled="@(ActivePage == 1)">
+                            Previous
+                        </button>
+                        <button class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm transition-colors duration-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                @onclick="() => ActivePage++"
+                                disabled="@(ActivePage * PageSize >= FilteredActive.Count())">
+                            Next
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Map Section -->
+            @if (FilteredActive.Any())
+            {
+                <div class="overflow-hidden rounded-2xl bg-white shadow-lg">
+                    <div class="border-b border-gray-200 bg-gray-50 px-6 py-4">
+                        <h2 class="text-xl font-semibold text-gray-900">Incident Map</h2>
+                        <p class="text-sm text-gray-600">Visual overview of active incidents</p>
+                    </div>
+                    <div class="p-6">
+                        <IncidentMap Incidents="FilteredActive.ToList()" />
+                    </div>
+                </div>
+            }
+
+
+            <!-- Closed Incidents Section -->
+            <div class="overflow-hidden rounded-2xl bg-white shadow-lg">
+                <div class="border-b border-gray-200 bg-gray-50 px-6 py-4">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-xl font-semibold text-gray-900">Closed Incidents</h2>
+                        @if (ShowClosedIncidents)
+                        {
+                            <span class="rounded-full bg-green-100 px-3 py-1 text-sm font-medium text-green-800">@FilteredClosed.Count() incidents</span>
+                        }
+                    </div>
+                </div>
+
+                @if (ShowClosedIncidents && !IsClosedLoading)
                 {
-                    <tr>
-                        <td>@incident.Title</td>
-                        <td>@incident.CreatedAt.ToString("g")</td>
-                        <td>@incident.Status</td>
-                        <td>@incident.Priority</td>
-                        <td>@GetWorkerName(incident.HandledByUserId)</td>
-                        <td>@(incident.HandledByExternal ? "Yes" : "No")</td>
-                        <td>@incident.Deadline?.ToString("g")</td>
-                        <td>
-                            <button class="btn btn-primary btn-sm" @onclick="@(() => NavigateToDetail(incident.Id))">Details</button>
-                        </td>
-                    </tr>
+                    <div class="p-6">
+                        <input type="text"
+                               placeholder="Search closed incidents by title..."
+                               @bind="ClosedTitleFilter"
+                               @bind:event="oninput"
+                               class="w-full rounded-xl border-0 bg-gray-100 px-4 py-3 text-gray-900 placeholder-gray-500 transition-all duration-200 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none" />
+                    </div>
                 }
-            </tbody>
-        </table>
 
-        <button class="btn btn-sm btn-secondary me-2" @onclick="() => ClosedPage--" disabled="@(ClosedPage == 1)">Prev</button>
-        <button class="btn btn-sm btn-secondary" @onclick="() => ClosedPage++" disabled="@(ClosedPage * PageSize >= FilteredClosed.Count())">Next</button>
-    }
-}
+                @if (!ShowClosedIncidents)
+                {
+                    <div class="p-6 text-center">
+                        <svg class="mx-auto mb-4 h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <h3 class="mb-2 text-lg font-medium text-gray-900">View Closed Incidents</h3>
+                        <p class="mb-4 text-gray-600">Load previously closed incidents to review past work</p>
+                        <button class="rounded-lg bg-blue-500 px-6 py-3 font-medium text-white transition-colors duration-200 hover:bg-blue-600"
+                                @onclick="LoadClosedIncidentsAsync">
+                            Load Closed Incidents
+                        </button>
+                    </div>
+                }
+                else
+                {
+                    @if (IsClosedLoading)
+                    {
+                        <div class="p-6 text-center">
+                            <div class="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-blue-500"></div>
+                            <p class="text-gray-600">Loading closed incidents...</p>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead class="border-b border-gray-200 bg-gray-50">
+                                    <tr>
+                                        <th class="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 hover:bg-gray-100"
+                                            @onclick='() => SortByClosed("Title")'>
+                                            <span class="flex items-center space-x-1">
+                                                <span>Title</span>
+                                                <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                          d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                                                </svg>
+                                            </span>
+                                        </th>
+                                        <th class="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 hover:bg-gray-100"
+                                            @onclick='() => SortByClosed("CreatedAt")'>
+                                            <span class="flex items-center space-x-1">
+                                                <span>Created At</span>
+                                                <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                          d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                                                </svg>
+                                            </span>
+                                        </th>
+                                        <th class="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 hover:bg-gray-100"
+                                            @onclick='() => SortByClosed("Status")'>
+                                            <span class="flex items-center space-x-1">
+                                                <span>Status</span>
+                                                <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                          d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                                                </svg>
+                                            </span>
+                                        </th>
+                                        <th class="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 hover:bg-gray-100"
+                                            @onclick='() => SortByClosed("Priority")'>
+                                            <span class="flex items-center space-x-1">
+                                                <span>Priority</span>
+                                                <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                          d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                                                </svg>
+                                            </span>
+                                        </th>
+                                        <th class="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 hover:bg-gray-100"
+                                            @onclick='() => SortByClosed("HandledByUserId")'>
+                                            <span class="flex items-center space-x-1">
+                                                <span>Assigned to</span>
+                                                <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                          d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                                                </svg>
+                                            </span>
+                                        </th>
+                                        <th class="cursor-pointer px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 hover:bg-gray-100"
+                                            @onclick='() => SortByClosed("HandledByExternal")'>
+                                            <span class="flex items-center space-x-1">
+                                                <span>External</span>
+                                                <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                          d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+                                                </svg>
+                                            </span>
+                                        </th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                            Deadline
+                                        </th>
+                                        <th class="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                                            Actions
+                                        </th>
+                                    </tr>
+                                </thead>
 
-<button @onclick="NavigateAdminPanel" class="btn btn-secondary mt-3"> Admin Panel</button>
-<button @onclick="Logout" class="btn btn-secondary mt-3">Logout</button>
+                                <tbody class="divide-y divide-gray-200 bg-white">
+                                    @foreach (var incident in PagedClosed)
+                                    {
+                                        <tr class="transition-colors duration-150 hover:bg-gray-50">
+                                            <td class="whitespace-nowrap px-6 py-4 text-sm font-medium text-gray-900">@incident.Title</td>
+                                            <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600">@incident.CreatedAt.ToString("g")</td>
+                                            <td class="whitespace-nowrap px-6 py-4">
+                                                <span class="rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800">@incident.Status</span>
+                                            </td>
+                                            <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600">@incident.Priority</td>
+                                            <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600">@GetWorkerName(incident.HandledByUserId)</td>
+                                            <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600">@(incident.HandledByExternal ? "Yes" : "No")</td>
+                                            <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600">@incident.Deadline?.ToString("g")</td>
+                                            <td class="whitespace-nowrap px-6 py-4 text-sm font-medium">
+                                                <button class="inline-flex items-center rounded-lg bg-blue-500 px-3 py-2 text-sm text-white transition-colors duration-200 hover:bg-blue-600"
+                                                        @onclick="@(() => NavigateToDetail(incident.Id))">
+                                                    Details
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Closed Incidents Pagination -->
+                        <div class="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-6 py-4">
+                            <div class="text-sm text-gray-600">
+                                Showing @((ClosedPage - 1) * PageSize + 1) to @Math.Min(ClosedPage * PageSize, FilteredClosed.Count()) of @FilteredClosed.Count() results
+                            </div>
+                            <div class="flex space-x-2">
+                                <button class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm transition-colors duration-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        @onclick="() => ClosedPage--"
+                                        disabled="@(ClosedPage == 1)">
+                                    Previous
+                                </button>
+                                <button class="rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm transition-colors duration-200 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                                        @onclick="() => ClosedPage++"
+                                        disabled="@(ClosedPage * PageSize >= FilteredClosed.Count())">
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div>
+</div>

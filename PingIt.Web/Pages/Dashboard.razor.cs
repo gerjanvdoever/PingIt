@@ -21,7 +21,12 @@ namespace PingIt.Web.Pages
         private bool SortAscending = true;
         private bool IsLoading = true;
 
+        private string ClosedSortColumn = "CreatedAt";
+        private bool ClosedSortAscending = true;
+
         private string TitleFilter { get; set; } = "";
+        private string ClosedTitleFilter { get; set; } = "";
+
 
         private int ActivePage = 1;
         private int ClosedPage = 1;
@@ -46,8 +51,8 @@ namespace PingIt.Web.Pages
         .ToList();
 
         private IEnumerable<IncidentDto> FilteredClosed =>
-        ClosedIncidents
-                .Where(i => string.IsNullOrWhiteSpace(TitleFilter) || i.Title.Contains(TitleFilter, StringComparison.OrdinalIgnoreCase))
+            ClosedIncidents
+                .Where(i => string.IsNullOrWhiteSpace(ClosedTitleFilter) || i.Title.Contains(ClosedTitleFilter, StringComparison.OrdinalIgnoreCase))
                 .ToList();
 
         protected override async Task OnInitializedAsync()
@@ -136,6 +141,30 @@ namespace PingIt.Web.Pages
             }
 
             SortIncidents();
+        }
+
+        private void SortByClosed(string column)
+        {
+            if (ClosedSortColumn == column)
+            {
+                ClosedSortAscending = !ClosedSortAscending;
+            }
+            else
+            {
+                ClosedSortColumn = column;
+                ClosedSortAscending = true;
+            }
+
+            ClosedIncidents = ClosedSortColumn switch
+            {
+                "Title" => ClosedSortAscending ? ClosedIncidents.OrderBy(i => i.Title).ToList() : ClosedIncidents.OrderByDescending(i => i.Title).ToList(),
+                "CreatedAt" => ClosedSortAscending ? ClosedIncidents.OrderBy(i => i.CreatedAt).ToList() : ClosedIncidents.OrderByDescending(i => i.CreatedAt).ToList(),
+                "Status" => ClosedSortAscending ? ClosedIncidents.OrderBy(i => i.Status).ToList() : ClosedIncidents.OrderByDescending(i => i.Status).ToList(),
+                "Priority" => ClosedSortAscending ? ClosedIncidents.OrderBy(i => i.Priority).ToList() : ClosedIncidents.OrderByDescending(i => i.Priority).ToList(),
+                "HandledByUserId" => ClosedSortAscending ? ClosedIncidents.OrderBy(i => i.HandledByUserId).ToList() : ClosedIncidents.OrderByDescending(i => i.HandledByUserId).ToList(),
+                "HandledByExternal" => ClosedSortAscending ? ClosedIncidents.OrderBy(i => i.HandledByExternal).ToList() : ClosedIncidents.OrderByDescending(i => i.HandledByExternal).ToList(),
+                _ => ClosedIncidents
+            };
         }
 
         private async void OnStatusChanged(IncidentDto incident, string? newValue)
