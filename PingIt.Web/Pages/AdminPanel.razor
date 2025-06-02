@@ -5,15 +5,19 @@
 @attribute [Authorize(Roles = "Administrator")]
 @inherits BaseAdminPage
 
-<div class="min-h-screen bg-gray-50 px-6 py-6 font-sans">
-    <div class="mb-6">
-        <a href="/dashboard" class="inline-flex items-center rounded-lg bg-blue-500 px-4 py-2 font-medium text-white transition-colors duration-200 hover:bg-blue-600">
+<div class="border-b border-gray-200 bg-white px-6 py-4 shadow-sm">
+    <div class="flex items-center justify-between">
+        <a href="/dashboard"
+           class="inline-flex items-center rounded-lg bg-gray-500 px-4 py-2 font-medium text-white transition-colors duration-200 hover:bg-gray-600">
             <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
             </svg>
-            Back to Dashboard
+            Back
         </a>
     </div>
+</div>
+
+<div class="min-h-screen bg-gray-50 px-6 py-6 font-sans">
 
     <div class="mx-auto max-w-[95%]">
         <div class="mb-8">

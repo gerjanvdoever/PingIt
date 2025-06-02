@@ -65,6 +65,18 @@ namespace PingIt.Web.Pages
             Nav.NavigateTo("/dashboard");
         }
 
+        private string? selectedPhotoUrl;
+
+        private void OpenPhoto(string photoUrl)
+        {
+            selectedPhotoUrl = photoUrl;
+        }
+
+        private void CloseModal()
+        {
+            selectedPhotoUrl = null;
+        }
+
         private void OnPriorityChanged(ChangeEventArgs e)
         {
             if (incident == null) return;

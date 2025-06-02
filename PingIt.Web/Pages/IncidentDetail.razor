@@ -6,138 +6,355 @@
 @attribute [Authorize(Roles = "Administrator")]
 @inherits BaseAdminPage
 
-<h3>Incident Detail</h3>
-<button class="btn btn-secondary mb-3 mt-3" @onclick="GoBack">Back</button>
-
-@if (incident == null)
-{
-    <p>Loading incident...</p>
-}
-else
-{
-    <div class="mb-4">
-        <h4>@incident.Title</h4>
-        <p><strong>Description:</strong> @incident.Description</p>
-        <p><strong>Created At:</strong> @incident.CreatedAt.ToString("g")</p>
-        
-        <div class="mb-2">
-            <label>Status:</label>
-            <select @bind="incident.Status">
-                @foreach (var status in Enum.GetValues<IncidentStatus>())
-                {
-                    <option value="@status">@status</option>
-                }
-            </select>
+<div class="min-h-screen bg-gray-50">
+    <!-- Header -->
+    <div class="border-b border-gray-200 bg-white px-6 py-4 shadow-sm">
+        <div class="flex items-center">
+            <button @onclick="GoBack"
+                    class="inline-flex items-center rounded-lg bg-blue-500 px-4 py-2 font-medium text-white transition-colors duration-200 hover:bg-blue-600">
+                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Back
+            </button>
         </div>
-
-        <div class="mb-2">
-            <label>Priority:</label>
-            <select @onchange="OnPriorityChanged">
-                @foreach (var level in Enum.GetValues<PriorityLevel>())
-                {
-                    <option value="@level" selected="@(incident.Priority == level)">
-                        @level
-                    </option>
-                }
-            </select>
-        </div>
-
-        <div class="mb-2">
-            <label>Deadline:</label>
-            <input type="datetime-local"
-                   class="form-control"
-                   value="@deadlineString"
-                   @onchange="OnDeadlineChanged" />
-        </div>
-
-        <div class="mb-2">
-            <label>Handled By:</label>
-            <select @bind="incident.HandledByUserId">
-                <option value="">-- Select --</option>
-                @foreach (var worker in Workers)
-                {
-                    <option value="@worker.Id">@worker.FirstName @worker.LastName</option>
-                }
-            </select>
-        </div>
-
-        <div class="mb-2">
-            <label>Handled By External:</label>
-            <select @bind="incident.HandledByExternal">
-                <option value="true">Yes</option>
-                <option value="false">No</option>
-            </select>
-        </div>
-
-        <div class="mb-2">
-            <label>Notes:</label>
-            <textarea class="form-control" @bind="incident.Notes"></textarea>
-        </div>
-
-        <button class="btn btn-primary mt-2" @onclick="SaveChangesAsync">Save</button>
-        <button class="btn btn-danger me-2 mt-2" @onclick="ConfirmDeleteAsync">Delete</button>
-        <button class="btn btn-outline-primary mt-2" @onclick="ExportToCsv">Export to CSV</button>
     </div>
 
-    <h5>Photos</h5>
-    @if (incident.Photos.Any())
-    {
-        <div class="d-flex flex-wrap">
-            @foreach (var photo in incident.Photos)
+
+    <!-- Main Content -->
+    <div class="px-6 py-8">
+        <div class="mx-auto max-w-[95%] space-y-6 xl:max-w-[1400px]">
+            @if (incident == null)
             {
-                <img src="@photo.PhotoUrl" alt="Incident Photo" width="200" class="mb-2 me-2" />
+                <div class="flex items-center justify-center rounded-2xl bg-white p-12 shadow-lg">
+                    <div class="text-center">
+                        <div class="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-b-2 border-blue-500"></div>
+                        <p class="text-gray-600">Loading incident...</p>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <!-- Incident Information Card -->
+                <div class="overflow-hidden rounded-2xl bg-white shadow-lg">
+                    <div class="border-b border-gray-200 bg-gray-50 px-6 py-4">
+                        <h2 class="text-xl font-semibold text-gray-900">@incident.Title</h2>
+                        <p class="text-sm text-gray-600">Created on @incident.CreatedAt.ToString("MMMM dd, yyyy 'at' h:mm tt")</p>
+                    </div>
+
+                    <div class="p-6">
+                        <div class="mb-6">
+                            <label class="mb-2 block text-sm font-medium text-gray-700">Description</label>
+                            <p class="rounded-lg bg-gray-50 p-4 text-gray-900">@incident.Description</p>
+                        </div>
+
+                        <!-- Form Fields Grid -->
+                        <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                            <!-- Status -->
+                            <div>
+                                <label class="mb-2 block text-sm font-medium text-gray-700">Status</label>
+                                <select @bind="incident.Status"
+                                        class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm transition-all duration-200 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    @foreach (var status in Enum.GetValues<IncidentStatus>())
+                                    {
+                                        <option value="@status">@status</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <!-- Priority -->
+                            <div>
+                                <label class="mb-2 block text-sm font-medium text-gray-700">Priority</label>
+                                <select @onchange="OnPriorityChanged"
+                                        class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm transition-all duration-200 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    @foreach (var level in Enum.GetValues<PriorityLevel>())
+                                    {
+                                        <option value="@level" selected="@(incident.Priority == level)">
+                                            @level
+                                        </option>
+                                    }
+                                </select>
+                            </div>
+
+                            <!-- Deadline -->
+                            <div>
+                                <label class="mb-2 block text-sm font-medium text-gray-700">Deadline</label>
+                                <input type="datetime-local"
+                                       value="@deadlineString"
+                                       @onchange="OnDeadlineChanged"
+                                       class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm transition-all duration-200 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                            </div>
+
+                            <!-- Handled By -->
+                            <div>
+                                <label class="mb-2 block text-sm font-medium text-gray-700">Assigned To</label>
+                                <select @bind="incident.HandledByUserId"
+                                        class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm transition-all duration-200 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="">-- Select Worker --</option>
+                                    @foreach (var worker in Workers)
+                                    {
+                                        <option value="@worker.Id">@worker.FirstName @worker.LastName</option>
+                                    }
+                                </select>
+                            </div>
+
+                            <!-- External Handler -->
+                            <div>
+                                <label class="mb-2 block text-sm font-medium text-gray-700">Handled Externally</label>
+                                <select @bind="incident.HandledByExternal"
+                                        class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm transition-all duration-200 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="mt-6">
+                            <label class="mb-2 block text-sm font-medium text-gray-700">Notes</label>
+                            <textarea @bind="incident.Notes"
+                                      rows="4"
+                                      class="w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm transition-all duration-200 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                      placeholder="Add notes about this incident..."></textarea>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="mt-6 flex flex-wrap gap-3">
+                            <button @onclick="SaveChangesAsync"
+                                    class="inline-flex items-center rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition-colors duration-200 hover:bg-blue-700">
+                                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                                </svg>
+                                Save Changes
+                            </button>
+                            <button @onclick="ExportToCsv"
+                                    class="inline-flex items-center rounded-lg bg-green-600 px-4 py-2 font-medium text-white transition-colors duration-200 hover:bg-green-700">
+                                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                </svg>
+                                Export to CSV
+                            </button>
+                            <button @onclick="ConfirmDeleteAsync"
+                                    class="inline-flex items-center rounded-lg bg-red-600 px-4 py-2 font-medium text-white transition-colors duration-200 hover:bg-red-700">
+                                <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                                Delete Incident
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Photos Section -->
+                <div class="overflow-hidden rounded-2xl bg-white shadow-lg">
+                    <div class="border-b border-gray-200 bg-gray-50 px-6 py-4">
+                        <h2 class="text-xl font-semibold text-gray-900">Photos</h2>
+                        <p class="text-sm text-gray-600">Incident documentation images</p>
+                    </div>
+                    <div class="p-6">
+                        @if (incident.Photos.Any())
+                        {
+                            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                                @foreach (var photo in incident.Photos)
+                                {
+                                    <div class="group relative cursor-pointer overflow-hidden rounded-lg border border-gray-200 bg-gray-50 transition-shadow duration-200 hover:shadow-md"
+                                         @onclick="@(() => OpenPhoto(photo.PhotoUrl))">
+                                        <img src="@photo.PhotoUrl"
+                                             alt="Incident Photo"
+                                             class="h-48 w-full object-cover transition-transform duration-200 group-hover:scale-105" />
+                                        <div class="absolute inset-0 bg-black bg-opacity-0 transition-opacity duration-200 group-hover:bg-opacity-20"></div>
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="py-12 text-center">
+                                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                <h3 class="mt-2 text-sm font-medium text-gray-900">No photos available</h3>
+                                <p class="mt-1 text-sm text-gray-500">No images have been uploaded for this incident.</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                @if (selectedPhotoUrl != null)
+                {
+                    <div class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75" @onclick="CloseModal">
+                        <img src="@selectedPhotoUrl" class="max-h-full max-w-full rounded-lg shadow-xl transition-transform duration-300"
+                        @onclick:stopPropagation />
+                    </div>
+                }
+
+                <!-- Location Section -->
+                <div class="overflow-hidden rounded-2xl bg-white shadow-lg">
+                    <div class="border-b border-gray-200 bg-gray-50 px-6 py-4">
+                        <h2 class="text-xl font-semibold text-gray-900">Location</h2>
+                        <p class="text-sm text-gray-600">Incident location on map</p>
+                    </div>
+                    <div class="p-6">
+                        <IncidentMap Incidents="@singleIncidentList" />
+                    </div>
+                </div>
+
+                <!-- Status History Section -->
+                <div class="overflow-hidden rounded-2xl bg-white shadow-lg">
+                    <div class="border-b border-gray-200 bg-gray-50 px-6 py-4">
+                        <h2 class="text-xl font-semibold text-gray-900">Status History</h2>
+                        <p class="text-sm text-gray-600">Timeline of incident status changes</p>
+                    </div>
+                    <div class="p-6">
+                        @if (statusHistory.Any())
+                        {
+                            <div class="flow-root">
+                                <ul class="-mb-8">
+                                    @for (int i = 0; i < statusHistory.Count(); i++)
+                                    {
+                                        var history = statusHistory.ElementAt(i);
+                                        var isLast = i == statusHistory.Count() - 1;
+
+                                        <li>
+                                            <div class="relative pb-8">
+                                                @if (!isLast)
+                                                {
+                                                    <span class="absolute left-4 top-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
+                                                }
+                                                <div class="relative flex space-x-3">
+                                                    <div class="flex h-8 w-8 items-center justify-center rounded-full border-2 bg-white @GetStatusBorderColor(history.Status)">
+                                                        @if (history.Status == IncidentStatus.Resolved)
+                                                        {
+                                                            <svg class="h-5 w-5 @GetStatusIconColor(history.Status)" fill="currentColor" viewBox="0 0 20 20">
+                                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                                            </svg>
+                                                        }
+                                                        else if (history.Status == IncidentStatus.InProgress || history.Status == IncidentStatus.Registered)
+                                                        {
+                                                            <svg class="h-5 w-5 @GetStatusIconColor(history.Status)" fill="currentColor" viewBox="0 0 20 20">
+                                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                                            </svg>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="h-2.5 w-2.5 rounded-full @GetStatusDotColor(history.Status)"></div>
+                                                        }
+                                                    </div>
+                                                    <div class="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
+                                                        <div>
+                                                            <p class="text-sm font-medium text-gray-900">@history.Status</p>
+                                                            <p class="text-sm text-gray-500">
+                                                                Changed by @(userIdToName.TryGetValue(history.ChangedByUserId, out var name) ? name : "Unknown")
+                                                            </p>
+                                                        </div>
+                                                        <div class="whitespace-nowrap text-right text-sm text-gray-500">
+                                                            <time>@history.ChangedAt.ToLocalTime().ToString("MMM dd, yyyy")</time>
+                                                            <p class="text-xs">@history.ChangedAt.ToLocalTime().ToString("h:mm tt")</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    }
+                                </ul>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="py-12 text-center">
+                                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <h3 class="mt-2 text-sm font-medium text-gray-900">No status history</h3>
+                                <p class="mt-1 text-sm text-gray-500">Status changes will appear here as they occur.</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <!-- Reported By Section -->
+                <div class="overflow-hidden rounded-2xl bg-white shadow-lg">
+                    <div class="border-b border-gray-200 bg-gray-50 px-6 py-4">
+                        <h2 class="text-xl font-semibold text-gray-900">Reported By</h2>
+                        <p class="text-sm text-gray-600">Information about the incident reporter</p>
+                    </div>
+                    <div class="p-6">
+                        @if (incident?.CreatedByUserId == null)
+                        {
+                            <div class="py-8 text-center">
+                                <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                                <h3 class="mt-2 text-sm font-medium text-gray-900">Anonymous Report</h3>
+                                <p class="mt-1 text-sm text-gray-500">This incident was reported anonymously.</p>
+                            </div>
+                        }
+                        else if (createdByUser != null)
+                        {
+                            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">Name</label>
+                                        <p class="mt-1 text-sm text-gray-900">@createdByUser.FirstName @createdByUser.LastName</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">Phone Number</label>
+                                        <p class="mt-1 text-sm text-gray-900">@createdByUser.PhoneNumber</p>
+                                    </div>
+                                </div>
+                                <div class="space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">Email</label>
+                                        <p class="mt-1 text-sm text-gray-900">@createdByUser.Email</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">Address</label>
+                                        <p class="mt-1 text-sm text-gray-900">
+                                            @createdByUser.Street @createdByUser.HouseNumber<br>
+                                            @createdByUser.PostalCode @createdByUser.City
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
             }
         </div>
-    }
-    else
+    </div>
+</div>
+
+@code {
+    private string GetStatusBorderColor(IncidentStatus status)
     {
-        <p>No photos available.</p>
+        return status switch
+        {
+            IncidentStatus.Resolved => "border-green-500",
+            IncidentStatus.InProgress or IncidentStatus.Registered => "border-blue-500",
+            IncidentStatus.Reported => "border-yellow-500",
+            _ => "border-gray-300"
+        };
     }
 
-    <h5>Location</h5>
-    <IncidentMap Incidents="@singleIncidentList" />
-
-    <h5>Status History</h5>
-
-    @if (statusHistory.Any())
+    private string GetStatusIconColor(IncidentStatus status)
     {
-        <table class="table-striped table">
-            <thead>
-                <tr>
-                    <th>Changed At</th>
-                    <th>Status</th>
-                    <th>Changed By</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var history in statusHistory)
-                {
-                    <tr>
-                        <td>@history.ChangedAt.ToLocalTime().ToString("g")</td>
-                        <td>@history.Status</td>
-                        <td>@(userIdToName.TryGetValue(history.ChangedByUserId, out var name) ? name : "Unknown")</td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
-    else
-    {
-        <p>No status history available.</p>
+        return status switch
+        {
+            IncidentStatus.Resolved => "text-green-500",
+            IncidentStatus.InProgress or IncidentStatus.Registered => "text-blue-500",
+            IncidentStatus.Reported => "text-yellow-500",
+            _ => "text-gray-400"
+        };
     }
 
-    <h5>Reported By</h5>
-    @if (incident?.CreatedByUserId == null)
+    private string GetStatusDotColor(IncidentStatus status)
     {
-        <p>This incident was reported anonymously.</p>
-    }
-    else if (createdByUser != null)
-    {
-        <div class="mb-3">
-            <p><strong>Name:</strong> @createdByUser.FirstName @createdByUser.LastName</p>
-            <p><strong>Phone:</strong> @createdByUser.PhoneNumber</p>
-            <p><strong>Email:</strong> @createdByUser.Email</p>
-            <p><strong>Address:</strong> @createdByUser.Street @createdByUser.HouseNumber, @createdByUser.PostalCode @createdByUser.City</p>
-        </div>
+        return status switch
+        {
+            IncidentStatus.Resolved => "bg-green-500",
+            IncidentStatus.InProgress or IncidentStatus.Registered => "bg-blue-500",
+            IncidentStatus.Reported => "bg-yellow-500",
+            _ => "bg-gray-400"
+        };
     }
 }
