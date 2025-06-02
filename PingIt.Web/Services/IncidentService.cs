@@ -11,6 +11,7 @@ namespace PingIt.Web.Services
         Task<bool> UpdateIncidentAsync(int incidentId, IncidentStatusUpdateDto updateDto);
         Task<IncidentDto> GetIncidentByIdAsync(int id);
         Task<List<IncidentDto>> GetClosedIncidentsAsync();
+        Task<List<IncidentStatusHistoryDto>> GetStatusHistoryAsync(int incidentId);
     }
 
     public class IncidentService : IIncidentService
@@ -89,6 +90,20 @@ namespace PingIt.Web.Services
             var error = await response.Content.ReadAsStringAsync();
             throw new HttpRequestException($"Error fetching closed incidents: {error}");
         }
+
+        public async Task<List<IncidentStatusHistoryDto>> GetStatusHistoryAsync(int incidentId)
+        {
+            var response = await _http.GetAsync($"api/incidents/{incidentId}/status/history");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                var error = await response.Content.ReadAsStringAsync();
+                throw new HttpRequestException($"Error fetching incident history: {error}");
+            }
+
+            return await response.Content.ReadFromJsonAsync<List<IncidentStatusHistoryDto>>() ?? new();
+        }
+
     }
 
 }

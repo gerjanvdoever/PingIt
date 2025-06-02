@@ -1,4 +1,52 @@
 ﻿@page "/adminpanel"
 @using PingIt.Web.Pages.Base
+@using PingIt.Shared.Enums
+@using PingIt.Shared.Dtos
 @attribute [Authorize(Roles = "Administrator")]
 @inherits BaseAdminPage
+
+<a class="btn btn-primary mb-3" href="/dashboard">Back</a>
+
+<h4>All Users</h4>
+
+@if (allUsers.Count > MaxVisible)
+{
+    <p class="text-muted">Showing only the first 50 users. Please filter to see specific users.</p>
+}
+
+<div class="table-responsive">
+    <table class="table-bordered table-sm table">
+        <thead>
+            <tr>
+                <th><input class="form-control" @bind="FirstNameFilter" @bind:event="oninput" placeholder="First Name" /></th>
+                <th><input class="form-control" @bind="LastNameFilter" @bind:event="oninput" placeholder="Last Name" /></th>
+                <th><input class="form-control" @bind="EmailFilter" @bind:event="oninput" placeholder="Email" /></th>
+                <th><input class="form-control" @bind="StreetFilter" @bind:event="oninput" placeholder="Street" /></th>
+                <th><input class="form-control" @bind="PostalFilter" @bind:event="oninput" placeholder="Postal Code" /></th>
+                <th><input class="form-control" @bind="CityFilter" @bind:event="oninput" placeholder="City" /></th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in filteredUsers)
+            {
+                <tr>
+                    <td>@user.FirstName</td>
+                    <td>@user.LastName</td>
+                    <td>@user.Email</td>
+                    <td>@user.Street @user.HouseNumber</td>
+                    <td>@user.PostalCode</td>
+                    <td>@user.City</td>
+                    <td>
+                        <select class="form-select form-select-sm" @onchange="e => OnRoleChanged(user, e)">
+                            @foreach (var role in Enum.GetValues<UserRole>())
+                            {
+                                <option value="@role" selected="@(user.Role == role)">@role</option>
+                            }
+                        </select>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

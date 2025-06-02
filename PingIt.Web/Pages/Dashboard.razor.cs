@@ -249,6 +249,11 @@ namespace PingIt.Web.Pages
             Nav.NavigateTo("/login", replace: true);
         }
 
+        private void NavigateAdminPanel()
+        {
+            Nav.NavigateTo("/adminpanel");
+        }
+
         private void NavigateToDetail(int incidentId)
         {
             Nav.NavigateTo($"/incidentdetail/{incidentId}");

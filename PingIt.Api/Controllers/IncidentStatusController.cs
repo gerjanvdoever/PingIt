@@ -130,7 +130,7 @@ namespace PingIt.Api.Controllers
         }
 
 
-        // GET: api/incidents/{incidentId}/status-history
+        // GET: api/incidents/{incidentId}/history
         [HttpGet("history")]
         public async Task<ActionResult<List<IncidentStatusHistoryDto>>> GetStatusHistory(int incidentId)
         {

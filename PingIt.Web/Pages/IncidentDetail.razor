@@ -76,6 +76,7 @@ else
 
         <button class="btn btn-primary mt-2" @onclick="SaveChangesAsync">Save</button>
         <button class="btn btn-danger me-2 mt-2" @onclick="ConfirmDeleteAsync">Delete</button>
+        <button class="btn btn-outline-primary mt-2" @onclick="ExportToCsv">Export to CSV</button>
     </div>
 
     <h5>Photos</h5>
@@ -95,4 +96,48 @@ else
 
     <h5>Location</h5>
     <IncidentMap Incidents="@singleIncidentList" />
+
+    <h5>Status History</h5>
+
+    @if (statusHistory.Any())
+    {
+        <table class="table-striped table">
+            <thead>
+                <tr>
+                    <th>Changed At</th>
+                    <th>Status</th>
+                    <th>Changed By</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var history in statusHistory)
+                {
+                    <tr>
+                        <td>@history.ChangedAt.ToLocalTime().ToString("g")</td>
+                        <td>@history.Status</td>
+                        <td>@(userIdToName.TryGetValue(history.ChangedByUserId, out var name) ? name : "Unknown")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No status history available.</p>
+    }
+
+    <h5>Reported By</h5>
+    @if (incident?.CreatedByUserId == null)
+    {
+        <p>This incident was reported anonymously.</p>
+    }
+    else if (createdByUser != null)
+    {
+        <div class="mb-3">
+            <p><strong>Name:</strong> @createdByUser.FirstName @createdByUser.LastName</p>
+            <p><strong>Phone:</strong> @createdByUser.PhoneNumber</p>
+            <p><strong>Email:</strong> @createdByUser.Email</p>
+            <p><strong>Address:</strong> @createdByUser.Street @createdByUser.HouseNumber, @createdByUser.PostalCode @createdByUser.City</p>
+        </div>
+    }
 }
