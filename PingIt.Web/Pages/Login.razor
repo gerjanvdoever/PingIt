@@ -3,39 +3,47 @@
 @using PingIt.Shared.Dtos
 @using Microsoft.AspNetCore.Components.Forms
 
-<div class="min-h-screen w-screen bg-gradient-to-r from-indigo-50 to-indigo-200 pt-16">
-    <p class="py-4 text-center text-3xl font-semibold text-black">LOGIN</p>
+<div class="flex min-h-screen items-center justify-center bg-gradient-to-b from-[#1E90FF] to-[#1ECAFF] to-70% px-4 sm:px-6 lg:px-8">
+    <div class="w-full max-w-md space-y-8">
+        <div class="rounded-2xl bg-white px-8 py-12 shadow-xl">
 
-    <div class="mx-auto my-3 w-4/5 rounded-md bg-white px-4 py-4 shadow-lg md:w-3/5 lg:w-2/5 2xl:w-1/5">
-        @if (error != null)
-        {
-            <p class="mb-4 text-center text-sm text-red-500">@error</p>
-        }
 
-        <EditForm Model="@dto" OnValidSubmit="HandleLogin">
-            <DataAnnotationsValidator />
-            <ValidationSummary class="mb-2 text-sm text-red-600" />
+            @if (error != null)
+            {
+                <div class="mb-6 rounded-xl border border-red-200 bg-red-50 p-4">
+                    <p class="text-center text-sm text-red-600">@error</p>
+                </div>
+            }
 
-            <label for="email" class="block px-3 py-1 text-sm font-medium text-gray-700">Email</label>
-            <p>
-                <InputText name="email"
-                           class="mx-3 mb-3 block w-[95%] rounded-md border-2 border-gray-400 px-3 py-2.5"
-                           @bind-Value="dto.Email"
-                           placeholder="Enter your email" />
-            </p>
+            <EditForm Model="@dto" OnValidSubmit="HandleLogin" class="space-y-6">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="mb-4 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-600" />
 
-            <label for="psw" class="block px-3 py-1 text-sm font-medium text-gray-700">Password</label>
-            <p>
-                <InputText type="password" name="psw"
-                           class="mx-3 block w-[95%] rounded-md border-2 border-gray-400 px-3 py-2.5"
-                           @bind-Value="dto.Password"
-                           placeholder="password" />
-            </p>
+                <div class="space-y-2">
+                    <div class="relative">
+                        <InputText name="email"
+                                   class="w-full rounded-xl border-0 bg-gray-50 px-4 py-4 text-gray-900 placeholder-gray-500 transition-all duration-200 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                   @bind-Value="dto.Email"
+                                   placeholder="Email" />
+                    </div>
+                </div>
 
-            <button type="submit"
-                    class="mx-auto mt-3 block rounded border-2 bg-indigo-50 px-2 py-1 transition-all duration-200 hover:bg-indigo-100">
-                LOGIN
-            </button>
-        </EditForm>
+                <div class="space-y-2">
+                    <div class="relative">
+                        <InputText type="password" name="psw"
+                                   class="w-full rounded-xl border-0 bg-gray-50 px-4 py-4 text-gray-900 placeholder-gray-500 transition-all duration-200 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                                   @bind-Value="dto.Password"
+                                   placeholder="Password" />
+                    </div>
+                </div>
+
+                <div class="pt-4">
+                    <button type="submit"
+                            class="w-full transform rounded-xl bg-blue-500 px-6 py-4 font-semibold text-white shadow-lg transition-all duration-200 hover:bg-blue-600 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                        Log in
+                    </button>
+                </div>
+            </EditForm>
+        </div>
     </div>
 </div>
