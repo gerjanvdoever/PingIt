@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using PingIt.Api.Data;
 using PingIt.Api.Models;
 using PingIt.Api.Services;
+using PingIt.Api.Services.PingIt.Api.Services;
 using PingIt.Shared.Dtos;
 using PingIt.Shared.Enums;
 
@@ -15,9 +16,9 @@ namespace PingIt.Api.Controllers
     public class IncidentStatusController : ControllerBase
     {
         private readonly PingItDbContext _context;
-        private readonly EmailService _emailService;
+        private readonly IEmailService _emailService;
 
-        public IncidentStatusController(PingItDbContext context, EmailService emailService)
+        public IncidentStatusController(PingItDbContext context, IEmailService emailService)
         {
             _context = context;
             _emailService = emailService;

@@ -118,6 +118,12 @@ namespace PingIt.Api.Controllers
         [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<List<UserDto>>> GetAllUsers()
         {
+            // Extra check for testing purposes
+            if (!User.IsInRole("Administrator"))
+            {
+                return Forbid("You are not authorized to view all users.");
+            }
+
             var users = await _context.Users.ToListAsync();
 
             var userDtos = users.Select(user => new UserDto
@@ -162,6 +168,10 @@ namespace PingIt.Api.Controllers
         [Authorize(Roles = "Administrator")]
         public async Task<IActionResult> UpdateUserRole(int id, [FromBody] UserRoleDto userRoleDto)
         {
+            if (!User.IsInRole("Administrator"))
+            {
+                return Forbid("You are not authorized to update user roles.");
+            }
             var user = await _context.Users.FindAsync(id);
 
             if (user == null)

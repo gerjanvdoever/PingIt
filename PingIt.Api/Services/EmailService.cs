@@ -2,10 +2,19 @@
 using MimeKit;
 using DotNetEnv;
 using MailKit.Security;
+using PingIt.Api.Services.PingIt.Api.Services;
 
 namespace PingIt.Api.Services
 {
-    public class EmailService
+    namespace PingIt.Api.Services
+    {
+        public interface IEmailService
+        {
+            Task SendEmailAsync(string toEmail, string subject, string body);
+        }
+    }
+
+    public class EmailService : IEmailService
     {
         private readonly string _server;
         private readonly int _port;
@@ -16,7 +25,6 @@ namespace PingIt.Api.Services
         public EmailService()
         {
             Env.Load();
-
             _server = Env.GetString("SMTP_SERVER") ?? throw new Exception("SMTP_SERVER missing");
             _port = int.Parse(Env.GetString("SMTP_PORT") ?? throw new Exception("SMTP_PORT missing"));
             _email = Env.GetString("SMTP_EMAIL") ?? throw new Exception("SMTP_EMAIL missing");
@@ -30,7 +38,6 @@ namespace PingIt.Api.Services
             message.From.Add(new MailboxAddress("PingIt", _email));
             message.To.Add(new MailboxAddress("", toEmail));
             message.Subject = subject;
-
             message.Body = new TextPart("plain")
             {
                 Text = body

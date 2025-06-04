@@ -7,6 +7,7 @@ using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using PingIt.Api.Data;
 using PingIt.Api.Services;
+using PingIt.Api.Services.PingIt.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -48,7 +49,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
-builder.Services.AddSingleton<EmailService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddControllers()
     .AddJsonOptions(options =>
