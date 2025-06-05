@@ -12,7 +12,7 @@ namespace PingIt.Maui.ViewModels
 {
     public partial class LoginViewModel : ObservableObject
     {
-        private readonly TokenStorageService _tokenStorageService;
+        private readonly ITokenStorageService _tokenStorageService;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<LoginViewModel> _logger;
 
@@ -31,7 +31,7 @@ namespace PingIt.Maui.ViewModels
         public bool IsNotBusy => !IsBusy;
 
         public LoginViewModel(
-            TokenStorageService tokenStorageService,
+            ITokenStorageService tokenStorageService,
             IHttpClientFactory httpClientFactory,
             ILogger<LoginViewModel> logger)
         {

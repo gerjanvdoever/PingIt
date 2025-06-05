@@ -16,7 +16,7 @@ namespace PingIt.Maui.ViewModels;
 
 public partial class IncidentListViewModel : ObservableObject
 {
-    private readonly TokenStorageService _tokenStorage;
+    private readonly ITokenStorageService _tokenStorage;
     private readonly HttpClient _httpClient;
     private readonly ILogger<IncidentListViewModel> _logger;
     private readonly IIncidentStore _store;
@@ -29,7 +29,7 @@ public partial class IncidentListViewModel : ObservableObject
     [ObservableProperty] private IncidentDto? selectedIncident;
 
     public IncidentListViewModel(
-        TokenStorageService tokenStorage,
+        ITokenStorageService tokenStorage,
         IHttpClientFactory httpClientFactory,
         ILogger<IncidentListViewModel> logger,
         IIncidentStore store)

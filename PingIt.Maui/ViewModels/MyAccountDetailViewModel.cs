@@ -18,13 +18,13 @@ namespace PingIt.Maui.ViewModels
         private readonly IUserStore _userStore;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<MyAccountDetailViewModel> _logger;
-        private readonly TokenStorageService _tokenStorage;
+        private readonly ITokenStorageService _tokenStorage;
 
         public MyAccountDetailViewModel(
             IUserStore userStore,
             IHttpClientFactory httpClientFactory,
             ILogger<MyAccountDetailViewModel> logger,
-            TokenStorageService tokenStorage)
+            ITokenStorageService tokenStorage)
         {
             _userStore = userStore;
             _httpClientFactory = httpClientFactory;

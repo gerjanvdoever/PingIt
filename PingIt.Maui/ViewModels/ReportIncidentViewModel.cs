@@ -16,7 +16,7 @@ namespace PingIt.Maui.ViewModels
     public partial class ReportIncidentViewModel : ObservableObject
     {
         private readonly HttpClient _httpClient;
-        private readonly TokenStorageService _tokenStorage;
+        private readonly ITokenStorageService _tokenStorage;
 
         [ObservableProperty]
         private string title = string.Empty;
@@ -39,7 +39,7 @@ namespace PingIt.Maui.ViewModels
 
         public ReportIncidentViewModel(
             IHttpClientFactory httpFactory,
-            TokenStorageService tokenStorage)
+            ITokenStorageService tokenStorage)
         {
             _httpClient = httpFactory.CreateClient("AuthenticatedClient");
             _tokenStorage = tokenStorage;

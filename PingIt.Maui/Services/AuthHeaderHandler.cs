@@ -3,9 +3,9 @@ using PingIt.Maui.Services;
 
 public class AuthHeaderHandler : DelegatingHandler
 {
-    private readonly TokenStorageService _tokenStorage;
+    private readonly ITokenStorageService _tokenStorage;
 
-    public AuthHeaderHandler(TokenStorageService tokenStorage)
+    public AuthHeaderHandler(ITokenStorageService tokenStorage)
     {
         _tokenStorage = tokenStorage;
     }

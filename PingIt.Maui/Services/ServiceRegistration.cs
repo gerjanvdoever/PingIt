@@ -10,7 +10,7 @@ public static class ServiceRegistration
     public static IServiceCollection AddPingItServices(this IServiceCollection services)
     {
         // Services
-        services.AddSingleton<TokenStorageService>();
+        services.AddSingleton<ITokenStorageService, TokenStorageService>();
         services.AddSingleton<IIncidentStore, IncidentStore>();
         services.AddSingleton<IUserStore, UserStore>();
 

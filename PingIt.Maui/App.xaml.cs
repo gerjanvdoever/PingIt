@@ -4,8 +4,8 @@ namespace PingIt.Maui
 {
     public partial class App : Application
     {
-        private readonly TokenStorageService _tokenStorage;
-        public App(TokenStorageService tokenStorage)
+        private readonly ITokenStorageService _tokenStorage;
+        public App(ITokenStorageService tokenStorage)
         {
             InitializeComponent();
             _tokenStorage = tokenStorage;

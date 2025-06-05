@@ -16,7 +16,7 @@ namespace PingIt.Maui.ViewModels
     {
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<RegisterViewModel> _logger;
-        private readonly TokenStorageService _tokenStorage;
+        private readonly ITokenStorageService _tokenStorage;
 
         [ObservableProperty]
         private string firstName = string.Empty;
@@ -60,7 +60,7 @@ namespace PingIt.Maui.ViewModels
         public bool IsNotBusy => !IsBusy;
 
         public RegisterViewModel(
-            TokenStorageService tokenStorage,
+            ITokenStorageService tokenStorage,
             IHttpClientFactory httpClientFactory,
             ILogger<RegisterViewModel> logger)
         {
