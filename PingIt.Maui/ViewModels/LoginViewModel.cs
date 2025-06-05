@@ -7,6 +7,7 @@ using PingIt.Maui.Views;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Maui.Alerts;
+using System.Text.Json;
 
 namespace PingIt.Maui.ViewModels
 {
@@ -41,7 +42,7 @@ namespace PingIt.Maui.ViewModels
         }
 
         [RelayCommand(CanExecute = nameof(IsNotBusy))]
-        private async Task LoginAsync()
+        public async Task LoginAsync()
         {
             if (IsBusy) return;
             IsBusy = true;
@@ -95,6 +96,11 @@ namespace PingIt.Maui.ViewModels
 
                 await _tokenStorageService.StoreTokenAsync(result.Token, result.Role);
                 await Shell.Current.GoToAsync("//AccountPage");
+            }
+            catch (JsonException)
+            {
+                ValidationError = "Didn't receive valid token";
+                return;
             }
             catch (Exception ex)
             {
