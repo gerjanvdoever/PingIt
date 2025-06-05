@@ -4,7 +4,18 @@ using System.Text.Json;
 
 namespace PingIt.Maui.Services
 {
-    public class TokenStorageService
+    public interface ITokenStorageService
+    {
+        string? Token { get; }
+        int? UserId { get; }
+        string? Role { get; }
+        bool IsAuthenticated { get; }
+
+        Task StoreTokenAsync(string token, string role);
+        Task LoadTokenAsync();
+        Task ClearTokenAsync();
+    }
+    public class TokenStorageService : ITokenStorageService
     {
         private const string TokenKey = "auth_token";
         private const string RoleKey = "auth_role";

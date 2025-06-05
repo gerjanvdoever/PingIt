@@ -18,7 +18,7 @@ namespace PingIt.Maui.ViewModels
     public partial class AccountViewModel : ObservableObject
     {
         // injected services
-        private readonly TokenStorageService _tokenStorage;
+        private readonly ITokenStorageService _tokenStorage;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<AccountViewModel> _logger;
         private readonly IIncidentStore _store;
@@ -61,7 +61,7 @@ namespace PingIt.Maui.ViewModels
         }
 
         public AccountViewModel(
-            TokenStorageService tokenStorage,
+            ITokenStorageService tokenStorage,
             IHttpClientFactory httpClientFactory,
             ILogger<AccountViewModel> logger,
             IIncidentStore store,
@@ -109,7 +109,7 @@ namespace PingIt.Maui.ViewModels
         }
 
         [RelayCommand]
-        private async Task LoadIncidentsAsync()
+        public async Task LoadIncidentsAsync()
         {
             if (_tokenStorage.UserId == null) return;
 

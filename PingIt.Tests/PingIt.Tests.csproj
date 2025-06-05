@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PingIt.Api\PingIt.Api.csproj" />
+    <ProjectReference Include="..\PingIt.Maui\PingIt.Maui.csproj" />
     <ProjectReference Include="..\PingIt.Shared\PingIt.Shared.csproj" />
   </ItemGroup>
 
