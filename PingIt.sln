@@ -32,6 +32,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PingIt.Tests", "PingIt.Test
 		{DA10DFA0-311F-4835-848C-DC68FEC6326B} = {DA10DFA0-311F-4835-848C-DC68FEC6326B}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PingIt.Maui.UITests", "PingIt.Maui.UITests\PingIt.Maui.UITests.csproj", "{1CA01E7B-99CD-4AF8-B5BA-AE2DD8C0F2E3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{FCD9073F-C4A9-4CE8-ABCF-9C952E135C9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FCD9073F-C4A9-4CE8-ABCF-9C952E135C9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FCD9073F-C4A9-4CE8-ABCF-9C952E135C9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1CA01E7B-99CD-4AF8-B5BA-AE2DD8C0F2E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CA01E7B-99CD-4AF8-B5BA-AE2DD8C0F2E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CA01E7B-99CD-4AF8-B5BA-AE2DD8C0F2E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CA01E7B-99CD-4AF8-B5BA-AE2DD8C0F2E3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
