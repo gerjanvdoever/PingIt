@@ -12,11 +12,10 @@ public static class TestConfiguration
         public static string AppPath => Path.GetFullPath(Path.Combine(
             TestContext.CurrentContext.TestDirectory,
             "..", "..", "..", "..",
-            "PingIt.Maui", "bin", "Debug", "net8.0-android",
+            "PingIt.Maui", "bin", "Release", "net9.0-android",
             "com.companyname.pingit.maui-Signed.apk"));
 
         public const string AppPackage = "com.companyname.pingit.maui";
-        public const string AppActivity = "crc64fcf28c0e24b4cc31.MainActivity";
     }
 
     public static class Appium

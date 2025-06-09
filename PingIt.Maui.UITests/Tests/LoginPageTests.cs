@@ -29,7 +29,6 @@ public class LoginPageTests : TestBase
         _loginPage.TapLogin();
 
         // Assert  
-        // Replace FindElementByXPath with FindElement using By.XPath  <-- NOG DOEN
         var accountHeader = Driver.FindElement(By.XPath("//android.widget.TextView[@text=\"Account Dashboard\"]"));
         Assert.That(accountHeader.Displayed, Is.True);
     }
