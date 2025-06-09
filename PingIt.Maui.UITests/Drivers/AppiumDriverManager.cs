@@ -24,8 +24,8 @@ public class AppiumDriverManager
         options.App = TestConfiguration.Android.AppPath;
         options.AddAdditionalAppiumOption("appPackage", TestConfiguration.Android.AppPackage);
         options.AddAdditionalAppiumOption("appWaitActivity", "*");
+        options.AddAdditionalAppiumOption("fullReset", false);
         options.AddAdditionalAppiumOption("noReset", false);
-        options.AddAdditionalAppiumOption("fullReset", true);
         options.AddAdditionalAppiumOption("autoGrantPermissions", true);
         options.AddAdditionalAppiumOption("newCommandTimeout", 300);
         options.AddAdditionalAppiumOption("autoGrantPermissions", true);
