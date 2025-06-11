@@ -2,9 +2,9 @@ name: Run PingIt.Tests on Push
 
 on:
   push:
-    branches: [ "**" ]  # Run on any branch push
+    branches: [ "**" ]
   pull_request:
-    branches: [ "**" ]  # Optional: run on PRs too
+    branches: [ "**" ]
 
 jobs:
   test:
@@ -18,7 +18,10 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.0.x' # Match your project's SDK version
+          dotnet-version: '9.0.x'
+
+      - name: Restore .NET workloads (for MAUI)
+        run: dotnet workload restore
 
       - name: Restore dependencies
         run: dotnet restore
