@@ -27,4 +27,4 @@ jobs:
         run: dotnet restore PingIt.Tests/PingIt.Tests.csproj
 
       - name: Run tests
-        run: dotnet test PingIt.Tests/PingIt.Tests.csproj --no-build --verbosity normal
+        run: dotnet test PingIt.Tests/PingIt.Tests.csproj --verbosity normal
