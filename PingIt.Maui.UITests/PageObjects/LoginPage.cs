@@ -9,6 +9,7 @@ public class LoginPage : BasePage
     private By EmailField => By.XPath("//android.widget.EditText[@text=\"Email\"]");
     private By PasswordField => By.XPath("//android.widget.EditText[@text=\"Password\"]");
     private By LoginButton => By.XPath("//android.widget.Button[@text=\"Login\"]");
+    private By RegisterButton => By.XPath("//android.widget.TextView[@text=\"Don't have an account? Register here\"]");
 
     public void WaitForPageToLoad()
     {
@@ -28,6 +29,11 @@ public class LoginPage : BasePage
     public void TapLogin()
     {
         Tap(LoginButton);
+    }
+
+    public void TapRegister()
+    {
+        Tap(RegisterButton);
     }
 
     public bool IsLoginButtonVisible()

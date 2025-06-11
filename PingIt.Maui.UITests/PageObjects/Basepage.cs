@@ -8,28 +8,28 @@ public abstract class BasePage
     protected readonly AndroidDriver Driver;
     protected readonly WebDriverWait Wait;
 
-    protected BasePage(AndroidDriver driver)
+    public BasePage(AndroidDriver driver)
     {
         Driver = driver;
         Wait = new WebDriverWait(driver, TimeSpan.FromSeconds(TestConfiguration.Appium.ExplicitWaitSeconds));
     }
 
-    protected IWebElement FindElement(By locator)
+    public IWebElement FindElement(By locator)
     {
         return Wait.Until(d => d.FindElement(locator));
     }
 
-    protected IReadOnlyCollection<IWebElement> FindElements(By locator)
+    public IReadOnlyCollection<IWebElement> FindElements(By locator)
     {
         return Driver.FindElements(locator);
     }
 
-    protected void WaitForElement(By locator)
+    public void WaitForElement(By locator)
     {
         Wait.Until(d => d.FindElement(locator).Displayed);
     }
 
-    protected void Tap(By locator)
+    public void Tap(By locator)
     {
         FindElement(locator).Click();
     }
@@ -41,12 +41,12 @@ public abstract class BasePage
         el.SendKeys(text);
     }
 
-    protected string GetText(By locator)
+    public string GetText(By locator)
     {
         return FindElement(locator).Text;
     }
 
-    protected bool IsElementDisplayed(By locator)
+    public bool IsElementDisplayed(By locator)
     {
         try
         {
@@ -56,5 +56,29 @@ public abstract class BasePage
         {
             return false;
         }
+    }
+
+    public void ScrollToElement(By locator)
+    {
+        const int maxScrolls = 5;
+        for (int i = 0; i < maxScrolls; i++)
+        {
+            if (IsElementDisplayed(locator)) return;
+
+            var js = (IJavaScriptExecutor)Driver;
+            js.ExecuteScript("mobile: scrollGesture", new Dictionary<string, object>
+        {
+            { "left", 100 },
+            { "top", 100 },
+            { "width", 800 },
+            { "height", 1000 },
+            { "direction", "down" },
+            { "percent", 0.8 }
+        });
+
+            Thread.Sleep(500); // Allow some time for scroll to complete
+        }
+
+        throw new Exception("Element not found after scrolling.");
     }
 }
