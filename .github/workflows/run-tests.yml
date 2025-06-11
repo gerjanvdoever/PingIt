@@ -1,0 +1,27 @@
+name: Run PingIt.Tests on Push
+
+on:
+  push:
+    branches: [ "**" ]  # Run on any branch push
+  pull_request:
+    branches: [ "**" ]  # Optional: run on PRs too
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '9.0.x' # Match your project's SDK version
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Run tests for PingIt.Tests only
+        run: dotnet test ./PingIt.Tests/PingIt.Tests.csproj --no-build --verbosity normal
