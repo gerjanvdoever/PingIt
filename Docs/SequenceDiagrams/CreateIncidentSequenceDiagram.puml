@@ -1,0 +1,47 @@
+@startuml
+actor User
+boundary View as MAUIView
+control ViewModel as ReportIncidentVM
+control HttpClient
+entity "API Controller\n(IncidentController)" as ApiController
+database "Database\n(PingItDbContext)" as Db
+
+User -> MAUIView : Tap "Submit Report"
+MAUIView -> ReportIncidentVM : SendCommand.Execute()
+activate ReportIncidentVM
+
+alt Missing Required Fields
+    ReportIncidentVM -> MAUIView : Display alert
+    deactivate ReportIncidentVM
+    return
+end
+
+ReportIncidentVM -> ReportIncidentVM : Construct IncidentDto
+note right of ReportIncidentVM : Title, Description, Lat, Long, UserId
+
+ReportIncidentVM -> HttpClient : POST api/incident
+activate HttpClient
+
+HttpClient -> ApiController : POST api/incident
+activate ApiController
+ApiController -> Db : Add Incident\n+ SaveChanges
+Db --> ApiController : Incident w/ Id
+ApiController -> ApiController : Load Photos (empty)
+ApiController --> HttpClient : Created IncidentDto
+deactivate ApiController
+HttpClient --> ReportIncidentVM : Response (IncidentDto w/ Id)
+deactivate HttpClient
+
+loop for each Photo
+    ReportIncidentVM -> HttpClient : POST api/incident/{id}/photos
+    HttpClient -> ApiController : POST incident photo
+    ApiController -> Db : Save IncidentPhoto
+    Db --> ApiController
+    ApiController --> HttpClient : Response
+end
+
+ReportIncidentVM -> MAUIView : Display Success Message
+ReportIncidentVM -> ReportIncidentVM : ClearFormAsync()
+ReportIncidentVM -> MAUIView : Navigate Back
+deactivate ReportIncidentVM
+@enduml

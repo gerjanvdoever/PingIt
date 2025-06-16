@@ -1,0 +1,70 @@
+@startuml
+!theme plain
+
+' General layout settings
+!define RECTANGLE class
+skinparam packageStyle rectangle
+skinparam linetype ortho
+left to right direction
+
+rectangle {
+
+    ' Top - Shared library
+    package "PingIt.Shared" <<class library>> #lightblue {
+        [Dtos]
+        [Enums]
+    }
+
+    ' Middle - Applications
+    package "PingIt.Api" <<web api>> #lightgreen {
+        [Controllers]
+        [API Services]
+        [Models]
+        [Data]
+        [Migrations]
+    }
+
+    package "PingIt.Web" <<web application>> #lightyellow {
+        [Web Components]
+        [Web Views]
+        [Web Pages]
+        [Web Services]
+        [Web Layout]
+    }
+
+    package "PingIt.Maui" <<mobile app>> #lightcoral {
+        [Mobile Views]
+        [ViewModels]
+        [Mobile Services]
+        [Platforms]
+        [Converters]
+        [Resources]
+    }
+
+    ' Bottom - Tests
+    package "PingIt.Tests" <<test project>> #lightgray {
+        [Api Tests]
+        [Maui Tests]
+    }
+
+    package "PingIt.Maui.UITests" <<test project>> #lightgray {
+        [UI Tests]
+        [Drivers]
+        [PageObjects]
+        [Utilities]
+    }
+}
+
+' Clear directional dependencies
+PingIt.Api -down-> PingIt.Shared : uses
+PingIt.Web -down-> PingIt.Shared : uses
+PingIt.Maui -down-> PingIt.Shared : uses
+
+PingIt.Web -right-> PingIt.Api : HTTP/REST
+PingIt.Maui -right-> PingIt.Api : HTTP/REST
+
+PingIt.Tests -down-> PingIt.Api : tests
+PingIt.Tests -right-> PingIt.Maui : tests
+PingIt.Maui.UITests -up-> PingIt.Maui : tests
+
+@enduml

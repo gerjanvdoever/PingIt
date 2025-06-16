@@ -121,23 +121,28 @@
                                     FontFamily="OpenSansRegular"
                                     TextColor="{AppThemeBinding Light=#656D76, Dark=#8B949E}" />
                             </Grid>
-
-                            <!-- Photo Grid for wider screens -->
+                            
                             <CollectionView
                                 ItemsSource="{Binding Incident.Photos}"
-                                HeightRequest="200">
+                                VerticalOptions="FillAndExpand">
                                 <CollectionView.ItemsLayout>
-                                    <GridItemsLayout Orientation="Vertical" 
-                                                   Span="4" 
-                                                   HorizontalItemSpacing="12" 
-                                                   VerticalItemSpacing="12" />
+                                    <GridItemsLayout 
+                                        Orientation="Vertical" 
+                                        Span="3" 
+                                        HorizontalItemSpacing="12" 
+                                        VerticalItemSpacing="12" />
                                 </CollectionView.ItemsLayout>
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate x:DataType="dto:IncidentPhotoDto">
-                                        <Border StrokeShape="RoundRectangle 12" BackgroundColor="Transparent">
+                                        <Border 
+                                            StrokeShape="RoundRectangle 12" 
+                                            BackgroundColor="Transparent">
                                             <Border.Shadow>
-                                                <Shadow Brush="{AppThemeBinding Light=#E1E4E8, Dark=#21262D}"
-                                                        Offset="0,2" Radius="6" Opacity="0.15" />
+                                                <Shadow 
+                                                    Brush="{AppThemeBinding Light=#E1E4E8, Dark=#21262D}"
+                                                    Offset="0,2" 
+                                                    Radius="6" 
+                                                    Opacity="0.15" />
                                             </Border.Shadow>
                                             <Border
                                                 StrokeShape="RoundRectangle 12"
@@ -146,8 +151,9 @@
                                                 BackgroundColor="{AppThemeBinding Light=White, Dark=#21262D}">
                                                 <Image
                                                     Source="{Binding PhotoUrl}"
-                                                    Aspect="AspectFill"
-                                                    HeightRequest="80">
+                                                    Aspect="AspectFit"
+                                                    HeightRequest="250"
+                                                    VerticalOptions="FillAndExpand">
                                                     <Image.GestureRecognizers>
                                                         <TapGestureRecognizer
                                                             Command="{Binding Source={RelativeSource AncestorType={x:Type vm:IncidentDetailViewModel}}, Path=ShowFullscreenImageCommand}"
@@ -161,7 +167,6 @@
                             </CollectionView>
                         </VerticalStackLayout>
                     </Border>
-
                 </VerticalStackLayout>
 
                 <!-- Right Column - Info Panel -->

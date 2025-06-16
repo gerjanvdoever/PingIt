@@ -24,11 +24,12 @@
             Aspect="AspectFit"
             VerticalOptions="Center"
             BackgroundColor="Transparent"
-            IsVisible="{Binding Source={x:Reference this}, Path=ShowBackButton}">
+            IsVisible="{OnPlatform Android={Binding Source={x:Reference this}, Path=ShowBackButton}, WinUI=False}">
             <Image.GestureRecognizers>
                 <TapGestureRecognizer Tapped="OnBackButtonClicked" />
             </Image.GestureRecognizers>
         </Image>
+
 
         <Label
             Grid.Column="0"
