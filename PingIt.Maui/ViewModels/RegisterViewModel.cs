@@ -70,7 +70,7 @@ namespace PingIt.Maui.ViewModels
         }
 
         [RelayCommand(CanExecute = nameof(IsNotBusy))]
-        private async Task RegisterAsync()
+        public async Task RegisterAsync()
         {
             if (IsBusy) return;
             IsBusy = true;
