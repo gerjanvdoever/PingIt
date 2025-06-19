@@ -23,6 +23,7 @@ namespace PingIt.Maui
             return window;
         }
 
+        // if token is present, go to account page otherwise go to login page
         private async Task InitAsync()
         {
             await _tokenStorage.LoadTokenAsync();

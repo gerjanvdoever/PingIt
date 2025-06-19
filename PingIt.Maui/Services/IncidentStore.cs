@@ -12,6 +12,7 @@ namespace PingIt.Maui.Services
         IncidentDto? SelectedIncident { get; set; }
     }
 
+    // Used for persisting incident data across screens
     public class IncidentStore : IIncidentStore
     {
         public IncidentDto? SelectedIncident { get; set; }

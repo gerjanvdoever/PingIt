@@ -12,6 +12,7 @@ namespace PingIt.Maui.Services
         UserDto? CurrentUser { get; set; }
     }
 
+    // Used for persisting user data across screens
     public class UserStore : IUserStore
     {
         public UserDto? CurrentUser { get; set; }

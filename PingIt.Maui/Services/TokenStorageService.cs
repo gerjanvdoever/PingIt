@@ -79,6 +79,7 @@ namespace PingIt.Maui.Services
             await Task.CompletedTask;
         }
 
+        // extract user ID and role from token
         private void ParseJwtClaims(string token)
         {
             var handler = new JwtSecurityTokenHandler();
