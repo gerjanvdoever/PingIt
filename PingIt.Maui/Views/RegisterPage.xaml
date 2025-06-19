@@ -98,9 +98,22 @@
                     </HorizontalStackLayout>
 
                     <Label Text="{Binding ValidationError}"
-                           TextColor="Red"
-                           FontSize="{OnPlatform Android='Small', WinUI=12}"
-                           IsVisible="{Binding ValidationError, Converter={StaticResource StringNotEmptyConverter}}" />
+       TextColor="Red"
+       FontSize="{OnPlatform Android='Small', WinUI=12}"
+       IsVisible="True">
+                        <Label.Triggers>
+                            <DataTrigger TargetType="Label"
+                   Binding="{Binding ValidationError}"
+                   Value="{x:Null}">
+                                <Setter Property="IsVisible" Value="False" />
+                            </DataTrigger>
+                            <DataTrigger TargetType="Label"
+                   Binding="{Binding ValidationError}"
+                   Value="">
+                                <Setter Property="IsVisible" Value="False" />
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
 
                     <Button Text="Register"
                             Command="{Binding RegisterCommand}"

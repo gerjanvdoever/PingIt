@@ -4,7 +4,6 @@
   xmlns:vm="clr-namespace:PingIt.Maui.ViewModels"
   xmlns:views="clr-namespace:PingIt.Maui.Views"
   xmlns:dto="clr-namespace:PingIt.Shared.Dtos;assembly=PingIt.Shared"
-  xmlns:conv="clr-namespace:PingIt.Maui.Converters"
   x:Class="PingIt.Maui.Views.MyIncidentDetail"
   Shell.NavBarIsVisible="False"
   x:DataType="vm:MyIncidentDetailViewModel"

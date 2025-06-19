@@ -1,12 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:converters="clr-namespace:PingIt.Maui.Converters"
              x:Class="PingIt.Maui.Views.BottomNavBar"
              x:Name="FooterRoot">
-    <ContentView.Resources>
-        <converters:PageToBackgroundConverter x:Key="PageToBackgroundConverter" />
-    </ContentView.Resources>
 
     <Grid ColumnDefinitions="*,*,*"
           BackgroundColor="{AppThemeBinding Light=#F0F0F0, Dark=#1C1C1E}"
@@ -14,7 +10,7 @@
 
         <!-- Map Navigation -->
         <Border Grid.Column="0"
-                BackgroundColor="{Binding CurrentPage, Source={x:Reference FooterRoot}, Converter={StaticResource PageToBackgroundConverter}, ConverterParameter=IncidentMapPage}"
+                BackgroundColor="Transparent"
                 StrokeThickness="0"
                 Padding="8"
                 HorizontalOptions="Center"
@@ -22,6 +18,14 @@
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="8" />
             </Border.StrokeShape>
+            <Border.Triggers>
+                <DataTrigger TargetType="Border"
+                           Binding="{Binding CurrentPage, Source={x:Reference FooterRoot}}"
+                           Value="IncidentMapPage">
+                    <Setter Property="BackgroundColor" 
+                            Value="{AppThemeBinding Light=#E0E0E0, Dark=#333333}" />
+                </DataTrigger>
+            </Border.Triggers>
             <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
                 <Image Source="map.png"
                        WidthRequest="32"
@@ -40,7 +44,7 @@
 
         <!-- List Navigation -->
         <Border Grid.Column="1"
-                BackgroundColor="{Binding CurrentPage, Converter={StaticResource PageToBackgroundConverter}, ConverterParameter=IncidentListPage}"
+                BackgroundColor="Transparent"
                 StrokeThickness="0"
                 Padding="8"
                 HorizontalOptions="Center"
@@ -48,6 +52,14 @@
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="8" />
             </Border.StrokeShape>
+            <Border.Triggers>
+                <DataTrigger TargetType="Border"
+                           Binding="{Binding CurrentPage, Source={x:Reference FooterRoot}}"
+                           Value="IncidentListPage">
+                    <Setter Property="BackgroundColor" 
+                            Value="{AppThemeBinding Light=#E0E0E0, Dark=#333333}" />
+                </DataTrigger>
+            </Border.Triggers>
             <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
                 <Image Source="list.png"
                        WidthRequest="32"
@@ -66,7 +78,7 @@
 
         <!-- Account Navigation -->
         <Border Grid.Column="2"
-                BackgroundColor="{Binding CurrentPage, Converter={StaticResource PageToBackgroundConverter}, ConverterParameter=AccountPage}"
+                BackgroundColor="Transparent"
                 StrokeThickness="0"
                 Padding="8"
                 HorizontalOptions="Center"
@@ -74,6 +86,14 @@
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="8" />
             </Border.StrokeShape>
+            <Border.Triggers>
+                <DataTrigger TargetType="Border"
+                           Binding="{Binding CurrentPage, Source={x:Reference FooterRoot}}"
+                           Value="AccountPage">
+                    <Setter Property="BackgroundColor" 
+                            Value="{AppThemeBinding Light=#E0E0E0, Dark=#333333}" />
+                </DataTrigger>
+            </Border.Triggers>
             <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
                 <Image Source="profile.png"
                        WidthRequest="32"

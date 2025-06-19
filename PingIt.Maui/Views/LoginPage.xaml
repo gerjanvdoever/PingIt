@@ -53,10 +53,22 @@
             HorizontalOptions="FillAndExpand" />
 
                     <Label
-            Text="{Binding ValidationError}"
-            TextColor="Red"
-            IsVisible="{Binding ValidationError,
-                        Converter={StaticResource StringNotEmptyConverter}}" />
+    Text="{Binding ValidationError}"
+    TextColor="Red"
+    IsVisible="True">
+                        <Label.Triggers>
+                            <DataTrigger TargetType="Label"
+                   Binding="{Binding ValidationError}"
+                   Value="{x:Null}">
+                                <Setter Property="IsVisible" Value="False" />
+                            </DataTrigger>
+                            <DataTrigger TargetType="Label"
+                   Binding="{Binding ValidationError}"
+                   Value="">
+                                <Setter Property="IsVisible" Value="False" />
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
 
                     <Button
             Text="Login"

@@ -5,13 +5,11 @@
     xmlns:vm="clr-namespace:PingIt.Maui.ViewModels"
     xmlns:views="clr-namespace:PingIt.Maui.Views"
     xmlns:dto="clr-namespace:PingIt.Shared.Dtos;assembly=PingIt.Shared"
-    xmlns:conv="clr-namespace:PingIt.Maui.Converters"
     x:Class="PingIt.Maui.Views.IncidentDetailPage"
     x:DataType="vm:IncidentDetailViewModel"
     Shell.NavBarIsVisible="False"
     BackgroundColor="{AppThemeBinding Light=#F8F9FA, Dark=#0D1117}"
     Title="Incident Details">
-
     <Grid RowDefinitions="Auto,*,Auto">
 
         <!-- Top Nav -->
@@ -188,15 +186,23 @@
 
                         <VerticalStackLayout Spacing="4">
                             <Label
-                                Text="Handled Externally"
-                                FontSize="12"
-                                FontFamily="OpenSansSemibold"
-                                TextColor="{AppThemeBinding Light=#656D76, Dark=#8B949E}" />
+        Text="Handled Externally"
+        FontSize="12"
+        FontFamily="OpenSansSemibold"
+        TextColor="{AppThemeBinding Light=#656D76, Dark=#8B949E}" />
                             <Label
-                                Text="{Binding Incident.HandledByExternal, Converter={StaticResource BoolToYesNoConverter}}"
-                                FontSize="14"
-                                FontFamily="OpenSansRegular"
-                                TextColor="{AppThemeBinding Light=#24292F, Dark=#F0F6FC}" />
+        Text="No"
+        FontSize="14"
+        FontFamily="OpenSansRegular"
+        TextColor="{AppThemeBinding Light=#24292F, Dark=#F0F6FC}">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label"
+                       Binding="{Binding Incident.HandledByExternal}"
+                       Value="True">
+                                        <Setter Property="Text" Value="Yes" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
                         </VerticalStackLayout>
 
                     </VerticalStackLayout>
