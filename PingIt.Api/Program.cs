@@ -98,4 +98,12 @@ app.UseStaticFiles(new StaticFileOptions
 
 app.MapControllers();
 
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<PingItDbContext>();
+    dbContext.Database.Migrate();
+    // Comment line below to disable seeding in production
+    await SeedData.SeedAsync(dbContext);
+}
+
 app.Run();

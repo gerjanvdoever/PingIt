@@ -39,7 +39,6 @@ namespace PingIt.Api.Data
                 .WithMany()
                 .HasForeignKey(h => h.ChangedByUserId)
                 .OnDelete(DeleteBehavior.NoAction);
-            SeedData.Seed(modelBuilder);
         }
     }
 }
