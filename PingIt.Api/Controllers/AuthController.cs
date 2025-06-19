@@ -49,7 +49,7 @@ namespace PingIt.Api.Controllers
             return Ok(new
             {
                 Token = token,
-                Role = user.Role
+                user.Role
             });
         }
 
@@ -112,7 +112,7 @@ namespace PingIt.Api.Controllers
             }
             catch (UnauthorizedAccessException ex)
             {
-                return Unauthorized(new { Message = ex.Message });
+                return Unauthorized(new { ex.Message });
             }
 
             var user = await _context.Users.FindAsync(id);
@@ -153,15 +153,14 @@ namespace PingIt.Api.Controllers
         }
 
 
-        private string HashPassword(string password)
+        private static string HashPassword(string password)
         {
-            using var sha256 = SHA256.Create();
             var bytes = Encoding.UTF8.GetBytes(password);
-            var hash = sha256.ComputeHash(bytes);
+            var hash = SHA256.HashData(bytes);
             return Convert.ToBase64String(hash);
         }
 
-        private string ValidateRegisterDto(RegisterDto dto)
+        private static string ValidateRegisterDto(RegisterDto dto)
         {
             if (string.IsNullOrWhiteSpace(dto.FirstName) ||
                 string.IsNullOrWhiteSpace(dto.LastName) ||

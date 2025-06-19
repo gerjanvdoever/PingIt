@@ -3,6 +3,7 @@ using PingIt.Shared.Enums;
 
 namespace PingIt.Api.Extensions
 {
+    // This class provides extension methods for ClaimsPrincipal to retrieve user information from claims.
     public static class ClaimsPrincipalExtensions
     {
         public static int GetUserId(this ClaimsPrincipal user)

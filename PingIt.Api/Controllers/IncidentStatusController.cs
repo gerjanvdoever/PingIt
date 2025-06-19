@@ -36,7 +36,6 @@ namespace PingIt.Api.Controllers
 
             bool statusChanged = false;
 
-            // Status change
             if (statusDto.NewStatus.HasValue && incident.Status != statusDto.NewStatus.Value)
             {
                 incident.Status = statusDto.NewStatus.Value;
@@ -49,42 +48,36 @@ namespace PingIt.Api.Controllers
                 }
             }
 
-            // Assign to worker
             if (statusDto.NewWorkerId.HasValue)
             {
                 incident.HandledByUserId = statusDto.NewWorkerId;
             }
 
-            // Mark as handled externally
             if (statusDto.HandledByExternal.HasValue)
             {
                 incident.HandledByExternal = statusDto.HandledByExternal.Value;
             }
 
-            // Update notes
             if (!string.IsNullOrWhiteSpace(statusDto.Notes))
             {
                 incident.Notes = statusDto.Notes;
             }
 
-            // Priority change
             if (statusDto.NewPriority.HasValue && incident.Priority != statusDto.NewPriority.Value)
             {
                 incident.Priority = statusDto.NewPriority.Value;
             }
 
-            // Deadline
             if (statusDto.NewDeadline.HasValue)
             {
                 incident.Deadline = statusDto.NewDeadline;
             }
 
 
-            // Save changes
             _context.Incidents.Update(incident);
             await _context.SaveChangesAsync();
 
-            // Create IncidentStatusHistory if status changed
+            // If status changed, log the change in history
             if (statusChanged)
             {
                 var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;

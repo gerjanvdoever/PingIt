@@ -13,6 +13,7 @@ namespace PingIt.Api.Controllers
             _config = config;
         }
 
+        // retrieving Google Maps API key for .web
         [HttpGet("google-maps-key")]
         public ActionResult<string> GetGoogleMapsApiKey()
         {

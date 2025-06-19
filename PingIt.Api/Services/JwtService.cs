@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 
 namespace PingIt.Api.Services
 {
+    // class for issuing JWT tokens for user authentication
     public class JwtService
     {
         private readonly IConfiguration _configuration;
@@ -21,7 +22,7 @@ namespace PingIt.Api.Services
             _jwtKey = DotNetEnv.Env.GetString("JWT_SECRET") ?? throw new InvalidOperationException("JWT_SECRET missing");
             _jwtIssuer = _configuration["Jwt:Issuer"] ?? throw new InvalidOperationException("Jwt:Issuer missing");
             _jwtAudience = _configuration["Jwt:Audience"] ?? throw new InvalidOperationException("Jwt:Audience missing");
-            _jwtExpireMinutes = int.Parse(_configuration["Jwt:ExpireMinutes"] ?? "60");
+            _jwtExpireMinutes = int.Parse(_configuration["Jwt:ExpireMinutes"] ?? "86400"); // two months
         }
 
         public string GenerateToken(User user)

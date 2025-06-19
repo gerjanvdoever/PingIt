@@ -6,6 +6,7 @@ using PingIt.Api.Services.PingIt.Api.Services;
 
 namespace PingIt.Api.Services
 {
+    // Interface used for unit testing purposes
     namespace PingIt.Api.Services
     {
         public interface IEmailService

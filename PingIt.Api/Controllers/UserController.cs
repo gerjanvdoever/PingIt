@@ -37,7 +37,7 @@ namespace PingIt.Api.Controllers
             }
             catch (UnauthorizedAccessException ex)
             {
-                return Unauthorized(new { Message = ex.Message });
+                return Unauthorized(new { ex.Message });
             }
 
             var user = await _context.Users.FindAsync(id);
@@ -79,7 +79,7 @@ namespace PingIt.Api.Controllers
             }
             catch (UnauthorizedAccessException ex)
             {
-                return Unauthorized(new { Message = ex.Message });
+                return Unauthorized(new { ex.Message });
             }
 
             var user = await _context.Users.FindAsync(id);
@@ -118,7 +118,6 @@ namespace PingIt.Api.Controllers
         [Authorize(Roles = "Administrator")]
         public async Task<ActionResult<List<UserDto>>> GetAllUsers()
         {
-            // Extra check for testing purposes
             if (!User.IsInRole("Administrator"))
             {
                 return Forbid("You are not authorized to view all users.");
@@ -187,7 +186,7 @@ namespace PingIt.Api.Controllers
             return NoContent();
         }
 
-        private string ValidateUserDto(UpdateUserDto dto)
+        private static string ValidateUserDto(UpdateUserDto dto)
         {
             // Check string fields only if they are provided (non-null)
             if (dto.FirstName is { Length: 0 } ||

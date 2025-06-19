@@ -8,6 +8,8 @@ using PingIt.Shared.Enums;
  * admin@pingit.nl password: Welkom123 (Administrator)
  * worker@pingit.nl password: Welkom123 (Worker with incidents)
  * for demonstration and testing purposes, every user has password: Welkom123
+ * 
+ * Adds a total of 16 users (2 Admins, 4 workers, 10 residents), 11 incidents, and 18 photos (already in upload folder) to said incidents.
  */
 namespace PingIt.Api.Data
 {

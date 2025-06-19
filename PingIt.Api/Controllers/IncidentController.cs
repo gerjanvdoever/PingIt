@@ -25,7 +25,7 @@ namespace PingIt.Api.Controllers
             _context = context;
         }
 
-        // GET: api/incidents
+        // GET: api/incident
         [HttpGet]
         [Authorize(Roles = "Worker, Administrator")]
         public async Task<ActionResult<List<IncidentDto>>> GetAllIncidents()
@@ -50,7 +50,7 @@ namespace PingIt.Api.Controllers
             return Ok(incidents.Select(MapToDto).ToList());
         }
 
-        // GET: api/incidents/closed
+        // GET: api/incident/closed
         [HttpGet("closed")]
         [Authorize(Roles = "Worker, Administrator")]
         public async Task<ActionResult<List<IncidentDto>>> GetClosedIncidents()
@@ -77,7 +77,7 @@ namespace PingIt.Api.Controllers
             return Ok(MapToDto(incident));
         }
 
-        // GET: api/incidents/user/{userId}
+        // GET: api/incident/user/{userId}
         [HttpGet("user/{userId}")]
         public async Task<ActionResult<List<IncidentDto>>> GetIncidentsByUserId(int userId)
         {
@@ -93,7 +93,7 @@ namespace PingIt.Api.Controllers
         }
 
 
-        // GET: api/incidents/worker/{workerId}/closed
+        // GET: api/incident/worker/{workerId}/closed
         [HttpGet("worker/{workerId}/closed")]
         [Authorize(Roles = "Worker, Administrator")]
         public async Task<ActionResult<List<IncidentDto>>> GetClosedIncidentsByWorkerId(int workerId)
@@ -106,7 +106,7 @@ namespace PingIt.Api.Controllers
             return Ok(incidents.Select(MapToDto).ToList());
         }
 
-        // GET: api/incidents/worker/{workerId}/active
+        // GET: api/incident/worker/{workerId}/active
         [HttpGet("worker/{workerId}/active")]
         [Authorize(Roles = "Worker, Administrator")]
         public async Task<ActionResult<List<IncidentDto>>> GetActiveIncidentsByWorkerId(int workerId)
@@ -119,7 +119,7 @@ namespace PingIt.Api.Controllers
             return Ok(incidents.Select(MapToDto).ToList());
         }
 
-        // POST: api/incidents
+        // POST: api/incident
         [HttpPost]
         [AllowAnonymous]
         public async Task<ActionResult<IncidentDto>> CreateIncident([FromBody] IncidentDto incidentDto)
@@ -176,7 +176,7 @@ namespace PingIt.Api.Controllers
             return NoContent();
         }
 
-        // PUT: api/incidents/{id}
+        // PUT: api/incident/{id}
         [HttpPut("{id}")]
         public async Task<ActionResult<IncidentDto>> UpdateIncident(
             int id,
@@ -198,7 +198,6 @@ namespace PingIt.Api.Controllers
 
             await _context.SaveChangesAsync();
 
-            // ensure photos are loaded before mapping
             await _context.Entry(incident).Collection(i => i.Photos).LoadAsync();
 
             return Ok(MapToDto(incident));

@@ -52,23 +52,22 @@ namespace PingIt.Api.Controllers
                 return BadRequest(new { Message = "Invalid base64 photo data." });
             }
 
-            // Generate a unique filename
+            // Generate filename
             var fileName = $"incident-{incidentId}-{Guid.NewGuid()}.jpg";
             var filePath = Path.Combine(uploadPath, fileName);
 
             await System.IO.File.WriteAllBytesAsync(filePath, imageBytes);
 
-            // Save to database
             var newPhoto = new IncidentPhoto
             {
                 IncidentId = incidentId,
-                PhotoUrl = $"/uploads/{fileName}" // Save the relative path
+                PhotoUrl = $"/uploads/{fileName}"
             };
 
             _context.IncidentPhotos.Add(newPhoto);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetPhotos), new { incidentId = incidentId }, new { Message = "Photo uploaded successfully.", PhotoUrl = newPhoto.PhotoUrl });
+            return CreatedAtAction(nameof(GetPhotos), new { incidentId }, new { Message = "Photo uploaded successfully.", newPhoto.PhotoUrl });
         }
 
         // GET: api/incident/{incidentId}/photos

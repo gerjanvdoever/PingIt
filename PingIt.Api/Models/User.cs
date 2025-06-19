@@ -10,7 +10,7 @@ namespace PingIt.Api.Models
         public string LastName { get; set; } = null!;
         public string Email { get; set; } = null!;
         public string PasswordHash { get; set; } = null!;
-        public UserRole Role { get; set; } = UserRole.Resident;
+        public UserRole Role { get; set; } = UserRole.Resident; // Resident, Worker, Admin
         public string? PhoneNumber { get; set; }
         public bool WantsNotifications { get; set; } = false;
         public string Street { get; set; } = null!;
