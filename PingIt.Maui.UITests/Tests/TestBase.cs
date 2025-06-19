@@ -40,6 +40,7 @@ public abstract class TestBase
         }
     }
 
+    // make ss in case of failure, easier to debug.
     private void TakeScreenshot()
     {
         try

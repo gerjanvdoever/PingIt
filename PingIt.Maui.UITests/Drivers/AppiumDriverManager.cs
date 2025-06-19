@@ -29,7 +29,7 @@ public class AppiumDriverManager
         options.AddAdditionalAppiumOption("autoGrantPermissions", true);
         options.AddAdditionalAppiumOption("newCommandTimeout", 300);
         options.AddAdditionalAppiumOption("autoGrantPermissions", true);
-        options.AddAdditionalAppiumOption("appWaitActivity", "*");
+        options.AddAdditionalAppiumOption("appWaitActivity", "*"); // let the app start and wait for any activity
         options.AddAdditionalAppiumOption("ignoreHiddenApiPolicyError", true);
 
         _driver = new AndroidDriver(new Uri(TestConfiguration.Appium.ServerUrl), options);

@@ -3,6 +3,7 @@
 namespace PingIt.Maui.UITests.Tests;
 
 [TestFixture]
+// Tests logging in, reporting an incident, navigating to the incident detail page, deletion and confirming deletion.
 public class ReportAndDeleteIncidentTest : TestBase
 {
     private LoginPage _loginPage = null!;

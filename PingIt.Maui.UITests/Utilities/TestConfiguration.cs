@@ -13,7 +13,7 @@ public static class TestConfiguration
             TestContext.CurrentContext.TestDirectory,
             "..", "..", "..", "..",
             "PingIt.Maui", "bin", "Release", "net9.0-android",
-            "com.companyname.pingit.maui-Signed.apk"));
+            "com.companyname.pingit.maui-Signed.apk")); // points to release build, adb install -r PingIt.Maui\bin\Release\net9.0-android\com.companyname.pingit.maui-Signed.apk
 
         public const string AppPackage = "com.companyname.pingit.maui";
     }

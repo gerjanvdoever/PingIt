@@ -3,6 +3,7 @@ using PingIt.Maui.UITests.PageObjects;
 
 namespace PingIt.Maui.UITests.Tests;
 
+// Testing logging in, changing first name, checking, changing it back, checking again.
 [TestFixture]
 public class UpdateFirstNameTest : TestBase
 {

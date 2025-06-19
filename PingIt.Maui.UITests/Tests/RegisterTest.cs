@@ -6,6 +6,7 @@ namespace PingIt.Maui.UITests.Tests;
 [TestFixture]
 public class RegisterTest : TestBase
 {
+    // Register and verify new user registration
     [Test]
     public void Register_NewUser_ShouldShowAccountDashboard()
     {
