@@ -98,8 +98,8 @@ namespace PingIt.Maui.ViewModels
             }
         }
 
-        partial void OnSelectedLocationChanged(LocationDto? newLocation)
-            => _ = HandleLocationChangedAsync(newLocation);
+        partial void OnSelectedLocationChanged(LocationDto? value)
+            => _ = HandleLocationChangedAsync(value);
 
         private async Task HandleLocationChangedAsync(LocationDto? location)
         {

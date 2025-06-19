@@ -12,7 +12,7 @@ public partial class IncidentListPage : ContentPage
         BindingContext = _vm = vm;
     }
 
-    protected override async void OnAppearing()
+    protected override void OnAppearing()
     {
         base.OnAppearing();
         if (_vm.LoadIncidentsCommand.CanExecute(null))

@@ -181,7 +181,6 @@ namespace PingIt.Maui.ViewModels
                 else
                 {
                     var error = await response.Content.ReadAsStringAsync();
-                    _logger.LogWarning("Password change failed: " + error);
                     await Toast.Make("Password change failed.", ToastDuration.Long).Show();
                 }
             }

@@ -2,8 +2,10 @@
 <ContentView
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:views="clr-namespace:PingIt.Maui.Views"
     x:Class="PingIt.Maui.Views.TopNavBar"
-    x:Name="this">
+    x:Name="this"
+    x:DataType="views:TopNavBar">
     <Grid
     BackgroundColor="{AppThemeBinding Light=White, Dark=#1C1C1E}"
     Padding="10"

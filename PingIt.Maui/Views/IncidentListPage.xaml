@@ -191,7 +191,7 @@
       InputTransparent="False"
       BackgroundColor="{StaticResource OverlayDark}">
             <ActivityIndicator
-        IsRunning="{Binding IsBusy}"
+        IsRunning="{Binding IsLoading}"
         HorizontalOptions="Center"
         VerticalOptions="Center"
         Color="White" />
