@@ -15,6 +15,9 @@ public partial class IncidentListPage : ContentPage
     protected override async void OnAppearing()
     {
         base.OnAppearing();
-        await _vm.LoadIncidentsAsync();
+        if (_vm.LoadIncidentsCommand.CanExecute(null))
+        {
+            _vm.LoadIncidentsCommand.Execute(null);
+        }
     }
 }

@@ -17,14 +17,12 @@ namespace PingIt.Maui.ViewModels
 {
     public partial class AccountViewModel : ObservableObject
     {
-        // injected services
         private readonly ITokenStorageService _tokenStorage;
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly ILogger<AccountViewModel> _logger;
         private readonly IIncidentStore _store;
         private readonly IUserStore _userStore;
 
-        // observable properties
         [ObservableProperty] string firstName = string.Empty;
         [ObservableProperty] string lastName = string.Empty;
         [ObservableProperty] bool isBusy;
@@ -202,7 +200,6 @@ namespace PingIt.Maui.ViewModels
         {
             try
             {
-                // Capture CurrentUser to avoid race conditions
                 var user = CurrentUser;
 
                 if (user == null)
@@ -225,7 +222,6 @@ namespace PingIt.Maui.ViewModels
 
                 IsLoading = true;
 
-                // Ensure we're on the main thread and use captured user
                 await MainThread.InvokeOnMainThreadAsync(async () =>
                 {
                     _userStore.CurrentUser = user;

@@ -49,7 +49,6 @@ namespace PingIt.Maui.ViewModels
             _httpClient = httpClientFactory.CreateClient("AuthenticatedClient");
             Incident = store.SelectedIncident ?? throw new InvalidOperationException();
 
-            // Notify property changes for computed properties
             OnPropertyChanged(nameof(HasHandledAt));
             OnPropertyChanged(nameof(PinItems));
         }
@@ -148,12 +147,10 @@ namespace PingIt.Maui.ViewModels
             FullscreenImageUrl = string.Empty;
         }
 
-        // Override OnPropertyChanged to handle computed properties
         protected override void OnPropertyChanged(System.ComponentModel.PropertyChangedEventArgs e)
         {
             base.OnPropertyChanged(e);
 
-            // Update computed properties when Incident changes
             if (e.PropertyName == nameof(Incident))
             {
                 OnPropertyChanged(nameof(HasHandledAt));

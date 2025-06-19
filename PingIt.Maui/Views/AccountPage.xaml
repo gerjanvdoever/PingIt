@@ -167,7 +167,6 @@
                                           VerticalOptions="Start"
                                           Margin="0,5,15,0" />
 
-                                    <!-- Incident Info -->
                                     <VerticalStackLayout Grid.Column="1" Spacing="6">
                                         <Label Text="{Binding Title}"
                                              FontSize="16"
@@ -228,7 +227,7 @@
             </Border.GestureRecognizers>
         </Border>
 
-        <!-- BOTTOM NAV -->
+        <!-- bottom nav -->
         <views:BottomNavBar
     Grid.Row="2"
     CurrentPage="AccountPage"
@@ -236,7 +235,7 @@
        Source={x:Reference RootPage}, 
        Path=BindingContext.IsFooterVisible}"/>
 
-        <!-- BUSY OVERLAY -->
+        <!-- busy overlay -->
         <Grid Grid.RowSpan="3"
             IsVisible="{Binding IsBusy}"
             InputTransparent="False"
@@ -257,7 +256,6 @@
             </Grid.GestureRecognizers>
         </Grid>
 
-        <!-- Dropdown -->
         <Border Grid.RowSpan="3"
               x:Name="DropdownMenu"
               IsVisible="{Binding IsDropdownVisible}"
@@ -275,7 +273,6 @@
             </Border.Shadow>
 
             <StackLayout Spacing="0">
-                <!-- Details Option -->
                 <Grid Padding="20,15" BackgroundColor="Transparent">
                     <Grid.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding ShowDetailsCommand}" />

@@ -13,20 +13,18 @@
 
     <Grid RowDefinitions="Auto,*,Auto">
 
-        <!-- Top Nav -->
         <views:TopNavBar
             Grid.Row="0"
             Title="{Binding Incident.Title}"
             ShowBackButton="True" />
 
-        <!-- Main Content Area -->
         <ScrollView Grid.Row="1" Padding="16">
             <Grid ColumnDefinitions="2*,1*" RowDefinitions="Auto,*" ColumnSpacing="16" RowSpacing="16">
 
-                <!-- Left Column - Main Content -->
+                <!-- Left Column -->
                 <VerticalStackLayout Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Spacing="16">
 
-                    <!-- Header Card: Title & Created At -->
+                    <!-- Header Card -->
                     <Border
                         BackgroundColor="{AppThemeBinding Light=White, Dark=#161B22}"
                         Padding="32,24"
@@ -51,7 +49,6 @@
                                     TextColor="{AppThemeBinding Light=#656D76, Dark=#8B949E}" />
                             </VerticalStackLayout>
 
-                            <!-- Priority Badge -->
                             <Border Grid.Column="1" 
                                     BackgroundColor="{AppThemeBinding Light=#FFF3CD, Dark=#332701}"
                                     Stroke="{AppThemeBinding Light=#FFEAA7, Dark=#664D03}"
@@ -168,7 +165,7 @@
                     </Border>
                 </VerticalStackLayout>
 
-                <!-- Right Column - Info Panel -->
+                <!-- Right Column -->
                 <VerticalStackLayout Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Spacing="16">
 
                     <!-- Details Card -->
@@ -259,7 +256,7 @@
                         </VerticalStackLayout>
                     </Border>
 
-                    <!-- Status & Notes Card -->
+                    <!-- Status, notes -->
                     <Border
                         BackgroundColor="{AppThemeBinding Light=White, Dark=#161B22}"
                         Padding="24,20"
@@ -357,7 +354,7 @@
             </Grid>
         </Border>
 
-        <!-- Fullscreen Image Overlay -->
+        <!-- image overlay for fullscreen -->
         <Grid
             Grid.RowSpan="3"
             IsVisible="{Binding IsImageFullscreen}"

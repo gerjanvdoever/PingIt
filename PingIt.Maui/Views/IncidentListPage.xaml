@@ -15,7 +15,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- Pull-to-refresh + CollectionView -->
+        <!-- pull to refresh w incidents -->
         <RefreshView
       Grid.Row="0"
       IsRefreshing="{Binding IsLoading}"
@@ -28,7 +28,6 @@
         SelectedItem="{Binding SelectedIncident, Mode=TwoWay}"
         BackgroundColor="Transparent">
 
-                <!-- header -->
                 <CollectionView.Header>
                     <VerticalStackLayout Padding="16,16,16,8" Spacing="4">
                         <HorizontalStackLayout Spacing="8" VerticalOptions="Center">
@@ -46,7 +45,6 @@
                     </VerticalStackLayout>
                 </CollectionView.Header>
 
-                <!-- ITEM TEMPLATE: active incidents -->
                 <CollectionView.ItemTemplate>
                     <DataTemplate x:DataType="dto:IncidentDto">
                         <Border BackgroundColor="Transparent" Padding="20,12">
@@ -102,7 +100,7 @@
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
 
-                <!-- FOOTER: show/hide closed incidents + closed list -->
+                <!-- closed incidents -->
                 <CollectionView.Footer>
                     <VerticalStackLayout Spacing="8" Padding="16,8,16,16">
                         <Button
@@ -183,7 +181,6 @@
             </CollectionView>
         </RefreshView>
 
-        <!-- Bottom navigation -->
         <views:BottomNavBar
       Grid.Row="1"
       CurrentPage="IncidentListPage" />

@@ -12,13 +12,12 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Top Navigation -->
         <views:TopNavBar 
             Grid.Row="0"
             Title="Account Details"
             ShowBackButton="True"/>
 
-        <!-- Main Content Grid -->
+        <!-- Main Content -->
         <ScrollView Grid.Row="1" Padding="20">
             <Grid
                 ColumnDefinitions="{OnPlatform Android='*', WinUI='*,*'}"
@@ -43,7 +42,6 @@
                                HorizontalOptions="Center"/>
 
                         <StackLayout Spacing="15">
-                            <!-- Reusable Fields -->
                             <StackLayout>
                                 <Label Text="First Name" FontSize="{OnPlatform Android=14, WinUI=13}" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#333333, Dark=#FFFFFF}"/>
                                 <Entry Text="{Binding FirstName}" Placeholder="Enter first name" BackgroundColor="{AppThemeBinding Light=#F8F9FA, Dark=#2C2C2C}" TextColor="{AppThemeBinding Light=#333333, Dark=#FFFFFF}" PlaceholderColor="{AppThemeBinding Light=#999999, Dark=#777777}" HeightRequest="45" FontSize="{OnPlatform Android=16, WinUI=14}"/>

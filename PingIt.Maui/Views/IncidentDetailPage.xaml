@@ -12,17 +12,14 @@
     Title="Incident Details">
     <Grid RowDefinitions="Auto,*,Auto">
 
-        <!-- Top Nav -->
         <views:TopNavBar
             Grid.Row="0"
             Title="{Binding Incident.Title}"
             ShowBackButton="True" />
 
-        <!-- Scrollable Content -->
         <ScrollView Grid.Row="1" Padding="0">
             <VerticalStackLayout Spacing="0">
-
-                <!-- Header Card: Title & Created At -->
+            <!--Incident header card-->
                 <Border
                     BackgroundColor="{AppThemeBinding Light=White, Dark=#161B22}"
                     Margin="16,16,16,8"
@@ -36,14 +33,11 @@
                     </Border.Shadow>
                     <VerticalStackLayout Spacing="12">
 
-                        <!-- Incident Title (read-only) -->
                         <Label
                             Text="{Binding Incident.Title}"
                             FontSize="20"
                             FontFamily="OpenSansSemibold"
                             TextColor="{AppThemeBinding Light=#24292F, Dark=#F0F6FC}" />
-
-                        <!-- Created At -->
                         <Label
                             Text="{Binding Incident.CreatedAt, StringFormat='Created: {0:dd MMM yyyy HH:mm}'}"
                             FontSize="14"
@@ -144,7 +138,7 @@
                     </VerticalStackLayout>
                 </Border>
 
-                <!-- Extra Info Card: Priority, Deadline, External Company -->
+                <!-- extra info card -->
                 <Border
                     BackgroundColor="{AppThemeBinding Light=White, Dark=#161B22}"
                     Margin="16,8,16,16"
@@ -240,7 +234,7 @@
                     </VerticalStackLayout>
                 </Border>
 
-                <!-- Status & Notes Card -->
+                <!-- status + notes -->
                 <Border
                     BackgroundColor="{AppThemeBinding Light=White, Dark=#161B22}"
                     Margin="16,8,16,8"
@@ -254,7 +248,6 @@
                     </Border.Shadow>
                     <VerticalStackLayout Spacing="16">
 
-                        <!-- Status Picker -->
                         <VerticalStackLayout Spacing="4">
                             <Label
                                 Text="Status"
@@ -274,7 +267,6 @@
                             </Border>
                         </VerticalStackLayout>
 
-                        <!-- Notes Editor -->
                         <VerticalStackLayout Spacing="4">
                             <Label
                                 Text="Notes"
@@ -301,7 +293,7 @@
             </VerticalStackLayout>
         </ScrollView>
 
-        <!-- Action Bar -->
+        <!-- save bar -->
         <Border
             Grid.Row="2"
             BackgroundColor="{AppThemeBinding Light=White, Dark=#161B22}"
@@ -325,7 +317,7 @@
             </Grid>
         </Border>
 
-        <!-- Fullscreen Image Overlay -->
+        <!-- image overlay for fullscreen -->
         <Grid
             Grid.RowSpan="3"
             IsVisible="{Binding IsImageFullscreen}"
