@@ -13,7 +13,6 @@ using PingIt.Maui.Views;
 using PingIt.Shared.Dtos;
 
 namespace PingIt.Maui.ViewModels;
-
 public partial class IncidentListViewModel : ObservableObject
 {
     private readonly ITokenStorageService _tokenStorage;
@@ -40,19 +39,26 @@ public partial class IncidentListViewModel : ObservableObject
         _store = store;
     }
 
-    partial void OnSelectedIncidentChanged(IncidentDto? value)
+    [RelayCommand]
+    private async Task NavigateToDetailAsync(IncidentDto incident)
     {
-        if (value is null)
+        if (incident is null)
             return;
 
-        _store.SelectedIncident = value;
+        try
+        {
+            _store.SelectedIncident = incident;
 
-        var targetPage = DeviceInfo.Platform == DevicePlatform.WinUI
-            ? nameof(IncidentDetailWindowsPage)
-            : nameof(IncidentDetailPage);
+            var targetPage = DeviceInfo.Platform == DevicePlatform.WinUI
+                ? nameof(IncidentDetailWindowsPage)
+                : nameof(IncidentDetailPage);
 
-        _ = Shell.Current.GoToAsync(targetPage);
-        SelectedIncident = null;
+            await Shell.Current.GoToAsync(targetPage);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error navigating to detail page");
+        }
     }
 
     [RelayCommand]

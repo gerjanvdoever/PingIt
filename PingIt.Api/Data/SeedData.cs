@@ -2,6 +2,13 @@
 using PingIt.Api.Models;
 using PingIt.Shared.Enums;
 
+/*
+ * Seed data for the PingIt application.
+ * Notable users:
+ * admin@pingit.nl password: Welkom123 (Administrator)
+ * worker@pingit.nl password: Welkom123 (Worker with incidents)
+ * for demonstration and testing purposes, every user has password: Welkom123
+ */
 namespace PingIt.Api.Data
 {
     public static class SeedData
@@ -50,7 +57,7 @@ namespace PingIt.Api.Data
                 new Incident { Id = 2, Title = "Zwerfvuil", Description = "Overal ligt afval op het speelveld achter het winkelcentrum, echt super goor", Latitude = 51.7510m, Longitude = 5.1310m, CreatedAt = staticNow.AddDays(-3), Status = IncidentStatus.InProgress, Priority = PriorityLevel.Low, Deadline = staticNow.AddDays(42), CreatedByUserId = 8, HandledByUserId = 3, Notes = "Reinigingsdienst is bezig met opruimen." },
                 new Incident { Id = 3, Title = "Kapot bankje", Description = "Bankje in het parkje bij de kerk is denk ik vernield man. niet spang.", Latitude = 51.7525m, Longitude = 5.1342m, CreatedAt = staticNow.AddDays(-4), Status = IncidentStatus.Resolved, Priority = PriorityLevel.High, Deadline = staticNow.AddDays(7), CreatedByUserId = 9, HandledByUserId = 3, Notes = "Bankje is vervangen." },
                 new Incident { Id = 4, Title = "Losliggende stoeptegel", Description = "Mijn moeder is bijna gevallen door een losse tegel op de hoek van de Schoolstraat.", Latitude = 51.7499m, Longitude = 5.1331m, CreatedAt = staticNow.AddDays(-1), Status = IncidentStatus.Reported, CreatedByUserId = 10 },
-                new Incident { Id = 5, Title = "Omgevallen boom", Description = "Er ligt een grote boom over het fietspad aan de Buitenkade.", Latitude = 51.7488m, Longitude = 5.1320m, CreatedAt = staticNow.AddDays(-1), Status = IncidentStatus.Registered, Priority = PriorityLevel.Emergency, Deadline = staticNow.AddDays(1), CreatedByUserId = 11 },
+                new Incident { Id = 5, Title = "Omgevallen boom", Description = "Er ligt een grote boom over het fietspad aan de Buitenkade.", Latitude = 51.7488m, Longitude = 5.1320m, CreatedAt = staticNow.AddDays(-1), Status = IncidentStatus.Registered, Priority = PriorityLevel.Emergency, Deadline = staticNow.AddDays(1), CreatedByUserId = 11, HandledByUserId =  4},
                 new Incident { Id = 6, Title = "Verdacht steegje mogelijke drugshandel", Description = "In dat steegje wordt sowieso gedealt. Constant gasten met capuchons op op scooters zijn daar aanwezig 's avonds. Ik vertrouw dit echt niet.", Latitude = 51.7592m, Longitude = 5.1286m, CreatedAt = staticNow.AddDays(-2), Status = IncidentStatus.Registered, Priority = PriorityLevel.High, Deadline = staticNow.AddDays(7), CreatedByUserId = 12, HandledByExternal = true, Notes = "Melding doorgestuurd naar politie." },
                 new Incident { Id = 7, Title = "Foutgeparkeerd voertuig", Description = "Auto staat al dagen op de stoep bij het gemeentehuis.", Latitude = 51.7490m, Longitude = 5.1309m, CreatedAt = staticNow.AddDays(-3), Status = IncidentStatus.Registered, Priority = PriorityLevel.Normal, Deadline = staticNow.AddDays(21), CreatedByUserId = 7, HandledByUserId = 3, Notes = "Voertuig moet worden weggesleept." },
                 new Incident { Id = 8, Title = "Wateroverlast verstopte put", Description = "Na regen staat de straat voor het huis blank, vermoeden is dat deze put het probleem is", Latitude = 51.7503m, Longitude = 5.1351m, CreatedAt = staticNow.AddDays(-5), Status = IncidentStatus.Reported, CreatedByUserId = null },

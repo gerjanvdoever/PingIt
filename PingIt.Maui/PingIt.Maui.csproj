@@ -44,7 +44,7 @@
 		<TargetPlatformMinVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'windows'">10.0.17763.0</TargetPlatformMinVersion>
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'tizen'">6.5</SupportedOSPlatformVersion>
 	</PropertyGroup>
-
+	
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net9.0-android|AnyCPU'">
 	  <ApplicationTitle>PingIt</ApplicationTitle>
 	</PropertyGroup>
@@ -62,7 +62,11 @@
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-android|AnyCPU'">
-	  <ApplicationTitle>PingIt</ApplicationTitle>
+		<PublishTrimmed>false</PublishTrimmed>
+		<AndroidLinkMode>None</AndroidLinkMode>
+		<RunAOTCompilation>false</RunAOTCompilation>
+		<EnableTrimAnalyzer>false</EnableTrimAnalyzer>
+		<UseInterpreter>true</UseInterpreter>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net9.0-ios|AnyCPU'">

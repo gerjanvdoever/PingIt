@@ -22,12 +22,14 @@
         <ScrollView Grid.Row="1" Padding="20">
             <Grid
                 ColumnDefinitions="{OnPlatform Android='*', WinUI='*,*'}"
+                RowDefinitions="{OnPlatform Android='Auto,Auto', WinUI='*'}"
                 ColumnSpacing="20"
                 RowSpacing="25">
 
                 <!-- Profile Info Section -->
                 <Border
                     Grid.Column="{OnPlatform Android=0, WinUI=0}"
+                    Grid.Row="{OnPlatform Android=0, WinUI=0}"
                     Background="{AppThemeBinding Light=White, Dark=#1E1E1E}"
                     Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#333333}"
                     StrokeShape="RoundRectangle 12"
@@ -103,6 +105,7 @@
                 <!-- Change Password Section -->
                 <Border
                     Grid.Column="{OnPlatform Android=0, WinUI=1}"
+                    Grid.Row="{OnPlatform Android=1, WinUI=0}"
                     Background="{AppThemeBinding Light=White, Dark=#1E1E1E}"
                     Stroke="{AppThemeBinding Light=#E0E0E0, Dark=#333333}"
                     StrokeShape="RoundRectangle 12"
