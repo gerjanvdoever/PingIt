@@ -4,7 +4,6 @@
   xmlns:vm="clr-namespace:PingIt.Maui.ViewModels"
   xmlns:views="clr-namespace:PingIt.Maui.Views"
   xmlns:dto="clr-namespace:PingIt.Shared.Dtos;assembly=PingIt.Shared"
-  xmlns:conv="clr-namespace:PingIt.Maui.Converters"
   x:Class="PingIt.Maui.Views.MyIncidentDetail"
   Shell.NavBarIsVisible="False"
   x:DataType="vm:MyIncidentDetailViewModel"
@@ -12,7 +11,6 @@
 
     <Grid RowDefinitions="Auto,*,Auto">
 
-        <!-- Top Navigation Bar -->
         <views:TopNavBar
             Grid.Row="0"
             Title="{Binding Incident.Title}"
@@ -22,7 +20,6 @@
         <ScrollView Grid.Row="1" Padding="0">
             <VerticalStackLayout Spacing="0">
 
-                <!-- Header Card -->
                 <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#161B22}"
                         Margin="16,16,16,8"
                         Padding="24,20"
@@ -37,7 +34,6 @@
                     </Border.Shadow>
 
                     <VerticalStackLayout Spacing="16">
-                        <!-- Incident Title -->
                         <VerticalStackLayout Spacing="8">
                             <Label Text="Incident Title"
                                    FontSize="14"
@@ -52,7 +48,6 @@
                                    PlaceholderColor="{AppThemeBinding Light=#8C959F, Dark=#6E7681}" />
                         </VerticalStackLayout>
 
-                        <!-- Status Info -->
                         <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto" ColumnSpacing="16" RowSpacing="12">
                             <VerticalStackLayout Grid.Column="0" Grid.Row="0" Spacing="4">
                                 <Label Text="Status"
@@ -256,7 +251,7 @@
 
             <Grid ColumnDefinitions="*,Auto" ColumnSpacing="12">
 
-                <!-- Save Changes fills all available space -->
+                <!-- Save Changes-->
                 <Button Grid.Column="0"
             Text="Save Changes"
             Command="{Binding SaveIncidentCommand}"
@@ -267,7 +262,7 @@
             CornerRadius="10"
             Padding="24,12" />
 
-                <!-- Delete sits top-right -->
+                <!-- Delete-->
                 <Button Grid.Column="1"
             Command="{Binding DeleteIncidentCommand}"
             BackgroundColor="{AppThemeBinding Light=#FFF1F0, Dark=#4C1B1B}"
@@ -296,7 +291,7 @@
                 <TapGestureRecognizer Command="{Binding CloseFullscreenImageCommand}" />
             </Grid.GestureRecognizers>
 
-            <!-- Make the border fill the available space (minus the margin) -->
+            <!-- Make the border fill the available space -->
             <Border BackgroundColor="Black"
             StrokeShape="RoundRectangle 12"
             StrokeThickness="0"
@@ -310,15 +305,11 @@
                     Opacity="0.3" />
                 </Border.Shadow>
 
-                <!-- Let the image row take up all the extra space, and the close-button row size to content -->
                 <Grid RowDefinitions="*,Auto">
-                    <!-- This will now expand to fill the star-row -->
                     <Image Source="{Binding FullscreenImageUrl}"
                    Aspect="AspectFit"
                    HorizontalOptions="FillAndExpand"
                    VerticalOptions="FillAndExpand" />
-
-                    <!-- Close Button stays at the bottom -->
                     <Button Grid.Row="1"
                     Text="✕"
                     Command="{Binding CloseFullscreenImageCommand}"

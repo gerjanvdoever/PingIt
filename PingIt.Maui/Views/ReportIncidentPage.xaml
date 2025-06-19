@@ -204,7 +204,7 @@
                                                     </Border>
                                                 </Border>
 
-                                                <!-- Delete button - positioned in top-right corner -->
+                                                <!-- Delete button -->
                                                 <Border BackgroundColor="{AppThemeBinding Light=#DC2626, Dark=#EF4444}"
                                                         StrokeShape="RoundRectangle 12"
                                                         WidthRequest="24"

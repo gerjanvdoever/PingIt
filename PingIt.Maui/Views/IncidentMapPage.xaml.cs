@@ -4,20 +4,22 @@ namespace PingIt.Maui.Views;
 
 public partial class IncidentMapPage : ContentPage
 {
+    private readonly IncidentMapViewModel _vm;
     public IncidentMapPage(IncidentMapViewModel vm)
     {
         InitializeComponent();
         BindingContext = vm;
+        _vm = vm;
     }
 
     protected override void OnAppearing()
     {
         base.OnAppearing();
 
-        if (BindingContext is IncidentMapViewModel vm &&
-            vm.LoadIncidentsCommand.CanExecute(null))
+        if (_vm.LoadIncidentsCommand.CanExecute(null))
         {
-            vm.LoadIncidentsCommand.Execute(null);
+            _vm.LoadIncidentsCommand.Execute(null);
         }
+
     }
 }

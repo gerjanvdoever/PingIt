@@ -4,7 +4,6 @@
   xmlns:vm="clr-namespace:PingIt.Maui.ViewModels"
   xmlns:views="clr-namespace:PingIt.Maui.Views"
   xmlns:dto="clr-namespace:PingIt.Shared.Dtos;assembly=PingIt.Shared"
-  xmlns:conv="clr-namespace:PingIt.Maui.Converters"
   x:Class="PingIt.Maui.Views.MyIncidentDetailWindowsPage"
   Shell.NavBarIsVisible="False"
   x:DataType="vm:MyIncidentDetailViewModel"
@@ -13,20 +12,19 @@
 
     <Grid RowDefinitions="Auto,*,Auto">
 
-        <!-- Top Navigation Bar -->
         <views:TopNavBar
             Grid.Row="0"
             Title="{Binding Incident.Title}"
             ShowBackButton="True" />
 
-        <!-- Main Content Area -->
+        <!-- Main Content -->
         <ScrollView Grid.Row="1" Padding="16">
             <Grid ColumnDefinitions="2*,1*" RowDefinitions="Auto,*" ColumnSpacing="16" RowSpacing="16">
 
-                <!-- Left Column - Main Content -->
+                <!-- Left Column-->
                 <VerticalStackLayout Grid.Column="0" Grid.Row="0" Grid.RowSpan="2" Spacing="16">
 
-                    <!-- Header Card: Title & Created At -->
+                    <!-- Header Card -->
                     <Border
                         BackgroundColor="{AppThemeBinding Light=White, Dark=#161B22}"
                         Padding="32,24"
@@ -53,7 +51,6 @@
                                     TextColor="{AppThemeBinding Light=#656D76, Dark=#8B949E}" />
                             </VerticalStackLayout>
 
-                            <!-- Status Badge -->
                             <Border Grid.Column="1" 
                                     BackgroundColor="{AppThemeBinding Light=#DDF4FF, Dark=#0C2D6B}"
                                     Stroke="{AppThemeBinding Light=#54AEFF, Dark=#1F6FEB}"
@@ -181,7 +178,7 @@
 
                 </VerticalStackLayout>
 
-                <!-- Right Column - Info Panel -->
+                <!-- Right Column -->
                 <VerticalStackLayout Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Spacing="16">
 
                     <!-- Details Card -->

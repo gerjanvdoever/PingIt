@@ -27,48 +27,21 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
 
-                <!-- profile avatar -->
-                <Border Grid.Column="0"
-                        WidthRequest="60" HeightRequest="60"
-                        StrokeThickness="3"
-                        Stroke="White"
-                        StrokeShape="RoundRectangle 30"
-                        BackgroundColor="White"
-                        VerticalOptions="Center">
+                <Border Grid.Column="0" WidthRequest="60" HeightRequest="60" StrokeThickness="3" Stroke="White" StrokeShape="RoundRectangle 30" BackgroundColor="White" VerticalOptions="Center">
                     <Border.Shadow>
                         <Shadow Brush="Black" Opacity="0.2" Radius="8" Offset="0,2" />
                     </Border.Shadow>
-                    <Image Source="user.png"
-                           WidthRequest="40" HeightRequest="40"
-                           Aspect="AspectFit" />
+                    <Image Source="user.png" WidthRequest="40" HeightRequest="40" Aspect="AspectFit" />
                 </Border>
 
                 <!-- User Info -->
-                <VerticalStackLayout Grid.Column="1" 
-                                     Spacing="4" 
-                                     Margin="15,0,0,0"
-                                     VerticalOptions="Center">
-                    <Label Text="{Binding FullName}"
-                           FontSize="20"
-                           FontAttributes="Bold"
-                           TextColor="White" />
-                    <Label Text="Account Dashboard"
-                           FontSize="14"
-                           TextColor="White"
-                           Opacity="0.8" />
+                <VerticalStackLayout Grid.Column="1" Spacing="4" Margin="15,0,0,0" VerticalOptions="Center">
+                    <Label Text="{Binding FullName}" FontSize="20" FontAttributes="Bold" TextColor="White" />
+                    <Label Text="Account Dashboard" FontSize="14" TextColor="White" Opacity="0.8" />
                 </VerticalStackLayout>
 
-                <!-- Settings Icon -->
-                <Border Grid.Column="2"
-                        WidthRequest="40" HeightRequest="40"
-                        StrokeThickness="1"
-                        Stroke="White"
-                        StrokeShape="RoundRectangle 20"
-                        BackgroundColor="Transparent"
-                        VerticalOptions="Center">
-                    <Image Source="settings.png"
-                           WidthRequest="20" HeightRequest="20"
-                           Aspect="AspectFit">
+                <Border Grid.Column="2" WidthRequest="40" HeightRequest="40" StrokeThickness="1" Stroke="White" StrokeShape="RoundRectangle 20" BackgroundColor="Transparent" VerticalOptions="Center">
+                    <Image Source="settings.png" WidthRequest="20" HeightRequest="20" Aspect="AspectFit">
                         <Image.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding ToggleDropdownCommand}" />
                         </Image.GestureRecognizers>
@@ -76,127 +49,60 @@
                 </Border>
             </Grid>
         </Border>
-        
+
         <Grid Grid.Row="1" RowDefinitions="Auto,*" BackgroundColor="{AppThemeBinding Light=#F8F9FA, Dark=#121212}">
 
             <VerticalStackLayout Grid.Row="0" Spacing="20" Padding="20,20,20,15">
                 <Grid ColumnDefinitions="*,*" ColumnSpacing="15">
                     <!-- Total Incidents Card -->
-                    <Border Grid.Column="0" 
-                            StrokeThickness="0"
-                            BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
-                            StrokeShape="RoundRectangle 15"
-                            Padding="15">
+                    <Border Grid.Column="0" StrokeThickness="0" BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}" StrokeShape="RoundRectangle 15" Padding="15">
                         <Border.Shadow>
                             <Shadow Brush="Black" Opacity="0.1" Radius="10" Offset="0,2" />
                         </Border.Shadow>
                         <VerticalStackLayout Spacing="8">
-                            <Image Source="barchart.png" 
-                                   WidthRequest="24" HeightRequest="24"
-                                   HorizontalOptions="Start"
-                                   Opacity="0.7" />
-                            <Label Text="{Binding Incidents.Count}"
-                                   FontSize="24"
-                                   FontAttributes="Bold"
-                                   TextColor="{StaticResource Primary}" />
-                            <Label Text="Total Incidents"
-                                   FontSize="12"
-                                   TextColor="{AppThemeBinding Light=#666666, Dark=#AAAAAA}" />
+                            <Image Source="barchart.png" WidthRequest="24" HeightRequest="24" HorizontalOptions="Start" Opacity="0.7" />
+                            <Label Text="{Binding Incidents.Count}" FontSize="24" FontAttributes="Bold" TextColor="{StaticResource Primary}" />
+                            <Label Text="Total Incidents" FontSize="12" TextColor="{AppThemeBinding Light=#666666, Dark=#AAAAAA}" />
                         </VerticalStackLayout>
                     </Border>
 
                     <!-- Active Incidents Card -->
-                    <Border Grid.Column="1"
-                            StrokeThickness="0"
-                            BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
-                            StrokeShape="RoundRectangle 15"
-                            Padding="15">
+                    <Border Grid.Column="1" StrokeThickness="0" BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}" StrokeShape="RoundRectangle 15" Padding="15">
                         <Border.Shadow>
                             <Shadow Brush="Black" Opacity="0.1" Radius="10" Offset="0,2" />
                         </Border.Shadow>
                         <VerticalStackLayout Spacing="8">
-                            <Image Source="warning.png" 
-                                   WidthRequest="24" HeightRequest="24"
-                                   HorizontalOptions="Start"
-                                   Opacity="0.7" />
-                            <Label Text="{Binding ActiveIncidentsCount}" 
-                                   FontSize="24"
-                                   FontAttributes="Bold"
-                                   TextColor="#FF6B35" />
-                            <Label Text="Active"
-                                   FontSize="12"
-                                   TextColor="{AppThemeBinding Light=#666666, Dark=#AAAAAA}" />
+                            <Image Source="warning.png" WidthRequest="24" HeightRequest="24" HorizontalOptions="Start" Opacity="0.7" />
+                            <Label Text="{Binding ActiveIncidentsCount}" FontSize="24" FontAttributes="Bold" TextColor="#FF6B35" />
+                            <Label Text="Active" FontSize="12" TextColor="{AppThemeBinding Light=#666666, Dark=#AAAAAA}" />
                         </VerticalStackLayout>
                     </Border>
                 </Grid>
 
-                <Label Text="My incidents"
-                       FontSize="18"
-                       FontAttributes="Bold"
-                       TextColor="{AppThemeBinding Light=Black, Dark=White}" />
+                <Label Text="My incidents" FontSize="18" FontAttributes="Bold" TextColor="{AppThemeBinding Light=Black, Dark=White}" />
             </VerticalStackLayout>
 
             <!-- incident list -->
-            <RefreshView Grid.Row="1" 
-                         IsRefreshing="{Binding IsLoading}"
-                         Command="{Binding LoadIncidentsCommand}"
-                         Margin="20,0,20,0">
-                <CollectionView ItemsSource="{Binding Incidents}"
-                              SelectionMode="Single"
-                              SelectedItem="{Binding SelectedIncident, Mode=TwoWay}"
-                              EmptyView="No incidents found. Tap + to create one."
-                              ItemSizingStrategy="MeasureAllItems">
+            <RefreshView Grid.Row="1" IsRefreshing="{Binding IsLoading}" Command="{Binding LoadIncidentsCommand}" Margin="20,0,20,0">
+                <CollectionView ItemsSource="{Binding Incidents}" SelectionMode="Single" SelectedItem="{Binding SelectedIncident, Mode=TwoWay}" EmptyView="No incidents found. Tap + to create one." ItemSizingStrategy="MeasureAllItems">
                     <CollectionView.ItemTemplate>
                         <DataTemplate x:DataType="dto:IncidentDto">
-                            <Border
-                                Stroke="{AppThemeBinding Light=#DDDDDD, Dark=#333333}"
-                                StrokeThickness="1"
-                                BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
-                                StrokeShape="RoundRectangle 15"
-                                Margin="0,0,0,15">
+                            <Border Stroke="{AppThemeBinding Light=#DDDDDD, Dark=#333333}" StrokeThickness="1" BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}" StrokeShape="RoundRectangle 15" Margin="0,0,0,15">
                                 <Border.Shadow>
                                     <Shadow Brush="Black" Opacity="0.08" Radius="12" Offset="0,3" />
                                 </Border.Shadow>
-
                                 <Grid Padding="20,15" ColumnDefinitions="Auto,*,Auto">
-                                    <Border Grid.Column="0"
-                                          WidthRequest="12" HeightRequest="12"
-                                          StrokeThickness="0"
-                                          BackgroundColor="{StaticResource Primary}"
-                                          StrokeShape="RoundRectangle 6"
-                                          VerticalOptions="Start"
-                                          Margin="0,5,15,0" />
-
-                                    <!-- Incident Info -->
+                                    <Border Grid.Column="0" WidthRequest="12" HeightRequest="12" StrokeThickness="0" BackgroundColor="{StaticResource Primary}" StrokeShape="RoundRectangle 6" VerticalOptions="Start" Margin="0,5,15,0" />
                                     <VerticalStackLayout Grid.Column="1" Spacing="6">
-                                        <Label Text="{Binding Title}"
-                                             FontSize="16"
-                                             FontAttributes="Bold"
-                                             TextColor="{AppThemeBinding Light=Black, Dark=White}" />
-
+                                        <Label Text="{Binding Title}" FontSize="16" FontAttributes="Bold" TextColor="{AppThemeBinding Light=Black, Dark=White}" />
                                         <Grid ColumnDefinitions="Auto,*">
-                                            <Border Grid.Column="0"
-                                                  StrokeThickness="0"
-                                                  BackgroundColor="{AppThemeBinding Light=#E8F4FD, Dark=#2A3A4A}"
-                                                  StrokeShape="RoundRectangle 10"
-                                                  Padding="8,4"
-                                                  HorizontalOptions="Start">
-                                                <Label Text="{Binding Status}"
-                                                     FontSize="11"
-                                                     FontAttributes="Bold"
-                                                     TextColor="{AppThemeBinding Light=#1976D2, Dark=#64B5F6}" />
+                                            <Border Grid.Column="0" StrokeThickness="0" BackgroundColor="{AppThemeBinding Light=#E8F4FD, Dark=#2A3A4A}" StrokeShape="RoundRectangle 10" Padding="8,4" HorizontalOptions="Start">
+                                                <Label Text="{Binding Status}" FontSize="11" FontAttributes="Bold" TextColor="{AppThemeBinding Light=#1976D2, Dark=#64B5F6}" />
                                             </Border>
                                         </Grid>
-
-                                        <Label Text="{Binding CreatedAt, StringFormat='{0:dd MMM yyyy}'}"
-                                             FontSize="13"
-                                             TextColor="{AppThemeBinding Light=#666666, Dark=#AAAAAA}" />
+                                        <Label Text="{Binding CreatedAt, StringFormat='{0:dd MMM yyyy}'}" FontSize="13" TextColor="{AppThemeBinding Light=#666666, Dark=#AAAAAA}" />
                                     </VerticalStackLayout>
-                                    <Label Grid.Column="2"
-                                         Text="›"
-                                         FontSize="20"
-                                         TextColor="{AppThemeBinding Light=#CCCCCC, Dark=#555555}"
-                                         VerticalOptions="Center" />
+                                    <Label Grid.Column="2" Text="›" FontSize="20" TextColor="{AppThemeBinding Light=#CCCCCC, Dark=#555555}" VerticalOptions="Center" />
                                 </Grid>
                             </Border>
                         </DataTemplate>
@@ -206,76 +112,36 @@
         </Grid>
 
         <!-- create incident -->
-        <Border Grid.Row="1"
-              HorizontalOptions="End"
-              VerticalOptions="End"
-              Margin="0,0,25,25"
-              WidthRequest="60" HeightRequest="60"
-              StrokeThickness="0"
-              BackgroundColor="{StaticResource Primary}"
-              StrokeShape="RoundRectangle 30">
+        <Border Grid.Row="1" HorizontalOptions="End" VerticalOptions="End" Margin="0,0,25,25" WidthRequest="60" HeightRequest="60" StrokeThickness="0" BackgroundColor="{StaticResource Primary}" StrokeShape="RoundRectangle 30">
             <Border.Shadow>
                 <Shadow Brush="Black" Opacity="0.3" Radius="15" Offset="0,4" />
             </Border.Shadow>
-            <Label Text="+"
-                   FontSize="28"
-                   FontAttributes="Bold"
-                   TextColor="White"
-                   HorizontalOptions="Center"
-                   VerticalOptions="Center" />
+            <Label Text="+" FontSize="28" FontAttributes="Bold" TextColor="White" HorizontalOptions="Center" VerticalOptions="Center" />
             <Border.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding NewIncidentCommand}" />
             </Border.GestureRecognizers>
         </Border>
 
-        <!-- BOTTOM NAV -->
-        <views:BottomNavBar
-    Grid.Row="2"
-    CurrentPage="AccountPage"
-    IsVisible="{Binding 
-       Source={x:Reference RootPage}, 
-       Path=BindingContext.IsFooterVisible}"/>
+        <!-- bottom nav -->
+        <views:BottomNavBar Grid.Row="2" CurrentPage="AccountPage" IsVisible="{Binding Source={x:Reference RootPage}, Path=BindingContext.IsFooterVisible}" />
 
-        <!-- BUSY OVERLAY -->
-        <Grid Grid.RowSpan="3"
-            IsVisible="{Binding IsBusy}"
-            InputTransparent="False"
-            BackgroundColor="{StaticResource OverlayDark}">
-            <ActivityIndicator IsRunning="{Binding IsBusy}"
-                             HorizontalOptions="Center"
-                             VerticalOptions="Center"
-                             Color="White" />
+        <!-- busy overlay -->
+        <Grid Grid.RowSpan="3" IsVisible="{Binding IsBusy}" InputTransparent="False" BackgroundColor="{StaticResource OverlayDark}">
+            <ActivityIndicator IsRunning="{Binding IsBusy}" HorizontalOptions="Center" VerticalOptions="Center" Color="White" />
         </Grid>
 
         <!-- Dropdown Overlay -->
-        <Grid Grid.RowSpan="3"
-            IsVisible="{Binding IsDropdownVisible}"
-            BackgroundColor="Transparent"
-            ZIndex="999">
+        <Grid Grid.RowSpan="3" IsVisible="{Binding IsDropdownVisible}" BackgroundColor="Transparent" ZIndex="999">
             <Grid.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding CloseDropdownCommand}" />
             </Grid.GestureRecognizers>
         </Grid>
 
-        <!-- Dropdown -->
-        <Border Grid.RowSpan="3"
-              x:Name="DropdownMenu"
-              IsVisible="{Binding IsDropdownVisible}"
-              Stroke="Transparent"
-              StrokeThickness="0"
-              BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}"
-              StrokeShape="RoundRectangle 12"
-              Padding="0"
-              HorizontalOptions="End"
-              VerticalOptions="Start"
-              Margin="20,80,20,0"
-              ZIndex="1000">
+        <Border Grid.RowSpan="3" x:Name="DropdownMenu" IsVisible="{Binding IsDropdownVisible}" Stroke="Transparent" StrokeThickness="0" BackgroundColor="{AppThemeBinding Light=White, Dark=#1E1E1E}" StrokeShape="RoundRectangle 12" Padding="0" HorizontalOptions="End" VerticalOptions="Start" Margin="20,80,20,0" ZIndex="1000">
             <Border.Shadow>
                 <Shadow Brush="Black" Opacity="0.2" Radius="20" Offset="0,6" />
             </Border.Shadow>
-
             <StackLayout Spacing="0">
-                <!-- Details Option -->
                 <Grid Padding="20,15" BackgroundColor="Transparent">
                     <Grid.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding ShowDetailsCommand}" />
@@ -284,23 +150,10 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-
-                    <Border Grid.Column="0"
-                    WidthRequest="32" HeightRequest="32"
-                    StrokeThickness="0"
-                    BackgroundColor="{AppThemeBinding Light=#F0F4FF, Dark=#2E3A59}"
-                    StrokeShape="RoundRectangle 8"
-                    Margin="0,0,12,0">
-                    <Image Source="personaldetails.png"
-                    WidthRequest="16" HeightRequest="16"
-                    Aspect="AspectFit" />
-                  </Border>
-
-                <Label Grid.Column="1"
-                Text="Details"
-                FontSize="15"
-                VerticalOptions="Center"
-                TextColor="{AppThemeBinding Light=#1976D2, Dark=#64B5F6}" />
+                    <Border Grid.Column="0" WidthRequest="32" HeightRequest="32" StrokeThickness="0" BackgroundColor="{AppThemeBinding Light=#F0F4FF, Dark=#2E3A59}" StrokeShape="RoundRectangle 8" Margin="0,0,12,0">
+                        <Image Source="personaldetails.png" WidthRequest="16" HeightRequest="16" Aspect="AspectFit" />
+                    </Border>
+                    <Label Grid.Column="1" Text="Details" FontSize="15" VerticalOptions="Center" TextColor="{AppThemeBinding Light=#1976D2, Dark=#64B5F6}" />
                 </Grid>
 
                 <Grid Padding="20,15" BackgroundColor="Transparent">
@@ -311,23 +164,10 @@
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
-
-                    <Border Grid.Column="0"
-                          WidthRequest="32" HeightRequest="32"
-                          StrokeThickness="0"
-                          BackgroundColor="{AppThemeBinding Light=#FFF3F3, Dark=#4A2A2A}"
-                          StrokeShape="RoundRectangle 8"
-                          Margin="0,0,12,0">
-                        <Image Source="logout.png"
-                             WidthRequest="16" HeightRequest="16"
-                             Aspect="AspectFit" />
+                    <Border Grid.Column="0" WidthRequest="32" HeightRequest="32" StrokeThickness="0" BackgroundColor="{AppThemeBinding Light=#FFF3F3, Dark=#4A2A2A}" StrokeShape="RoundRectangle 8" Margin="0,0,12,0">
+                        <Image Source="logout.png" WidthRequest="16" HeightRequest="16" Aspect="AspectFit" />
                     </Border>
-
-                    <Label Grid.Column="1"
-                         Text="Logout"
-                         FontSize="15"
-                         VerticalOptions="Center"
-                         TextColor="{AppThemeBinding Light=#D32F2F, Dark=#FF6B6B}" />
+                    <Label Grid.Column="1" Text="Logout" FontSize="15" VerticalOptions="Center" TextColor="{AppThemeBinding Light=#D32F2F, Dark=#FF6B6B}" />
                 </Grid>
             </StackLayout>
         </Border>

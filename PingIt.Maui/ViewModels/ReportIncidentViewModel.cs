@@ -311,13 +311,14 @@ namespace PingIt.Maui.ViewModels
             }
         }
 
-        private async Task ClearFormAsync()
+        private Task ClearFormAsync()
         {
             Title = string.Empty;
             Description = string.Empty;
             Photos.Clear();
             NewIncidentCoord = null;
             ShowUserLocation = false;
+            return Task.CompletedTask;
         }
 
         private async static Task<string> UploadLocalAsync(string fileName, Stream stream)

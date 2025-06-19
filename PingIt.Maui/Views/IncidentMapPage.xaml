@@ -12,7 +12,6 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <!-- Map -->
         <views:MapView
       Grid.Row="0"
       PinItems="{Binding PinItems}"

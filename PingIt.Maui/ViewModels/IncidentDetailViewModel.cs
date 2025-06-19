@@ -60,7 +60,6 @@ namespace PingIt.Maui.ViewModels
                        ?? throw new InvalidOperationException("No incident selected");
             SelectedStatus = Incident.Status;
 
-            // recompute when Incident changes
             OnPropertyChanged(nameof(PinItems));
         }
 

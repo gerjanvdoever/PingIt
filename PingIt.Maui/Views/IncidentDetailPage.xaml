@@ -5,7 +5,6 @@
     xmlns:vm="clr-namespace:PingIt.Maui.ViewModels"
     xmlns:views="clr-namespace:PingIt.Maui.Views"
     xmlns:dto="clr-namespace:PingIt.Shared.Dtos;assembly=PingIt.Shared"
-    xmlns:conv="clr-namespace:PingIt.Maui.Converters"
     x:Class="PingIt.Maui.Views.IncidentDetailPage"
     x:DataType="vm:IncidentDetailViewModel"
     Shell.NavBarIsVisible="False"
@@ -14,100 +13,53 @@
 
     <Grid RowDefinitions="Auto,*,Auto">
 
-        <!-- Top Nav -->
-        <views:TopNavBar
-            Grid.Row="0"
-            Title="{Binding Incident.Title}"
-            ShowBackButton="True" />
+        <views:TopNavBar Grid.Row="0" Title="{Binding Incident.Title}" ShowBackButton="True" />
 
-        <!-- Scrollable Content -->
         <ScrollView Grid.Row="1" Padding="0">
             <VerticalStackLayout Spacing="0">
 
-                <!-- Header Card: Title & Created At -->
-                <Border
-                    BackgroundColor="{AppThemeBinding Light=White, Dark=#161B22}"
-                    Margin="16,16,16,8"
-                    Padding="24,20"
-                    StrokeShape="RoundRectangle 16"
-                    Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#30363D}"
-                    StrokeThickness="1">
+                <!--Incident header card-->
+                <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#161B22}" Margin="16,16,16,8" Padding="24,20"
+                        StrokeShape="RoundRectangle 16" Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#30363D}" StrokeThickness="1">
                     <Border.Shadow>
-                        <Shadow Brush="{AppThemeBinding Light=#E1E4E8, Dark=#21262D}"
-                                Offset="0,2" Radius="8" Opacity="0.12" />
+                        <Shadow Brush="{AppThemeBinding Light=#E1E4E8, Dark=#21262D}" Offset="0,2" Radius="8" Opacity="0.12" />
                     </Border.Shadow>
                     <VerticalStackLayout Spacing="12">
-
-                        <!-- Incident Title (read-only) -->
-                        <Label
-                            Text="{Binding Incident.Title}"
-                            FontSize="20"
-                            FontFamily="OpenSansSemibold"
-                            TextColor="{AppThemeBinding Light=#24292F, Dark=#F0F6FC}" />
-
-                        <!-- Created At -->
-                        <Label
-                            Text="{Binding Incident.CreatedAt, StringFormat='Created: {0:dd MMM yyyy HH:mm}'}"
-                            FontSize="14"
-                            FontFamily="OpenSansRegular"
-                            TextColor="{AppThemeBinding Light=#656D76, Dark=#8B949E}" />
-
+                        <Label Text="{Binding Incident.Title}" FontSize="20" FontFamily="OpenSansSemibold"
+                               TextColor="{AppThemeBinding Light=#24292F, Dark=#F0F6FC}" />
+                        <Label Text="{Binding Incident.CreatedAt, StringFormat='Created: {0:dd MMM yyyy HH:mm}'}"
+                               FontSize="14" FontFamily="OpenSansRegular"
+                               TextColor="{AppThemeBinding Light=#656D76, Dark=#8B949E}" />
                     </VerticalStackLayout>
                 </Border>
 
                 <!-- Photos Card -->
-                <Border
-                    BackgroundColor="{AppThemeBinding Light=White, Dark=#161B22}"
-                    Margin="16,8,16,8"
-                    Padding="24,20"
-                    StrokeShape="RoundRectangle 16"
-                    Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#30363D}"
-                    StrokeThickness="1">
+                <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#161B22}" Margin="16,8,16,8" Padding="24,20"
+                        StrokeShape="RoundRectangle 16" Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#30363D}" StrokeThickness="1">
                     <Border.Shadow>
-                        <Shadow Brush="{AppThemeBinding Light=#E1E4E8, Dark=#21262D}"
-                                Offset="0,2" Radius="8" Opacity="0.12" />
+                        <Shadow Brush="{AppThemeBinding Light=#E1E4E8, Dark=#21262D}" Offset="0,2" Radius="8" Opacity="0.12" />
                     </Border.Shadow>
                     <VerticalStackLayout Spacing="16">
                         <Grid ColumnDefinitions="*,Auto">
-                            <Label
-                                Grid.Column="0"
-                                Text="Photos"
-                                FontSize="16"
-                                FontFamily="OpenSansSemibold"
-                                TextColor="{AppThemeBinding Light=#24292F, Dark=#F0F6FC}" />
-                            <Label
-                                Grid.Column="1"
-                                Text="{Binding Incident.Photos.Count, StringFormat='{0} photos'}"
-                                FontSize="13"
-                                FontFamily="OpenSansRegular"
-                                TextColor="{AppThemeBinding Light=#656D76, Dark=#8B949E}" />
+                            <Label Grid.Column="0" Text="Photos" FontSize="16" FontFamily="OpenSansSemibold"
+                                   TextColor="{AppThemeBinding Light=#24292F, Dark=#F0F6FC}" />
+                            <Label Grid.Column="1" Text="{Binding Incident.Photos.Count, StringFormat='{0} photos'}"
+                                   FontSize="13" FontFamily="OpenSansRegular"
+                                   TextColor="{AppThemeBinding Light=#656D76, Dark=#8B949E}" />
                         </Grid>
                         <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
-                            <CollectionView
-                                ItemsSource="{Binding Incident.Photos}"
-                                ItemsLayout="HorizontalList"
-                                HeightRequest="140">
+                            <CollectionView ItemsSource="{Binding Incident.Photos}" ItemsLayout="HorizontalList" HeightRequest="140">
                                 <CollectionView.ItemTemplate>
                                     <DataTemplate x:DataType="dto:IncidentPhotoDto">
                                         <Border Margin="0,0,12,0" StrokeShape="RoundRectangle 12" BackgroundColor="Transparent">
                                             <Border.Shadow>
-                                                <Shadow Brush="{AppThemeBinding Light=#E1E4E8, Dark=#21262D}"
-                                                        Offset="0,2" Radius="6" Opacity="0.15" />
+                                                <Shadow Brush="{AppThemeBinding Light=#E1E4E8, Dark=#21262D}" Offset="0,2" Radius="6" Opacity="0.15" />
                                             </Border.Shadow>
-                                            <Border
-                                                StrokeShape="RoundRectangle 12"
-                                                Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#30363D}"
-                                                StrokeThickness="1"
-                                                BackgroundColor="{AppThemeBinding Light=White, Dark=#21262D}">
-                                                <Image
-                                                    Source="{Binding PhotoUrl}"
-                                                    Aspect="AspectFill"
-                                                    WidthRequest="120"
-                                                    HeightRequest="120">
+                                            <Border StrokeShape="RoundRectangle 12" Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#30363D}"
+                                                    StrokeThickness="1" BackgroundColor="{AppThemeBinding Light=White, Dark=#21262D}">
+                                                <Image Source="{Binding PhotoUrl}" Aspect="AspectFill" WidthRequest="120" HeightRequest="120">
                                                     <Image.GestureRecognizers>
-                                                        <TapGestureRecognizer
-                                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:IncidentDetailViewModel}}, Path=ShowFullscreenImageCommand}"
-                                                            CommandParameter="{Binding PhotoUrl}" />
+                                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type vm:IncidentDetailViewModel}}, Path=ShowFullscreenImageCommand}" CommandParameter="{Binding PhotoUrl}" />
                                                     </Image.GestureRecognizers>
                                                 </Image>
                                             </Border>
@@ -120,172 +72,94 @@
                 </Border>
 
                 <!-- Description Card -->
-                <Border
-                    BackgroundColor="{AppThemeBinding Light=White, Dark=#161B22}"
-                    Margin="16,8,16,8"
-                    Padding="24,20"
-                    StrokeShape="RoundRectangle 16"
-                    Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#30363D}"
-                    StrokeThickness="1">
+                <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#161B22}" Margin="16,8,16,8" Padding="24,20"
+                        StrokeShape="RoundRectangle 16" Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#30363D}" StrokeThickness="1">
                     <Border.Shadow>
-                        <Shadow Brush="{AppThemeBinding Light=#E1E4E8, Dark=#21262D}"
-                                Offset="0,2" Radius="8" Opacity="0.12" />
+                        <Shadow Brush="{AppThemeBinding Light=#E1E4E8, Dark=#21262D}" Offset="0,2" Radius="8" Opacity="0.12" />
                     </Border.Shadow>
                     <VerticalStackLayout Spacing="12">
-                        <Label
-                            Text="Description"
-                            FontSize="16"
-                            FontFamily="OpenSansSemibold"
-                            TextColor="{AppThemeBinding Light=#24292F, Dark=#F0F6FC}" />
-                        <Label
-                            Text="{Binding Incident.Description}"
-                            FontSize="15"
-                            FontFamily="OpenSansRegular"
-                            TextColor="{AppThemeBinding Light=#24292F, Dark=#F0F6FC}"
-                            LineBreakMode="WordWrap" />
+                        <Label Text="Description" FontSize="16" FontFamily="OpenSansSemibold"
+                               TextColor="{AppThemeBinding Light=#24292F, Dark=#F0F6FC}" />
+                        <Label Text="{Binding Incident.Description}" FontSize="15" FontFamily="OpenSansRegular"
+                               TextColor="{AppThemeBinding Light=#24292F, Dark=#F0F6FC}" LineBreakMode="WordWrap" />
                     </VerticalStackLayout>
                 </Border>
 
-                <!-- Extra Info Card: Priority, Deadline, External Company -->
-                <Border
-                    BackgroundColor="{AppThemeBinding Light=White, Dark=#161B22}"
-                    Margin="16,8,16,16"
-                    Padding="24,20"
-                    StrokeShape="RoundRectangle 16"
-                    Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#30363D}"
-                    StrokeThickness="1">
+                <!-- extra info card -->
+                <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#161B22}" Margin="16,8,16,16" Padding="24,20"
+                        StrokeShape="RoundRectangle 16" Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#30363D}" StrokeThickness="1">
                     <Border.Shadow>
-                        <Shadow Brush="{AppThemeBinding Light=#E1E4E8, Dark=#21262D}"
-                                Offset="0,2" Radius="8" Opacity="0.12" />
+                        <Shadow Brush="{AppThemeBinding Light=#E1E4E8, Dark=#21262D}" Offset="0,2" Radius="8" Opacity="0.12" />
                     </Border.Shadow>
                     <VerticalStackLayout Spacing="12">
-
                         <VerticalStackLayout Spacing="4">
-                            <Label
-                                Text="Priority"
-                                FontSize="12"
-                                FontFamily="OpenSansSemibold"
-                                TextColor="{AppThemeBinding Light=#656D76, Dark=#8B949E}" />
-                            <Label
-                                Text="{Binding Incident.Priority, StringFormat='{0}'}"
-                                FontSize="14"
-                                FontFamily="OpenSansRegular"
-                                TextColor="{AppThemeBinding Light=#24292F, Dark=#F0F6FC}" />
+                            <Label Text="Priority" FontSize="12" FontFamily="OpenSansSemibold"
+                                   TextColor="{AppThemeBinding Light=#656D76, Dark=#8B949E}" />
+                            <Label Text="{Binding Incident.Priority, StringFormat='{0}'}" FontSize="14" FontFamily="OpenSansRegular"
+                                   TextColor="{AppThemeBinding Light=#24292F, Dark=#F0F6FC}" />
                         </VerticalStackLayout>
 
                         <VerticalStackLayout Spacing="4">
-                            <Label
-                                Text="Deadline"
-                                FontSize="12"
-                                FontFamily="OpenSansSemibold"
-                                TextColor="{AppThemeBinding Light=#656D76, Dark=#8B949E}" />
-                            <Label
-                                Text="{Binding Incident.Deadline, StringFormat='{0:dd MMM yyyy HH:mm}', TargetNullValue='None'}"
-                                FontSize="14"
-                                FontFamily="OpenSansRegular"
-                                TextColor="{AppThemeBinding Light=#24292F, Dark=#F0F6FC}" />
+                            <Label Text="Deadline" FontSize="12" FontFamily="OpenSansSemibold"
+                                   TextColor="{AppThemeBinding Light=#656D76, Dark=#8B949E}" />
+                            <Label Text="{Binding Incident.Deadline, StringFormat='{0:dd MMM yyyy HH:mm}', TargetNullValue='None'}"
+                                   FontSize="14" FontFamily="OpenSansRegular" TextColor="{AppThemeBinding Light=#24292F, Dark=#F0F6FC}" />
                         </VerticalStackLayout>
 
                         <VerticalStackLayout Spacing="4">
-                            <Label
-                                Text="Handled Externally"
-                                FontSize="12"
-                                FontFamily="OpenSansSemibold"
-                                TextColor="{AppThemeBinding Light=#656D76, Dark=#8B949E}" />
-                            <Label
-                                Text="{Binding Incident.HandledByExternal, Converter={StaticResource BoolToYesNoConverter}}"
-                                FontSize="14"
-                                FontFamily="OpenSansRegular"
-                                TextColor="{AppThemeBinding Light=#24292F, Dark=#F0F6FC}" />
+                            <Label Text="Handled Externally" FontSize="12" FontFamily="OpenSansSemibold"
+                                   TextColor="{AppThemeBinding Light=#656D76, Dark=#8B949E}" />
+                            <Label Text="No" FontSize="14" FontFamily="OpenSansRegular"
+                                   TextColor="{AppThemeBinding Light=#24292F, Dark=#F0F6FC}">
+                                <Label.Triggers>
+                                    <DataTrigger TargetType="Label" Binding="{Binding Incident.HandledByExternal}" Value="True">
+                                        <Setter Property="Text" Value="Yes" />
+                                    </DataTrigger>
+                                </Label.Triggers>
+                            </Label>
                         </VerticalStackLayout>
-
                     </VerticalStackLayout>
                 </Border>
 
                 <!-- Location Card -->
-                <Border
-                    BackgroundColor="{AppThemeBinding Light=White, Dark=#161B22}"
-                    Margin="16,0,16,16"
-                    Padding="24,20"
-                    StrokeShape="RoundRectangle 16"
-                    Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#30363D}"
-                    StrokeThickness="1">
+                <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#161B22}" Margin="16,0,16,16" Padding="24,20"
+                        StrokeShape="RoundRectangle 16" Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#30363D}" StrokeThickness="1">
                     <Border.Shadow>
-                        <Shadow Brush="{AppThemeBinding Light=#E1E4E8, Dark=#21262D}"
-                                Offset="0,2" Radius="8" Opacity="0.12" />
+                        <Shadow Brush="{AppThemeBinding Light=#E1E4E8, Dark=#21262D}" Offset="0,2" Radius="8" Opacity="0.12" />
                     </Border.Shadow>
                     <VerticalStackLayout Spacing="16">
-                        <Label
-                            Text="Location"
-                            FontSize="16"
-                            FontFamily="OpenSansSemibold"
-                            TextColor="{AppThemeBinding Light=#24292F, Dark=#F0F6FC}" />
-                        <Border
-                            StrokeShape="RoundRectangle 12"
-                            Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#30363D}"
-                            StrokeThickness="1"
-                            BackgroundColor="{AppThemeBinding Light=#F6F8FA, Dark=#21262D}">
-                            <views:MapView
-                                HeightRequest="220"
-                                PinItems="{Binding PinItems}"
-                                ShowUserLocation="True"
-                                IsPinSelectionEnabled="False" />
+                        <Label Text="Location" FontSize="16" FontFamily="OpenSansSemibold"
+                               TextColor="{AppThemeBinding Light=#24292F, Dark=#F0F6FC}" />
+                        <Border StrokeShape="RoundRectangle 12" Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#30363D}"
+                                StrokeThickness="1" BackgroundColor="{AppThemeBinding Light=#F6F8FA, Dark=#21262D}">
+                            <views:MapView HeightRequest="220" PinItems="{Binding PinItems}" ShowUserLocation="True" IsPinSelectionEnabled="False" />
                         </Border>
                     </VerticalStackLayout>
                 </Border>
 
-                <!-- Status & Notes Card -->
-                <Border
-                    BackgroundColor="{AppThemeBinding Light=White, Dark=#161B22}"
-                    Margin="16,8,16,8"
-                    Padding="24,20"
-                    StrokeShape="RoundRectangle 16"
-                    Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#30363D}"
-                    StrokeThickness="1">
+                <!-- status + notes -->
+                <Border BackgroundColor="{AppThemeBinding Light=White, Dark=#161B22}" Margin="16,8,16,8" Padding="24,20"
+                        StrokeShape="RoundRectangle 16" Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#30363D}" StrokeThickness="1">
                     <Border.Shadow>
-                        <Shadow Brush="{AppThemeBinding Light=#E1E4E8, Dark=#21262D}"
-                                Offset="0,2" Radius="8" Opacity="0.12" />
+                        <Shadow Brush="{AppThemeBinding Light=#E1E4E8, Dark=#21262D}" Offset="0,2" Radius="8" Opacity="0.12" />
                     </Border.Shadow>
                     <VerticalStackLayout Spacing="16">
 
-                        <!-- Status Picker -->
                         <VerticalStackLayout Spacing="4">
-                            <Label
-                                Text="Status"
-                                FontSize="12"
-                                FontFamily="OpenSansSemibold"
-                                TextColor="{AppThemeBinding Light=#656D76, Dark=#8B949E}" />
-                            <Border
-                                BackgroundColor="{AppThemeBinding Light=#F6F8FA, Dark=#21262D}"
-                                Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#30363D}"
-                                StrokeThickness="1"
-                                Padding="8,4"
-                                StrokeShape="RoundRectangle 6">
-                                <Picker
-                                    ItemsSource="{Binding StatusOptions}"
-                                    SelectedItem="{Binding SelectedStatus, Mode=TwoWay}"
-                                    Title="Select status" />
+                            <Label Text="Status" FontSize="12" FontFamily="OpenSansSemibold"
+                                   TextColor="{AppThemeBinding Light=#656D76, Dark=#8B949E}" />
+                            <Border BackgroundColor="{AppThemeBinding Light=#F6F8FA, Dark=#21262D}" Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#30363D}"
+                                    StrokeThickness="1" Padding="8,4" StrokeShape="RoundRectangle 6">
+                                <Picker ItemsSource="{Binding StatusOptions}" SelectedItem="{Binding SelectedStatus, Mode=TwoWay}" Title="Select status" />
                             </Border>
                         </VerticalStackLayout>
 
-                        <!-- Notes Editor -->
                         <VerticalStackLayout Spacing="4">
-                            <Label
-                                Text="Notes"
-                                FontSize="12"
-                                FontFamily="OpenSansSemibold"
-                                TextColor="{AppThemeBinding Light=#656D76, Dark=#8B949E}" />
-                            <Border
-                                BackgroundColor="{AppThemeBinding Light=#F6F8FA, Dark=#21262D}"
-                                Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#30363D}"
-                                StrokeThickness="1"
-                                Padding="16,12"
-                                StrokeShape="RoundRectangle 8">
-                                <Editor
-                                    Text="{Binding Incident.Notes, Mode=TwoWay}"
-                                    AutoSize="TextChanges"
-                                    Placeholder="Enter notes..."
-                                    MinimumHeightRequest="100" />
+                            <Label Text="Notes" FontSize="12" FontFamily="OpenSansSemibold"
+                                   TextColor="{AppThemeBinding Light=#656D76, Dark=#8B949E}" />
+                            <Border BackgroundColor="{AppThemeBinding Light=#F6F8FA, Dark=#21262D}" Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#30363D}"
+                                    StrokeThickness="1" Padding="16,12" StrokeShape="RoundRectangle 8">
+                                <Editor Text="{Binding Incident.Notes, Mode=TwoWay}" AutoSize="TextChanges" Placeholder="Enter notes..." MinimumHeightRequest="100" />
                             </Border>
                         </VerticalStackLayout>
 
@@ -295,81 +169,40 @@
             </VerticalStackLayout>
         </ScrollView>
 
-        <!-- Action Bar -->
-        <Border
-            Grid.Row="2"
-            BackgroundColor="{AppThemeBinding Light=White, Dark=#161B22}"
-            Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#30363D}"
-            StrokeThickness="1"
-            Padding="20,16">
+        <!-- save bar -->
+        <Border Grid.Row="2" BackgroundColor="{AppThemeBinding Light=White, Dark=#161B22}"
+                Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#30363D}" StrokeThickness="1" Padding="20,16">
             <Border.Shadow>
-                <Shadow Brush="{AppThemeBinding Light=#E1E4E8, Dark=#21262D}"
-                        Offset="0,-2" Radius="8" Opacity="0.1" />
+                <Shadow Brush="{AppThemeBinding Light=#E1E4E8, Dark=#21262D}" Offset="0,-2" Radius="8" Opacity="0.1" />
             </Border.Shadow>
             <Grid ColumnDefinitions="*" HorizontalOptions="Fill">
-                <Button
-                    Text="Save"
-                    Command="{Binding ChangeStatusCommand}"
-                    FontSize="16"
-                    FontFamily="OpenSansSemibold"
-                    TextColor="White"
-                    BackgroundColor="{StaticResource Primary}"
-                    CornerRadius="10"
-                    Padding="24,12" />
+                <Button Text="Save" Command="{Binding ChangeStatusCommand}" FontSize="16" FontFamily="OpenSansSemibold"
+                        TextColor="White" BackgroundColor="{StaticResource Primary}" CornerRadius="10" Padding="24,12" />
             </Grid>
         </Border>
 
-        <!-- Fullscreen Image Overlay -->
-        <Grid
-            Grid.RowSpan="3"
-            IsVisible="{Binding IsImageFullscreen}"
-            BackgroundColor="#CC000000"
-            InputTransparent="False">
+        <!-- image overlay for fullscreen -->
+        <Grid Grid.RowSpan="3" IsVisible="{Binding IsImageFullscreen}" BackgroundColor="#CC000000" InputTransparent="False">
             <Grid.GestureRecognizers>
                 <TapGestureRecognizer Command="{Binding CloseFullscreenImageCommand}" />
             </Grid.GestureRecognizers>
-            <Border
-                BackgroundColor="Black"
-                StrokeShape="RoundRectangle 12"
-                Margin="20"
-                VerticalOptions="FillAndExpand"
-                HorizontalOptions="FillAndExpand">
+            <Border BackgroundColor="Black" StrokeShape="RoundRectangle 12" Margin="20" VerticalOptions="FillAndExpand" HorizontalOptions="FillAndExpand">
                 <Border.Shadow>
                     <Shadow Brush="Black" Offset="0,8" Radius="24" Opacity="0.3" />
                 </Border.Shadow>
                 <Grid RowDefinitions="*,Auto">
-                    <Image
-                        Source="{Binding FullscreenImageUrl}"
-                        Aspect="AspectFit"
-                        HorizontalOptions="FillAndExpand"
-                        VerticalOptions="FillAndExpand" />
-                    <Button
-                        Grid.Row="1"
-                        Text="✕"
-                        Command="{Binding CloseFullscreenImageCommand}"
-                        BackgroundColor="#80000000"
-                        TextColor="White"
-                        FontSize="18"
-                        CornerRadius="20"
-                        WidthRequest="40"
-                        HeightRequest="40"
-                        HorizontalOptions="End"
-                        VerticalOptions="Start"
-                        Margin="8" />
+                    <Image Source="{Binding FullscreenImageUrl}" Aspect="AspectFit" HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" />
+                    <Button Grid.Row="1" Text="✕" Command="{Binding CloseFullscreenImageCommand}" BackgroundColor="#80000000"
+                            TextColor="White" FontSize="18" CornerRadius="20" WidthRequest="40" HeightRequest="40"
+                            HorizontalOptions="End" VerticalOptions="Start" Margin="8" />
                 </Grid>
             </Border>
         </Grid>
 
         <!-- Busy Overlay -->
-        <Grid
-            IsVisible="{Binding IsBusy}"
-            InputTransparent="False"
-            BackgroundColor="{StaticResource OverlayDark}">
-            <ActivityIndicator
-                IsRunning="{Binding IsBusy}"
-                HorizontalOptions="Center"
-                VerticalOptions="Center"
-                Color="White" />
+        <Grid IsVisible="{Binding IsBusy}" InputTransparent="False" BackgroundColor="{StaticResource OverlayDark}">
+            <ActivityIndicator IsRunning="{Binding IsBusy}" HorizontalOptions="Center" VerticalOptions="Center" Color="White" />
         </Grid>
+
     </Grid>
 </ContentPage>

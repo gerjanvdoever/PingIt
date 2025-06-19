@@ -1,35 +1,25 @@
-﻿// -----------------------------------------------------------------------------
-// <summary>
-//   MapView is a reusable MAUI component for displaying a map with pins
-//   based on a collection of LocationDto items, and optionally showing
-//   and centering on the user's current location. On initialization, the map
-//   will center on pins if any are provided, even when ShowUserLocation is enabled.
+﻿// Reusable MapView Control for MAUI, uses LocationDto for pins and optionally shows user location.
 //
-//   Usage Guide:
-//     1. Add the namespace to your XAML page:
-//        xmlns:views="clr-namespace:PingIt.Maui.Views;assembly=PingIt.Maui"
+// Usage as follows:
+// add namespace: xmlns:views="clr-namespace:PingIt.Maui.Views;assembly=PingIt.Maui"
+// declare mapview in layout with following optional properties:
+// - PinItems: IEnumerable<LocationDto> for pins
+// - ShowUserLocation: bool to show user's current location
+// - SelectedLocation: LocationDto for currently selected pin (TwoWay binding)
+// - AllowDetailNavigation: bool to allow navigation on pin selection
+// - IsPinSelectionEnabled: bool to allow selecting pins by tapping on the map
+// - MapType: MapType enum to set the map type (Street, Satellite, Hybrid)
 //
-//     2. Declare the MapView in your page's layout:
-//        <views:MapView
-//           PinItems="{Binding YourLocationsCollection}"
-//           ShowUserLocation="True"
-//           SelectedLocation="{Binding SelectedLocation, Mode=TwoWay}"
-//           AllowDetailNavigation="True"
-//           IsPinSelectionEnabled="True"
-//           MapType="Street" />
+// set following in viewmodel:
+// - IEnumerable<LocationDto> YourLocationsCollection
+// - LocationDto SelectedLocation (TwoWay binding)
 //
-//     3. In your ViewModel, expose:
-//         - IEnumerable<LocationDto> YourLocationsCollection
-//         - LocationDto SelectedLocation (TwoWay binding)
+// Handle selection changes to navigate or update UI when
+// SelectedLocation is set.
 //
-//     4. Handle selection changes to navigate or update UI when
-//        SelectedLocation is set.
-//
-//   The control will automatically update pins when PinItems
-//   or SelectedLocation changes, and on first location update it
-//   prioritizes pin centering over user location centering.
-// </summary>
-// -----------------------------------------------------------------------------
+// The control will automatically update pins when PinItems
+// or SelectedLocation changes, and on first location update it
+// prioritizes pin centering over user location centering.
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -98,14 +88,14 @@ namespace PingIt.Maui.Views
         public MapView()
         {
             InitializeComponent();
-            this.Loaded += OnMapViewLoaded;
+            Loaded += OnMapViewLoaded;
         }
 
-        private void OnMapViewLoaded(object sender, EventArgs e)
+        private void OnMapViewLoaded(object? sender, EventArgs e)
         {
-            // Initial pin setup and centering
+            // Initial pin setup and centering  
             UpdatePins();
-            // Reset flag so first location update won't override pin centering
+            // Reset flag so first location update won't override pin centering  
             _firstLocationUpdate = true;
         }
 
@@ -186,7 +176,7 @@ namespace PingIt.Maui.Views
                 }
                 catch (InvalidOperationException ioe)
                 {
-                    // Throws, which is fine, we just log it
+                    // Throws, doesn't matter, only log it
                     System.Diagnostics.Debug.WriteLine($"[MapView] StartListening skipped: {ioe.Message}");
                 }
                 catch (Exception ex)
@@ -206,9 +196,9 @@ namespace PingIt.Maui.Views
         }
 
 
-        private void OnLocationChanged(object sender, GeolocationLocationChangedEventArgs e)
+        private void OnLocationChanged(object? sender, GeolocationLocationChangedEventArgs e)
         {
-            // Skip first update if we have pins to preserve initial centering
+            // Skip first update if we have pins to preserve initial centering  
             if (_firstLocationUpdate && PinItems != null && PinItems.Any())
             {
                 _firstLocationUpdate = false;
@@ -265,7 +255,7 @@ namespace PingIt.Maui.Views
                     catch { }
                 }
 
-                // Center on all pins or single pin (big calculation)
+                // Center on all pins or single pin (big calculation big brain)
                 if (list.Count > 1)
                 {
                     var minLat = list.Min(p => (double)p.Latitude);
@@ -294,7 +284,7 @@ namespace PingIt.Maui.Views
                 InternalMap.MoveToRegion(MapSpan.FromCenterAndRadius(sel, Distance.FromMeters(1000)));
             }
         }
-
+        
         void HandleMapClicked(object sender, MapClickedEventArgs e)
         {
             if (!IsPinSelectionEnabled) return;

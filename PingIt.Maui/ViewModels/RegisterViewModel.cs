@@ -18,44 +18,19 @@ namespace PingIt.Maui.ViewModels
         private readonly ILogger<RegisterViewModel> _logger;
         private readonly ITokenStorageService _tokenStorage;
 
-        [ObservableProperty]
-        private string firstName = string.Empty;
-
-        [ObservableProperty]
-        private string lastName = string.Empty;
-
-        [ObservableProperty]
-        private string email = string.Empty;
-
-        [ObservableProperty]
-        private string password = string.Empty;
-
-        [ObservableProperty]
-        private string confirmPassword = string.Empty;
-
-        [ObservableProperty]
-        private string? phoneNumber;
-
-        [ObservableProperty]
-        private string street = string.Empty;
-
-        [ObservableProperty]
-        private string houseNumber = string.Empty;
-
-        [ObservableProperty]
-        private string postalCode = string.Empty;
-
-        [ObservableProperty]
-        private string city = string.Empty;
-
-        [ObservableProperty]
-        private bool wantsNotifications = false;
-
-        [ObservableProperty]
-        private string validationError = string.Empty;
-
-        [ObservableProperty]
-        private bool isBusy;
+        [ObservableProperty] private string firstName = string.Empty;
+        [ObservableProperty] private string lastName = string.Empty;
+        [ObservableProperty] private string email = string.Empty;
+        [ObservableProperty] private string password = string.Empty;
+        [ObservableProperty] private string confirmPassword = string.Empty;
+        [ObservableProperty] private string? phoneNumber;
+        [ObservableProperty] private string street = string.Empty;
+        [ObservableProperty] private string houseNumber = string.Empty;
+        [ObservableProperty] private string postalCode = string.Empty;
+        [ObservableProperty] private string city = string.Empty;
+        [ObservableProperty] private bool wantsNotifications = false;
+        [ObservableProperty] private string validationError = string.Empty;
+        [ObservableProperty] private bool isBusy;
 
         public bool IsNotBusy => !IsBusy;
 

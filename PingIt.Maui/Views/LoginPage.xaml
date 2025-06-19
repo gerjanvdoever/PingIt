@@ -14,69 +14,81 @@
 
     <Grid>
         <VerticalStackLayout
-      HorizontalOptions="Center"
-      VerticalOptions="Center"
-      Spacing="20"
-      IsEnabled="{Binding IsNotBusy}">
+            HorizontalOptions="Center"
+            VerticalOptions="Center"
+            Spacing="20"
+            IsEnabled="{Binding IsNotBusy}">
 
             <Image
-        Source="logo.png"
-        HeightRequest="140"
-        HorizontalOptions="Center" />
+                Source="logo.png"
+                HeightRequest="140"
+                HorizontalOptions="Center" />
 
             <Border
-        Stroke="Transparent"
-        BackgroundColor="White"
-        StrokeShape="RoundRectangle 20"
-        Padding="30"
-        Margin="0"
-        WidthRequest="360"
+                Stroke="Transparent"
+                BackgroundColor="White"
+                StrokeShape="RoundRectangle 20"
+                Padding="30"
+                Margin="0"
+                WidthRequest="360"
                 HorizontalOptions="Center"
-        VerticalOptions="Center">
+                VerticalOptions="Center">
 
                 <VerticalStackLayout Spacing="20">
 
                     <Entry
-            Placeholder="Email"
-            Text="{Binding Email}"
-            Keyboard="Email"
-            HeightRequest="50"
-            FontSize="{OnPlatform Android='Medium', WinUI=14}"
-            HorizontalOptions="FillAndExpand" />
+                        Placeholder="Email"
+                        Text="{Binding Email}"
+                        Keyboard="Email"
+                        HeightRequest="50"
+                        FontSize="{OnPlatform Android='Medium', WinUI=14}"
+                        HorizontalOptions="FillAndExpand" />
 
                     <Entry
-            Placeholder="Password"
-            Text="{Binding Password}"
-            IsPassword="True"
-            HeightRequest="50"
-            FontSize="{OnPlatform Android='Medium', WinUI=14}"
-            HorizontalOptions="FillAndExpand" />
+                        Placeholder="Password"
+                        Text="{Binding Password}"
+                        IsPassword="True"
+                        HeightRequest="50"
+                        FontSize="{OnPlatform Android='Medium', WinUI=14}"
+                        HorizontalOptions="FillAndExpand" />
 
                     <Label
-            Text="{Binding ValidationError}"
-            TextColor="Red"
-            IsVisible="{Binding ValidationError,
-                        Converter={StaticResource StringNotEmptyConverter}}" />
+                        Text="{Binding ValidationError}"
+                        TextColor="Red"
+                        IsVisible="True">
+                        <Label.Triggers>
+                            <DataTrigger TargetType="Label"
+                                         Binding="{Binding ValidationError}"
+                                         Value="{x:Null}">
+                                <Setter Property="IsVisible" Value="False" />
+                            </DataTrigger>
+                            <DataTrigger TargetType="Label"
+                                         Binding="{Binding ValidationError}"
+                                         Value="">
+                                <Setter Property="IsVisible" Value="False" />
+                            </DataTrigger>
+                        </Label.Triggers>
+                    </Label>
 
                     <Button
-            Text="Login"
-            Command="{Binding LoginCommand}"
-            IsEnabled="{Binding IsNotBusy}"
-            CornerRadius="25"
-            FontAttributes="Bold" />
+                        Text="Login"
+                        Command="{Binding LoginCommand}"
+                        IsEnabled="{Binding IsNotBusy}"
+                        CornerRadius="25"
+                        FontAttributes="Bold" />
 
                     <Button
-            Text="Report anonymously"
-            Command="{Binding AnonymousCommand}"
-            IsEnabled="{Binding IsNotBusy}"
-            CornerRadius="25"
-            FontAttributes="Bold"/>
+                        Text="Report anonymously"
+                        Command="{Binding AnonymousCommand}"
+                        IsEnabled="{Binding IsNotBusy}"
+                        CornerRadius="25"
+                        FontAttributes="Bold" />
 
                     <Label
-            Text="Don't have an account? Register here"
-            FontSize="{OnPlatform Android=Small, WinUI=13}"
-            HorizontalOptions="Center"
-            TextColor="{StaticResource Primary}">
+                        Text="Don't have an account? Register here"
+                        FontSize="{OnPlatform Android=Small, WinUI=13}"
+                        HorizontalOptions="Center"
+                        TextColor="{StaticResource Primary}">
                         <Label.GestureRecognizers>
                             <TapGestureRecognizer Command="{Binding RegisterCommand}" />
                         </Label.GestureRecognizers>
@@ -87,14 +99,14 @@
         </VerticalStackLayout>
 
         <Grid
-      IsVisible="{Binding IsBusy}"
-      InputTransparent="False"
-      BackgroundColor="{StaticResource OverlayDark}">
+            IsVisible="{Binding IsBusy}"
+            InputTransparent="False"
+            BackgroundColor="{StaticResource OverlayDark}">
             <ActivityIndicator
-        IsRunning="{Binding IsBusy}"
-        HorizontalOptions="Center"
-        VerticalOptions="Center"
-        Color="White" />
+                IsRunning="{Binding IsBusy}"
+                HorizontalOptions="Center"
+                VerticalOptions="Center"
+                Color="White" />
         </Grid>
     </Grid>
 </ContentPage>
