@@ -147,9 +147,9 @@
               Grid.RowSpan="2"
               InputTransparent="False">
             <ActivityIndicator IsRunning="True"
-                               Color="{AppThemeBinding Light=#007ACC, Dark=#4FC3F7}"
-                               VerticalOptions="Center"
-                               HorizontalOptions="Center"/>
+            Color="{AppThemeBinding Light=#007ACC, Dark=#4FC3F7}"
+            VerticalOptions="Center"
+            HorizontalOptions="Center"/>
         </Grid>
     </Grid>
 </ContentPage>

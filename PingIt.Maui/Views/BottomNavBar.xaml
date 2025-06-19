@@ -9,104 +9,62 @@
           Padding="10">
 
         <!-- Map Navigation -->
-        <Border Grid.Column="0"
-                BackgroundColor="Transparent"
-                StrokeThickness="0"
-                Padding="8"
-                HorizontalOptions="Center"
-                VerticalOptions="Center">
+        <Border Grid.Column="0" BackgroundColor="Transparent" StrokeThickness="0" Padding="8" HorizontalOptions="Center" VerticalOptions="Center">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="8" />
             </Border.StrokeShape>
             <Border.Triggers>
-                <DataTrigger TargetType="Border"
-                           Binding="{Binding CurrentPage, Source={x:Reference FooterRoot}}"
-                           Value="IncidentMapPage">
-                    <Setter Property="BackgroundColor" 
-                            Value="{AppThemeBinding Light=#E0E0E0, Dark=#333333}" />
+                <DataTrigger TargetType="Border" Binding="{Binding CurrentPage, Source={x:Reference FooterRoot}}" Value="IncidentMapPage">
+                    <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#E0E0E0, Dark=#333333}" />
                 </DataTrigger>
             </Border.Triggers>
             <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
-                <Image Source="map.png"
-                       WidthRequest="32"
-                       HeightRequest="32"
-                       Aspect="AspectFit">
+                <Image Source="map.png" WidthRequest="32" HeightRequest="32" Aspect="AspectFit">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NavigateMapCommand}" />
                     </Image.GestureRecognizers>
                 </Image>
-                <Label Text="Map"
-                       FontSize="12"
-                       HorizontalTextAlignment="Center"
-                       TextColor="{AppThemeBinding Light=#333333, Dark=#FFFFFF}" />
+                <Label Text="Map" FontSize="12" HorizontalTextAlignment="Center" TextColor="{AppThemeBinding Light=#333333, Dark=#FFFFFF}" />
             </StackLayout>
         </Border>
 
         <!-- List Navigation -->
-        <Border Grid.Column="1"
-                BackgroundColor="Transparent"
-                StrokeThickness="0"
-                Padding="8"
-                HorizontalOptions="Center"
-                VerticalOptions="Center">
+        <Border Grid.Column="1" BackgroundColor="Transparent" StrokeThickness="0" Padding="8" HorizontalOptions="Center" VerticalOptions="Center">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="8" />
             </Border.StrokeShape>
             <Border.Triggers>
-                <DataTrigger TargetType="Border"
-                           Binding="{Binding CurrentPage, Source={x:Reference FooterRoot}}"
-                           Value="IncidentListPage">
-                    <Setter Property="BackgroundColor" 
-                            Value="{AppThemeBinding Light=#E0E0E0, Dark=#333333}" />
+                <DataTrigger TargetType="Border" Binding="{Binding CurrentPage, Source={x:Reference FooterRoot}}" Value="IncidentListPage">
+                    <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#E0E0E0, Dark=#333333}" />
                 </DataTrigger>
             </Border.Triggers>
             <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
-                <Image Source="list.png"
-                       WidthRequest="32"
-                       HeightRequest="32"
-                       Aspect="AspectFit">
+                <Image Source="list.png" WidthRequest="32" HeightRequest="32" Aspect="AspectFit">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NavigateListCommand}" />
                     </Image.GestureRecognizers>
                 </Image>
-                <Label Text="List"
-                       FontSize="12"
-                       HorizontalTextAlignment="Center"
-                       TextColor="{AppThemeBinding Light=#333333, Dark=#FFFFFF}" />
+                <Label Text="List" FontSize="12" HorizontalTextAlignment="Center" TextColor="{AppThemeBinding Light=#333333, Dark=#FFFFFF}" />
             </StackLayout>
         </Border>
 
         <!-- Account Navigation -->
-        <Border Grid.Column="2"
-                BackgroundColor="Transparent"
-                StrokeThickness="0"
-                Padding="8"
-                HorizontalOptions="Center"
-                VerticalOptions="Center">
+        <Border Grid.Column="2" BackgroundColor="Transparent" StrokeThickness="0" Padding="8" HorizontalOptions="Center" VerticalOptions="Center">
             <Border.StrokeShape>
                 <RoundRectangle CornerRadius="8" />
             </Border.StrokeShape>
             <Border.Triggers>
-                <DataTrigger TargetType="Border"
-                           Binding="{Binding CurrentPage, Source={x:Reference FooterRoot}}"
-                           Value="AccountPage">
-                    <Setter Property="BackgroundColor" 
-                            Value="{AppThemeBinding Light=#E0E0E0, Dark=#333333}" />
+                <DataTrigger TargetType="Border" Binding="{Binding CurrentPage, Source={x:Reference FooterRoot}}" Value="AccountPage">
+                    <Setter Property="BackgroundColor" Value="{AppThemeBinding Light=#E0E0E0, Dark=#333333}" />
                 </DataTrigger>
             </Border.Triggers>
             <StackLayout HorizontalOptions="Center" VerticalOptions="Center">
-                <Image Source="profile.png"
-                       WidthRequest="32"
-                       HeightRequest="32"
-                       Aspect="AspectFit">
+                <Image Source="profile.png" WidthRequest="32" HeightRequest="32" Aspect="AspectFit">
                     <Image.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding NavigateAccountCommand}" />
                     </Image.GestureRecognizers>
                 </Image>
-                <Label Text="Account"
-                       FontSize="12"
-                       HorizontalTextAlignment="Center"
-                       TextColor="{AppThemeBinding Light=#333333, Dark=#FFFFFF}" />
+                <Label Text="Account" FontSize="12" HorizontalTextAlignment="Center" TextColor="{AppThemeBinding Light=#333333, Dark=#FFFFFF}" />
             </StackLayout>
         </Border>
 
