@@ -30,7 +30,7 @@ namespace PingIt.Web.Pages
 
         private int ActivePage = 1;
         private int ClosedPage = 1;
-        private const int PageSize = 50;
+        private const int PageSize = 20;
 
         private bool ShowClosedIncidents = false;
         private bool IsClosedLoading = false;
@@ -223,7 +223,7 @@ namespace PingIt.Web.Pages
                 {
                     Incidents.Remove(incident);
                     SortIncidents();
-                    StateHasChanged(); // Trigger re-render to update the map
+                    StateHasChanged();
                 }
             }
             catch (HttpRequestException ex)

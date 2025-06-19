@@ -34,7 +34,7 @@ public class AuthService : IAuthService
         var loginResp =
             await resp.Content.ReadFromJsonAsync<LoginResponseDto>();
 
-        // Reject non-admins *client side*
+        // Reject non-admins
         bool isAdmin = loginResp!.Role == "Administrator";
 
         if (!isAdmin)

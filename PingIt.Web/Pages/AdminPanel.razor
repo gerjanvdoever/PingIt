@@ -18,15 +18,17 @@
 </div>
 
 <div class="min-h-screen bg-gray-50 px-6 py-6 font-sans">
-
     <div class="mx-auto max-w-[95%]">
         <div class="mb-8">
             <h1 class="mb-2 text-3xl font-bold text-gray-900">Residents</h1>
             <p class="text-gray-600">Manage residents in your community</p>
+
             @if (allUsers.Count > MaxVisible)
             {
                 <div class="mt-4 rounded-xl border border-blue-200 bg-blue-50 p-4">
-                    <p class="text-sm text-blue-700">Showing only the first 50 users. Please filter to see specific users.</p>
+                    <p class="text-sm text-blue-700">
+                        Showing only the first 40 users. Please filter to see specific users.
+                    </p>
                 </div>
             }
         </div>
@@ -97,7 +99,9 @@
                                 <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">@user.FirstName</td>
                                 <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-900">@user.LastName</td>
                                 <td class="whitespace-nowrap px-6 py-4 text-sm text-blue-600">@user.Email</td>
-                                <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600">@user.Street @user.HouseNumber</td>
+                                <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600">
+                                    @user.Street @user.HouseNumber
+                                </td>
                                 <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600">@user.PostalCode</td>
                                 <td class="whitespace-nowrap px-6 py-4 text-sm text-gray-600">@user.City</td>
                                 <td class="whitespace-nowrap px-6 py-4">
@@ -105,7 +109,9 @@
                                             @onchange="e => OnRoleChanged(user, e)">
                                         @foreach (var role in Enum.GetValues<UserRole>())
                                         {
-                                            <option value="@role" selected="@(user.Role == role)">@role</option>
+                                            <option value="@role" selected="@(user.Role == role)">
+                                                @role
+                                            </option>
                                         }
                                     </select>
                                 </td>

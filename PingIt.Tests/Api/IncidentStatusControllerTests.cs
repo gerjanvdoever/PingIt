@@ -20,7 +20,7 @@ namespace PingIt.Tests.Api
     public class IncidentStatusControllerTests
     {
         private PingItDbContext _context;
-        private Mock<IEmailService> _mockEmailService; // Changed to interface
+        private Mock<IEmailService> _mockEmailService;
         private IncidentStatusController _controller;
 
         [SetUp]
@@ -56,7 +56,7 @@ namespace PingIt.Tests.Api
 
             _context.SaveChanges();
 
-            _mockEmailService = new Mock<IEmailService>(); // Now mocking interface
+            _mockEmailService = new Mock<IEmailService>();
             _controller = new IncidentStatusController(_context, _mockEmailService.Object);
 
             // Mock HttpContext
@@ -110,7 +110,7 @@ namespace PingIt.Tests.Api
             // Act
             await _controller.ChangeStatus(1, dto);
 
-            // Assert - Verify email was sent
+            // Assert
             _mockEmailService.Verify(
                 x => x.SendEmailAsync(
                     "test@example.com",
@@ -134,7 +134,7 @@ namespace PingIt.Tests.Api
                 HouseNumber = "2",
                 City = "Testville",
                 PostalCode = "12345",
-                WantsNotifications = false // Key difference
+                WantsNotifications = false // main diff
             };
 
             var incidentWithoutNotifications = new Incident
@@ -158,7 +158,7 @@ namespace PingIt.Tests.Api
             // Act
             await _controller.ChangeStatus(2, dto);
 
-            // Assert - Verify email was NOT sent
+            // Assert - this time if it was not sent
             _mockEmailService.Verify(
                 x => x.SendEmailAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<string>()),
                 Times.Never);

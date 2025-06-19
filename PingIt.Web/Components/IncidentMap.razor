@@ -20,7 +20,7 @@ else if (HasError)
 else
 {
     <div id="map"
-         style="width: 100%; height: 500px; border: 1px solid #ccc; border-radius: 4px;">
+    style="width: 100%; height: 500px; border: 1px solid #ccc; border-radius: 4px;">
     </div>
 }
 
@@ -64,6 +64,7 @@ else
         StateHasChanged();
     }
 
+	// Used for initial map rendering
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (!_mapInitialized &&
@@ -89,9 +90,9 @@ else
         }
     }
 
+	// Used to update map markers when incidents change e.g. after incidents have been filtered
     protected override async Task OnParametersSetAsync()
     {
-        // Only update if map is already initialized, no error, and the list has changed
         if (_mapInitialized &&
             !HasError &&
             !IncidentsEqual(_lastRenderedIncidents, Incidents ?? new List<IncidentDto>()))
@@ -107,11 +108,11 @@ else
             catch (Exception ex)
             {
                 Console.WriteLine($"Error updating map markers: {ex.Message}");
-                // Don’t set HasError here since a marker-update failure might be temporary
             }
         }
     }
 
+	// Used to compare two lists of incidents to prevent unnecessary updates
     private bool IncidentsEqual(List<IncidentDto> list1, List<IncidentDto> list2)
     {
         if (list1 == null && list2 == null) return true;

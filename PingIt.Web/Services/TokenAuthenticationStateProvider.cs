@@ -53,8 +53,6 @@ public class TokenAuthenticationStateProvider : AuthenticationStateProvider
         }
     }
 
-
-
     public void NotifyUserAuthentication(string token)
         => NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
 

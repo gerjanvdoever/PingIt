@@ -31,7 +31,6 @@ namespace PingIt.Tests.Api
 
             _context = new PingItDbContext(options);
 
-            // Seed complete test data with all required fields
             _context.Users.AddRange(new List<User>
     {
         new User

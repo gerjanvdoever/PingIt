@@ -215,46 +215,46 @@
                                         var history = statusHistory.ElementAt(i);
                                         var isLast = i == statusHistory.Count() - 1;
 
-                                        <li>
-                                            <div class="relative pb-8">
-                                                @if (!isLast)
-                                                {
-                                                    <span class="absolute left-4 top-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
-                                                }
-                                                <div class="relative flex space-x-3">
-                                                    <div class="flex h-8 w-8 items-center justify-center rounded-full border-2 bg-white @GetStatusBorderColor(history.Status)">
-                                                        @if (history.Status == IncidentStatus.Resolved)
-                                                        {
-                                                            <svg class="h-5 w-5 @GetStatusIconColor(history.Status)" fill="currentColor" viewBox="0 0 20 20">
-                                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
-                                                            </svg>
-                                                        }
-                                                        else if (history.Status == IncidentStatus.InProgress || history.Status == IncidentStatus.Registered)
-                                                        {
-                                                            <svg class="h-5 w-5 @GetStatusIconColor(history.Status)" fill="currentColor" viewBox="0 0 20 20">
-                                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
-                                                            </svg>
-                                                        }
-                                                        else
-                                                        {
-                                                            <div class="h-2.5 w-2.5 rounded-full @GetStatusDotColor(history.Status)"></div>
-                                                        }
-                                                    </div>
-                                                    <div class="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
-                                                        <div>
-                                                            <p class="text-sm font-medium text-gray-900">@history.Status</p>
-                                                            <p class="text-sm text-gray-500">
-                                                                Changed by @(userIdToName.TryGetValue(history.ChangedByUserId, out var name) ? name : "Unknown")
-                                                            </p>
-                                                        </div>
-                                                        <div class="whitespace-nowrap text-right text-sm text-gray-500">
-                                                            <time>@history.ChangedAt.ToLocalTime().ToString("MMM dd, yyyy")</time>
-                                                            <p class="text-xs">@history.ChangedAt.ToLocalTime().ToString("h:mm tt")</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </li>
+                                    <li>
+                                    <div class="relative pb-8">
+                                    @if (!isLast)
+                                    {
+                                        <span class="absolute left-4 top-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
+                                    }
+                                    <div class="relative flex space-x-3">
+                                    <div class="flex h-8 w-8 items-center justify-center rounded-full border-2 bg-white @GetStatusBorderColor(history.Status)">
+                                        @if (history.Status == IncidentStatus.Resolved)
+                                        {
+                                            <svg class="h-5 w-5 @GetStatusIconColor(history.Status)" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        }
+                                        else if (history.Status == IncidentStatus.InProgress || history.Status == IncidentStatus.Registered)
+                                        {
+                                            <svg class="h-5 w-5 @GetStatusIconColor(history.Status)" fill="currentColor" viewBox="0 0 20 20">
+                                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+                                            </svg>
+                                        }
+                                        else
+                                        {
+                                            <div class="h-2.5 w-2.5 rounded-full @GetStatusDotColor(history.Status)"></div>
+                                        }
+                                    </div>
+                                    <div class="flex min-w-0 flex-1 justify-between space-x-4 pt-1.5">
+                                        <div>
+                                            <p class="text-sm font-medium text-gray-900">@history.Status</p>
+                                            <p class="text-sm text-gray-500">
+                                                Changed by @(userIdToName.TryGetValue(history.ChangedByUserId, out var name) ? name : "Unknown")
+                                            </p>
+                                        </div>
+                                        <div class="whitespace-nowrap text-right text-sm text-gray-500">
+                                            <time>@history.ChangedAt.ToLocalTime().ToString("MMM dd, yyyy")</time>
+                                            <p class="text-xs">@history.ChangedAt.ToLocalTime().ToString("h:mm tt")</p>
+                                        </div>
+                                    </div>
+                                    </div>
+                                    </div>
+                                    </li>
                                     }
                                 </ul>
                             </div>
@@ -325,6 +325,7 @@
 </div>
 
 @code {
+	// Section for handling border colors, icon colors, and dot colors based on status
     private string GetStatusBorderColor(IncidentStatus status)
     {
         return status switch
