@@ -125,6 +125,14 @@ namespace PingIt.Web.Pages
             return fullName;
         }
 
+        private void OnHandledExternallyChanged(ChangeEventArgs e)
+        {
+            if (incident == null) return;
+
+            var selected = e.Value?.ToString();
+            incident.HandledByExternal = selected == "true";
+        }
+
 
         private async Task ConfirmDeleteAsync()
         {

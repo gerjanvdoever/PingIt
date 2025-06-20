@@ -12,7 +12,7 @@ using PingIt.Api.Data;
 namespace PingIt.Api.Migrations
 {
     [DbContext(typeof(PingItDbContext))]
-    [Migration("20250619192251_InitialMigration")]
+    [Migration("20250620085439_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
