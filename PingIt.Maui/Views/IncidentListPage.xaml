@@ -16,93 +16,88 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <!-- Scrollable content with pull-to-refresh -->
-        <RefreshView 
-            Grid.Row="0"
-            IsRefreshing="{Binding IsRefreshing}"
-            Command="{Binding RefreshCommand}"
-            RefreshColor="{AppThemeBinding Light=#0969DA, Dark=#58A6FF}">
-            <ScrollView>
-                <VerticalStackLayout Spacing="0" Padding="0">
+        <!-- Scrollable content -->
+        <ScrollView Grid.Row="0">
+            <VerticalStackLayout Spacing="0" Padding="0">
 
-                    <!-- Active Incidents -->
-                    <CollectionView
-                        ItemsSource="{Binding Incidents}"
-                        SelectionMode="Single"
-                        SelectedItem="{Binding SelectedIncident, Mode=TwoWay}"
-                        BackgroundColor="Transparent"
-                        Margin="0,0,0,16">
-                        <CollectionView.Header>
-                            <VerticalStackLayout Padding="16,16,16,8" Spacing="4">
-                                <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
-                                    <VerticalStackLayout Grid.Column="0" Spacing="4">
-                                        <Label
-                                            Text="Active Incidents"
-                                            FontSize="18"
-                                            FontFamily="OpenSansSemibold"
-                                            TextColor="{AppThemeBinding Light=#24292F, Dark=#F0F6FC}" />
-                                        <Label
-                                            Text="{Binding Incidents.Count, StringFormat='{0} active'}"
-                                            FontSize="14"
-                                            FontFamily="OpenSansRegular"
-                                            TextColor="{AppThemeBinding Light=#656D76, Dark=#8B949E}" />
-                                    </VerticalStackLayout>
-                                    <Button
-                                        Grid.Column="1"
-                                        Text="↻"
-                                        Command="{Binding RefreshCommand}"
-                                        BackgroundColor="Transparent"
-                                        BorderColor="{AppThemeBinding Light=#D0D7DE, Dark=#30363D}"
-                                        BorderWidth="1"
-                                        CornerRadius="8"
-                                        WidthRequest="40"
-                                        HeightRequest="40"
+                <!-- Active Incidents -->
+                <CollectionView
+                    ItemsSource="{Binding Incidents}"
+                    SelectionMode="Single"
+                    SelectedItem="{Binding SelectedIncident, Mode=TwoWay}"
+                    BackgroundColor="Transparent"
+                    Margin="0,0,0,16">
+                    <CollectionView.Header>
+                        <VerticalStackLayout Padding="16,16,16,8" Spacing="4">
+                            <Grid ColumnDefinitions="*,Auto" VerticalOptions="Center">
+                                <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                    <Label
+                                        Text="Active Incidents"
                                         FontSize="18"
+                                        FontFamily="OpenSansSemibold"
+                                        TextColor="{AppThemeBinding Light=#24292F, Dark=#F0F6FC}" />
+                                    <Label
+                                        Text="{Binding Incidents.Count, StringFormat='{0} active'}"
+                                        FontSize="14"
                                         FontFamily="OpenSansRegular"
-                                        TextColor="{AppThemeBinding Light=#656D76, Dark=#8B949E}"
-                                        Padding="0"
-                                        VerticalOptions="Center">
-                                        <Button.Shadow>
-                                            <Shadow
-                                                Brush="{AppThemeBinding Light=#E1E4E8, Dark=#21262D}"
-                                                Offset="0,1"
-                                                Radius="2"
-                                                Opacity="0.1" />
-                                        </Button.Shadow>
-                                        <Button.Triggers>
-                                            <DataTrigger TargetType="Button" Binding="{Binding IsRefreshing}" Value="True">
-                                                <Setter Property="IsEnabled" Value="False" />
-                                                <Setter Property="Opacity" Value="0.6" />
-                                            </DataTrigger>
-                                        </Button.Triggers>
-                                    </Button>
-                                </Grid>
-                            </VerticalStackLayout>
-                        </CollectionView.Header>
+                                        TextColor="{AppThemeBinding Light=#656D76, Dark=#8B949E}" />
+                                </VerticalStackLayout>
+                                <Button
+                                    Grid.Column="1"
+                                    Text="↻"
+                                    Command="{Binding RefreshCommand}"
+                                    BackgroundColor="Transparent"
+                                    BorderColor="{AppThemeBinding Light=#D0D7DE, Dark=#30363D}"
+                                    BorderWidth="1"
+                                    CornerRadius="8"
+                                    WidthRequest="40"
+                                    HeightRequest="40"
+                                    FontSize="18"
+                                    FontFamily="OpenSansRegular"
+                                    TextColor="{AppThemeBinding Light=#656D76, Dark=#8B949E}"
+                                    Padding="0"
+                                    VerticalOptions="Center">
+                                    <Button.Shadow>
+                                        <Shadow
+                                            Brush="{AppThemeBinding Light=#E1E4E8, Dark=#21262D}"
+                                            Offset="0,1"
+                                            Radius="2"
+                                            Opacity="0.1" />
+                                    </Button.Shadow>
+                                    <Button.Triggers>
+                                        <DataTrigger TargetType="Button" Binding="{Binding IsLoading}" Value="True">
+                                            <Setter Property="IsEnabled" Value="False" />
+                                            <Setter Property="Opacity" Value="0.6" />
+                                        </DataTrigger>
+                                    </Button.Triggers>
+                                </Button>
+                            </Grid>
+                        </VerticalStackLayout>
+                    </CollectionView.Header>
 
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate x:DataType="dto:IncidentDto">
-                                <Border
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="dto:IncidentDto">
+                            <Border
                                 BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#0D1117}"
                                 Stroke="{AppThemeBinding Light=#D0D7DE, Dark=#30363D}"
                                 StrokeThickness="1"
                                 Padding="16"
                                 StrokeShape="RoundRectangle 10"
                                 Margin="16,4,16,0">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer 
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer 
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type vm:IncidentListViewModel}}, Path=NavigateToDetailCommand}" 
                                         CommandParameter="{Binding .}" />
-                                    </Border.GestureRecognizers>
-                                    <Border.Shadow>
-                                        <Shadow
+                                </Border.GestureRecognizers>
+                                <Border.Shadow>
+                                    <Shadow
                                         Brush="{AppThemeBinding Light=#E1E4E8, Dark=#21262D}"
                                         Offset="0,1"
                                         Radius="3"
                                         Opacity="0.12" />
-                                    </Border.Shadow>
-                                    <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto">
-                                        <Label
+                                </Border.Shadow>
+                                <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto">
+                                    <Label
                                         Grid.Row="0" 
                                         Grid.Column="0"
                                         Text="{Binding Title}"
@@ -110,7 +105,7 @@
                                         FontFamily="OpenSansSemibold"
                                         TextColor="{AppThemeBinding Light=#24292F, Dark=#F0F6FC}"
                                         LineBreakMode="TailTruncation" />
-                                        <Border
+                                    <Border
                                         Grid.Row="0" 
                                         Grid.Column="1"
                                         BackgroundColor="{AppThemeBinding Light=#FFF8DC, Dark=#3C2415}"
@@ -119,13 +114,13 @@
                                         Padding="8,4"
                                         StrokeShape="RoundRectangle 12"
                                         VerticalOptions="Start">
-                                            <Label
+                                        <Label
                                             Text="{Binding Priority}"
                                             FontSize="12"
                                             FontFamily="OpenSansSemibold"
                                             TextColor="{AppThemeBinding Light=#9A6700, Dark=#E3CC2D}" />
-                                        </Border>
-                                        <Label
+                                    </Border>
+                                    <Label
                                         Grid.Row="1" 
                                         Grid.ColumnSpan="2"
                                         Text="{Binding Deadline, StringFormat='Deadline: {0:dd MMM yyyy HH:mm}', TargetNullValue='No deadline'}"
@@ -133,14 +128,14 @@
                                         FontFamily="OpenSansRegular"
                                         TextColor="{AppThemeBinding Light=#D73A49, Dark=#F85149}"
                                         Margin="0,8,0,0" />
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
 
-                    <!-- Toggle Button -->
-                    <Button
+                <!-- Toggle Button -->
+                <Button
                     Text="Show Closed Incidents"
                     Command="{Binding LoadClosedIncidentsCommand}"
                     FontSize="15"
@@ -151,32 +146,32 @@
                     CornerRadius="8"
                     Margin="16,0"
                     TextColor="{AppThemeBinding Light=#656D76, Dark=#8B949E}">
-                        <Button.Triggers>
-                            <DataTrigger TargetType="Button" Binding="{Binding ShowClosed}" Value="True">
-                                <Setter Property="Text" Value="Hide Closed Incidents" />
-                            </DataTrigger>
-                        </Button.Triggers>
-                    </Button>
+                    <Button.Triggers>
+                        <DataTrigger TargetType="Button" Binding="{Binding ShowClosed}" Value="True">
+                            <Setter Property="Text" Value="Hide Closed Incidents" />
+                        </DataTrigger>
+                    </Button.Triggers>
+                </Button>
 
-                    <!-- Closed Incidents -->
-                    <CollectionView
+                <!-- Closed Incidents -->
+                <CollectionView
                     ItemsSource="{Binding ClosedIncidents}"
                     IsVisible="{Binding ShowClosed}"
                     SelectionMode="None"
                     BackgroundColor="Transparent"
                     Margin="0,8,0,0">
-                        <CollectionView.Header>
-                            <Label
+                    <CollectionView.Header>
+                        <Label
                             Text="Closed Incidents"
                             FontSize="18"
                             Padding="16,8,16,0"
                             FontFamily="OpenSansSemibold"
                             TextColor="{AppThemeBinding Light=#24292F, Dark=#F0F6FC}" />
-                        </CollectionView.Header>
+                    </CollectionView.Header>
 
-                        <CollectionView.ItemTemplate>
-                            <DataTemplate x:DataType="dto:IncidentDto">
-                                <Border
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="dto:IncidentDto">
+                            <Border
                                 BackgroundColor="{AppThemeBinding Light=#FAFBFC, Dark=#0D1117}"
                                 Stroke="{AppThemeBinding Light=#E1E4E8, Dark=#21262D}"
                                 StrokeThickness="1"
@@ -184,13 +179,13 @@
                                 StrokeShape="RoundRectangle 10"
                                 Opacity="0.8"
                                 Margin="16,4,16,0">
-                                    <Border.GestureRecognizers>
-                                        <TapGestureRecognizer 
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer 
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type vm:IncidentListViewModel}}, Path=NavigateToDetailCommand}" 
                                         CommandParameter="{Binding .}" />
-                                    </Border.GestureRecognizers>
-                                    <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto">
-                                        <Label
+                                </Border.GestureRecognizers>
+                                <Grid RowDefinitions="Auto,Auto" ColumnDefinitions="*,Auto">
+                                    <Label
                                         Grid.Row="0" 
                                         Grid.Column="0"
                                         Text="{Binding Title}"
@@ -198,7 +193,7 @@
                                         FontFamily="OpenSansRegular"
                                         TextColor="{AppThemeBinding Light=#656D76, Dark=#8B949E}"
                                         LineBreakMode="TailTruncation" />
-                                        <Border
+                                    <Border
                                         Grid.Row="0" 
                                         Grid.Column="1"
                                         BackgroundColor="{AppThemeBinding Light=#F0F0F0, Dark=#2D2D2D}"
@@ -207,13 +202,13 @@
                                         Padding="8,4"
                                         StrokeShape="RoundRectangle 12"
                                         VerticalOptions="Start">
-                                            <Label
+                                        <Label
                                             Text="{Binding Priority}"
                                             FontSize="12"
                                             FontFamily="OpenSansRegular"
                                             TextColor="{AppThemeBinding Light=#656D76, Dark=#8B949E}" />
-                                        </Border>
-                                        <Label
+                                    </Border>
+                                    <Label
                                         Grid.Row="1" 
                                         Grid.ColumnSpan="2"
                                         Text="{Binding Deadline, StringFormat='Deadline: {0:dd MMM yyyy HH:mm}', TargetNullValue='No deadline'}"
@@ -221,15 +216,14 @@
                                         FontFamily="OpenSansRegular"
                                         TextColor="{AppThemeBinding Light=#656D76, Dark=#8B949E}"
                                         Margin="0,8,0,0" />
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </CollectionView.ItemTemplate>
-                    </CollectionView>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
 
-                </VerticalStackLayout>
-            </ScrollView>
-        </RefreshView>
+            </VerticalStackLayout>
+        </ScrollView>
 
         <!-- Bottom nav bar -->
         <views:BottomNavBar
