@@ -23,6 +23,7 @@ public partial class IncidentListViewModel : ObservableObject
     [ObservableProperty] private ObservableCollection<IncidentDto> incidents = new();
     [ObservableProperty] private ObservableCollection<IncidentDto> closedIncidents = new();
     [ObservableProperty] private bool isLoading;
+    [ObservableProperty] private bool isRefreshing;
     [ObservableProperty] private string statusMessage = string.Empty;
     [ObservableProperty] private bool showClosed;
     [ObservableProperty] private IncidentDto? selectedIncident;
@@ -62,6 +63,34 @@ public partial class IncidentListViewModel : ObservableObject
     }
 
     [RelayCommand]
+    public async Task RefreshAsync()
+    {
+        if (IsRefreshing)
+            return;
+
+        try
+        {
+            IsRefreshing = true;
+            await LoadIncidentsAsync();
+
+            // If closed incidents are currently shown, refresh them too
+            if (ShowClosed)
+            {
+                await LoadClosedIncidentsInternalAsync();
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during refresh");
+            StatusMessage = "Something went wrong while refreshing.";
+        }
+        finally
+        {
+            IsRefreshing = false;
+        }
+    }
+
+    [RelayCommand]
     public async Task LoadIncidentsAsync()
     {
         if (_tokenStorage.UserId is null)
@@ -72,7 +101,9 @@ public partial class IncidentListViewModel : ObservableObject
 
         try
         {
-            IsLoading = true;
+            if (!IsRefreshing)
+                IsLoading = true;
+
             StatusMessage = string.Empty;
 
             int userId = _tokenStorage.UserId.Value;
@@ -95,7 +126,8 @@ public partial class IncidentListViewModel : ObservableObject
         }
         finally
         {
-            IsLoading = false;
+            if (!IsRefreshing)
+                IsLoading = false;
         }
     }
 
@@ -121,6 +153,29 @@ public partial class IncidentListViewModel : ObservableObject
             StatusMessage = string.Empty;
             ShowClosed = true;
 
+            await LoadClosedIncidentsInternalAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error fetching closed incidents");
+            StatusMessage = "Something went wrong while fetching closed incidents.";
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    private async Task LoadClosedIncidentsInternalAsync()
+    {
+        if (_tokenStorage.UserId is null)
+        {
+            StatusMessage = "User not logged in.";
+            return;
+        }
+
+        try
+        {
             int userId = _tokenStorage.UserId.Value;
             var response = await _httpClient.GetAsync($"api/incident/worker/{userId}/closed");
 
@@ -136,12 +191,8 @@ public partial class IncidentListViewModel : ObservableObject
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error fetching closed incidents");
-            StatusMessage = "Something went wrong while fetching closed incidents.";
-        }
-        finally
-        {
-            IsLoading = false;
+            _logger.LogError(ex, "Error fetching closed incidents internally");
+            throw;
         }
     }
 }

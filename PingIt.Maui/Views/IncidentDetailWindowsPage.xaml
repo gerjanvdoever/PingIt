@@ -242,7 +242,7 @@
         </Grid>
 
         <!-- Busy Overlay -->
-        <Grid IsVisible="{Binding IsBusy}" InputTransparent="False" BackgroundColor="{StaticResource OverlayDark}">
+        <Grid Grid.RowSpan="3" IsVisible="{Binding IsBusy}" InputTransparent="False" BackgroundColor="{StaticResource OverlayDark}">
             <ActivityIndicator IsRunning="{Binding IsBusy}" HorizontalOptions="Center"
                                VerticalOptions="Center" Color="White" />
         </Grid>
