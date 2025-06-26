@@ -256,14 +256,13 @@ namespace PingIt.Maui.ViewModels
                 if (result != null)
                 {
                     var stream = await result.OpenReadAsync();
-                    var uploadPath = await UploadLocalAsync(result.FileName, stream);
+                    var memoryStream = new MemoryStream();
+                    await stream.CopyToAsync(memoryStream);
+                    memoryStream.Seek(0, SeekOrigin.Begin);
 
-                    // Create ImageSource from the saved file path
-                    var imageSource = ImageSource.FromFile(uploadPath);
+                    var imageSource = ImageSource.FromStream(() => memoryStream);
+
                     Photos.Add(imageSource);
-
-                    // Force UI update
-                    OnPropertyChanged(nameof(Photos));
                 }
             }
             catch (Exception ex)

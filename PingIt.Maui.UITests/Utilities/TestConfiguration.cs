@@ -6,7 +6,7 @@ public static class TestConfiguration
     {
         public const string PlatformName = "Android";
         public const string AutomationName = "UiAutomator2";
-        public const string DeviceName = "emulator-5554";
+        public const string DeviceName = "emulator-5556";
         public const string PlatformVersion = "15";
 
         public static string AppPath => Path.GetFullPath(Path.Combine(

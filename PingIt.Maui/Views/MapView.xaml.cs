@@ -211,7 +211,7 @@ namespace PingIt.Maui.Views
             {
                 var center = new Location(userLoc.Latitude, userLoc.Longitude);
                 InternalMap.MoveToRegion(
-                    MapSpan.FromCenterAndRadius(center, Distance.FromMeters(500)));
+                    MapSpan.FromCenterAndRadius(center, Distance.FromMeters(250)));
             });
         }
 
@@ -281,7 +281,7 @@ namespace PingIt.Maui.Views
             {
                 var sel = new Location((double)SelectedLocation.Latitude, (double)SelectedLocation.Longitude);
                 InternalMap.Pins.Add(new Pin { Label = "Selected", Location = sel, Type = PinType.Place });
-                InternalMap.MoveToRegion(MapSpan.FromCenterAndRadius(sel, Distance.FromMeters(1000)));
+                InternalMap.MoveToRegion(MapSpan.FromCenterAndRadius(sel, Distance.FromMeters(250)));
             }
         }
         
