@@ -1,5 +1,7 @@
 # PingIt – Cross-Platform Public Incident Management
 
+> **This project was developed as final graduation project for my Computing Science Associate Degree.**
+
 **PingIt** is a modern, cross-platform application designed to streamline the reporting and handling of public incidents. The platform enables citizens to submit reports — optionally anonymously — while providing municipalities with a structured dashboard for follow-up and resolution.
 
 PingIt consists of three core applications:
